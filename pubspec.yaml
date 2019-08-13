@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  convert: ^2.1.1
+  protobuf: 0.13.15
 
 dev_dependencies:
   flutter_test:
