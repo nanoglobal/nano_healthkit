@@ -9,6 +9,17 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
+    //return the name of the _channel.invokeMethod('hola_mauro') from flutter
+    print(call.method)
+    var book = BookInfo()
+    book.id = 1
+    book.title = "mauro"
+    book.author = "author"
+    do{
+        result(try book.serializedData())
+    }catch {
+        
+    }
+    
   }
 }
