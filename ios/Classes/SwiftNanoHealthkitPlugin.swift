@@ -11,6 +11,7 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
+        print("calling handler")
         if call.method == "requestPermissions" {
             self.requestPermissions(call, result: result)
         }
@@ -32,22 +33,29 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
     
     func getDataBatch(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
   
+        print("calling getDataBatch")
         guard let params = call.arguments as? [String: Int] else {
+            print("no params")
             result(nil)
             return
         }
         
         guard let typeInt = params["type"], let type = HealthKitFetchTypes.init(rawValue: typeInt) else {
+            print("no type")
             result(nil)
             return
         }
         
         guard let index = params["index"] else {
+            print("no index")
             result(nil)
             return
         }
         
-        appleHealthUtils.fetchData(type: type, index: index, result: result)
+        print("ready to fetch")
+        appleHealthUtils.fetchData(type: type, index: index, result: { (batch, error) in
+            result(batch)
+        })
     }
     
     
