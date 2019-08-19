@@ -65,22 +65,11 @@ class _MyAppState extends State<MyApp> {
 
   _getUserBasicHealthData() async {
     var basicHealth = await NanoHealthkitPlugin.getDataBatch(
-        HealthKitFetchTypes.CATEGORIES, 1);
+        HealthKitFetchTypes.QUANTITIES, 2);
     setState(() {
       _basicHealthString = basicHealth.toString();
     });
   }
-
-  /*_getActivityHealthData() async {
-    var steps = await NanoHealthkitPlugin.getSteps;
-    var running = await NanoHealthkitPlugin.getWalkingAndRunningDistance;
-    var cycle = await NanoHealthkitPlugin.geCyclingDistance;
-    var flights = await NanoHealthkitPlugin.getFlights;
-    setState(() {
-      _activityData =
-          "steps: $steps\nwalking running: $running\ncycle: $cycle flights: $flights";
-    });
-  }*/
 
   @override
   Widget build(BuildContext context) {

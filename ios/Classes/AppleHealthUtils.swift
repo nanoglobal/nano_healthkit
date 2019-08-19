@@ -142,6 +142,8 @@ class AppleHealthUtils: NSObject {
         dataFetcher.fetchBatchData(for: type, index: index, result: result)
     }
     
+    // MARK - Not yet used methods
+    
     func subscribeToUpdates(forced: Bool, completion: @escaping (Bool, Error?) -> Void) {
         
         dataFetcher.subscribeToUpdates(completion: completion)
