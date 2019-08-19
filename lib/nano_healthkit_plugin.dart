@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:nano_healthkit_plugin/HealthKitData.pb.dart';
+import 'package:nano_healthkit_plugin/HealthKitData.pbenum.dart';
 
 class NanoHealthkitPlugin {
   static const MethodChannel _channel =
@@ -14,12 +15,14 @@ class NanoHealthkitPlugin {
   }
 
   static Future<bool> get authorize async {
-    return await _channel.invokeMethod('requestAuthorization');
+    return await _channel.invokeMethod('requestPermissions');
   }
 
-  static Future<HealthKitData> get mauricio async {
-    final Uint8List rawData = await _channel.invokeMethod('hola_mauro');
-    final BookInfo bookInfo = BookInfo.fromBuffer(rawData);
-    return bookInfo;
+  static Future<HealthKitDataBatch> getDataBatch(
+      HealthKitFetchTypes type, int index) async {
+    final Uint8List rawData = await _channel
+        .invokeMethod('getDataBatch', {"type": type.hashCode, "index": index});
+    final HealthKitDataBatch result = HealthKitDataBatch.fromBuffer(rawData);
+    return result;
   }
 }

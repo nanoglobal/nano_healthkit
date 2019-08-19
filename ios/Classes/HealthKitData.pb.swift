@@ -19,6 +19,50 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+enum HealthKitFetchTypes: SwiftProtobuf.Enum {
+  typealias RawValue = Int
+  case categories // = 0
+  case quantities // = 1
+  case workout // = 2
+  case UNRECOGNIZED(Int)
+
+  init() {
+    self = .categories
+  }
+
+  init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .categories
+    case 1: self = .quantities
+    case 2: self = .workout
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  var rawValue: Int {
+    switch self {
+    case .categories: return 0
+    case .quantities: return 1
+    case .workout: return 2
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension HealthKitFetchTypes: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [HealthKitFetchTypes] = [
+    .categories,
+    .quantities,
+    .workout,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
 struct HealthKitData {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -62,7 +106,7 @@ struct HealthKitDataBatch {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var type: [HealthKitData] = []
+  var data: [HealthKitData] = []
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -70,6 +114,14 @@ struct HealthKitDataBatch {
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
+
+extension HealthKitFetchTypes: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "CATEGORIES"),
+    1: .same(proto: "QUANTITIES"),
+    2: .same(proto: "WORKOUT"),
+  ]
+}
 
 extension HealthKitData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "HealthKitData"
@@ -181,27 +233,27 @@ extension HealthKitData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
 extension HealthKitDataBatch: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "HealthKitDataBatch"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "type"),
+    1: .same(proto: "data"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 1: try decoder.decodeRepeatedMessageField(value: &self.type)
+      case 1: try decoder.decodeRepeatedMessageField(value: &self.data)
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.type.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.type, fieldNumber: 1)
+    if !self.data.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.data, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: HealthKitDataBatch, rhs: HealthKitDataBatch) -> Bool {
-    if lhs.type != rhs.type {return false}
+    if lhs.data != rhs.data {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

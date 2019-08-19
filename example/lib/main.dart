@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:nano_healthkit_plugin/nano_healthkit_plugin.dart';
 import 'package:nano_healthkit_plugin/HealthKitData.pb.dart';
+import 'package:nano_healthkit_plugin/HealthKitData.pbenum.dart';
 
 void main() => runApp(MyApp());
 
@@ -63,13 +64,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   _getUserBasicHealthData() async {
-    var basicHealth = await NanoHealthkitPlugin.getBasicHealthData;
+    var basicHealth = await NanoHealthkitPlugin.getDataBatch(
+        HealthKitFetchTypes.CATEGORIES, 1);
     setState(() {
       _basicHealthString = basicHealth.toString();
     });
   }
 
-  _getActivityHealthData() async {
+  /*_getActivityHealthData() async {
     var steps = await NanoHealthkitPlugin.getSteps;
     var running = await NanoHealthkitPlugin.getWalkingAndRunningDistance;
     var cycle = await NanoHealthkitPlugin.geCyclingDistance;
@@ -78,7 +80,7 @@ class _MyAppState extends State<MyApp> {
       _activityData =
           "steps: $steps\nwalking running: $running\ncycle: $cycle flights: $flights";
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +105,7 @@ class _MyAppState extends State<MyApp> {
               Text('Basic health: $_basicHealthString\n'),
               RaisedButton(
                   child: Text("Get Activity Data"),
-                  onPressed: _getActivityHealthData),
+                  onPressed: _getUserBasicHealthData),
               Text('\n$_activityData\n'),
             ],
           ),

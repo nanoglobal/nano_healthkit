@@ -11,38 +11,17 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
-        if call.method == "requestAuthorization" {
-            HealthkitReader.sharedInstance.requestHealthAuthorization { success in
-                result(success)
-            }
-        }
-        if call.method == "getActivity" {
-            self.getActivity(call, result: result)
-        }
-        
-        if call.method == "getBasicHealthData" {
-            self.getBasicHealthData(result: result)
-        }
-        
-        /* //return the name of the _channel.invokeMethod('hola_mauro') from flutter
-         print(call.method)
-         var book = BookInfo()
-         book.id = 1
-         book.title = "mauro"
-         book.author = "author"
-         do{
-             result(try book.serializedData())
-         }catch {
-             // ASdasdasd.
-         } */
-        
         if call.method == "requestPermissions" {
             self.requestPermissions(call, result: result)
         }
         
+        if call.method == "getDataBatch" {
+            self.getDataBatch(call, result: result)
+        }
+        
     }
     
-    let appleHealthUtils = AppleHealthUtils()
+    let appleHealthUtils = AppleHealthUtils.global
     
     func requestPermissions(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
@@ -51,9 +30,29 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
         }
     }
     
+    func getDataBatch(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+  
+        guard let params = call.arguments as? [String: Int] else {
+            result(nil)
+            return
+        }
+        
+        guard let typeInt = params["type"], let type = HealthKitFetchTypes.init(rawValue: typeInt) else {
+            result(nil)
+            return
+        }
+        
+        guard let index = params["index"] else {
+            result(nil)
+            return
+        }
+        
+        appleHealthUtils.fetchData(type: type, index: index, result: result)
+    }
     
     
-    func getBasicHealthData(result: @escaping FlutterResult) {
+    
+    /*func getBasicHealthData(result: @escaping FlutterResult) {
         let dob = HealthkitReader.sharedInstance.getDOB()
         let gender = HealthkitReader.sharedInstance.getBioLogicalSex()
         HealthkitReader.sharedInstance.getLastWeightReading {
@@ -129,7 +128,7 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
                 result([])
             }
         }
-    }
+    }*/
 }
 
 extension Date {

@@ -83,7 +83,7 @@ class AppleHealthDataFetcher: NSObject {
         }
     }
     
-    private func subscribeQuery(for touple: (HKSampleType, AppleHealthFetchTypes, Int), completion: @escaping (Bool, Error?) -> Void) -> HKObserverQuery {
+    private func subscribeQuery(for touple: (HKSampleType, HealthKitFetchTypes, Int), completion: @escaping (Bool, Error?) -> Void) -> HKObserverQuery {
         
         return HKObserverQuery(sampleType: touple.0, predicate: nil) {
             [weak self] query, completionHandler, error in
@@ -109,7 +109,7 @@ class AppleHealthDataFetcher: NSObject {
                 if addedObjects != nil && addedObjects?.count ?? 0 > 0 {
                     print("There were samples for touple: \(touple.0.description)")
                     let data = self?.makeData(from: addedObjects, fetchType: touple.1, index: touple.2, sampleType: touple.0)
-                    self?.sendData(data)
+                    self?.sendData(data?.data)
                 }
                 
                 // NOTE: There's no way to delete values on current api version so it will be ignored for now
@@ -126,62 +126,14 @@ class AppleHealthDataFetcher: NSObject {
         }
     }
     
-    func fetchAllHistoricData(record: AppleHealthStatusRecord, completion: @escaping (Bool, Error?) -> Swift.Void) {
-        
-        // If record exists and is finished, exit
-        if record.readAllHasCompleted {
-            completion(true, nil)
-            return
-        }
-        
-        // If it was already running dont continue
-        if isFetchingData {
-            completion(false, SimpleLocalizedError("applehealth_already_fetching"))
-            return
-        }
-        isFetchingData = true
-        
-        moveToNextHistoricData(record: record, completion: completion)
-    }
     
-    private func moveToNextHistoricData(record: AppleHealthStatusRecord, completion: @escaping (Bool, Error?) -> Swift.Void) {
-        
-        // Move to the next value
-        record.readIndex = record.readIndex + 1
-        // If there is no next in the current type, move to the next
-        if record.readIndex >= AppleHealthUtils.ALL_TYPES[record.readType].count {
-            record.readIndex = 0
-            record.readType = record.readType + 1
-        }
-        // If there is no next, mark as completed
-        if record.readType >= AppleHealthUtils.ALL_TYPES.count {
-            record.readIndex = 0
-            record.readType = 0
-            record.readAllHasCompleted = true
-        }
-        
-        // Save the record
-        AppleHealthUtils.saveRecord(record)
-        
-        // If is finished then exit
-        if record.readAllHasCompleted {
-            isFetchingData = false
-            completion(true, nil)
-            return
-        }
-        
-        // Call the fetch
-        let fetchType = AppleHealthFetchTypes(rawValue: record.readType)!
-        fetchData(for: fetchType, index: record.readIndex, record: record, completion: completion)
-    }
-    
-    private func fetchData(for fetchType: AppleHealthFetchTypes, index: Int, record: AppleHealthStatusRecord, completion: @escaping (Bool, Error?) -> Swift.Void) {
+    func fetchBatchData(for fetchType: HealthKitFetchTypes, index: Int, result: @escaping (HealthKitDataBatch?, Error?) -> Swift.Void) {
         
         // Get the object type
         let sampleType = getObjectType(for: fetchType, index: index)
         // Note: Here we would check for permissions for reading but apple doesnt grant information about it, only for writing
         if sampleType == nil {
-            moveToNextHistoricData(record: record, completion: completion)
+            result(nil, SimpleLocalizedError("Invalid sample type"))
             return
         }
         
@@ -199,15 +151,12 @@ class AppleHealthDataFetcher: NSObject {
                                         sortDescriptors: [sortDescriptor]) { [weak self] query, samples, error in
                                             
                                             if error != nil {
-                                                self?.isFetchingData = false
-                                                completion(false, error)
-                                                return // abort()
+                                                result(nil, error)
+                                                return
                                             }
                                             
                                             let data = self?.makeData(from: samples, fetchType: fetchType, index: index, sampleType: sampleType!)
-                                            self?.sendData(data)
-                                            
-                                            self?.moveToNextHistoricData(record: record, completion: completion)
+                                            result(data, nil)
         }
         
         AppleHealthUtils.healthStore?.execute(sampleQuery)
@@ -215,9 +164,9 @@ class AppleHealthDataFetcher: NSObject {
     
     
     
-    func makeData(from samples: [HKSample]?, fetchType: AppleHealthFetchTypes, index: Int, sampleType: HKSampleType) -> [HealthKitData] {
+    func makeData(from samples: [HKSample]?, fetchType: HealthKitFetchTypes, index: Int, sampleType: HKSampleType) -> HealthKitDataBatch {
         
-        var data: [HealthKitData] = []
+        var data = HealthKitDataBatch()
         for sample: HKSample in samples ?? [] {
             
             var singleData: HealthKitData? = nil
@@ -230,45 +179,21 @@ class AppleHealthDataFetcher: NSObject {
             }
             
             if singleData != nil {
-                data.append(singleData!)
+                data.data.append(singleData!)
             }
         }
         return data
         
     }
-    
-    /*private func saveSampleInDb(samples: [HKSample]?, fetchType: AppleHealthFetchTypes, index: Int, sampleType: HKSampleType) {
-        
-        let dbUtils = DBUtils()
-        
-        for sample: HKSample in samples ?? [] {
-            
-            var jsonRes: [String: Any]?
-            if let workoutSample = sample as? HKWorkout {
-                jsonRes = AppleHealthDataFetcher.saveInJson(type: sampleType, value: workoutSample, index: index)
-            } else if let quantitySample = sample as? HKQuantitySample {
-                jsonRes = AppleHealthDataFetcher.saveInJson(type: sampleType, value: quantitySample, index: index)
-            } else if let categorySample = sample as? HKCategorySample {
-                jsonRes = AppleHealthDataFetcher.saveInJson(type: sampleType, value: categorySample, index: index)
-            }
-            
-            if jsonRes != nil, let dataString = String.fromJson(jsonRes!) {
-                let data = AppleHealthData()
-                data.dataType = fetchType.rawValue
-                data.dataIndex = index
-                data.dataString = dataString
-                dbUtils.save(object: data)
-            }
-        }
-    }*/
+   
     
     // MARK: Aux methods
     
-    private func getAllSampleTypes() -> [(HKSampleType, AppleHealthFetchTypes, Int)] {
+    private func getAllSampleTypes() -> [(HKSampleType, HealthKitFetchTypes, Int)] {
         
-        var allTypes: [(HKSampleType, AppleHealthFetchTypes, Int)] = []
+        var allTypes: [(HKSampleType, HealthKitFetchTypes, Int)] = []
         for typeIndex in 0 ..< AppleHealthUtils.ALL_TYPES.count {
-            let fetchType = AppleHealthFetchTypes(rawValue: typeIndex)!
+            let fetchType = HealthKitFetchTypes(rawValue: typeIndex)!
             let typeArray = AppleHealthUtils.ALL_TYPES[typeIndex]
             for index in 0 ..< typeArray.count {
                 if let sampleType = getObjectType(for: fetchType, index: index) {
@@ -280,7 +205,7 @@ class AppleHealthDataFetcher: NSObject {
         return allTypes
     }
     
-    private func getSimpleAllSampleTypes(origin: [(HKSampleType, AppleHealthFetchTypes, Int)]) -> Set<HKSampleType> {
+    private func getSimpleAllSampleTypes(origin: [(HKSampleType, HealthKitFetchTypes, Int)]) -> Set<HKSampleType> {
         
         var allTypes: Set<HKSampleType> = Set()
         for touple in origin {
@@ -289,7 +214,7 @@ class AppleHealthDataFetcher: NSObject {
         return allTypes
     }
     
-    private func getObjectType(for fetchType: AppleHealthFetchTypes, index: Int) -> HKSampleType? {
+    private func getObjectType(for fetchType: HealthKitFetchTypes, index: Int) -> HKSampleType? {
         
         var sampleType: HKSampleType?
         if fetchType == .categories {

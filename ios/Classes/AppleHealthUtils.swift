@@ -2,12 +2,6 @@
 import HealthKit
 import HealthKitUI
 
-enum AppleHealthFetchTypes: Int {
-    case categories = 0
-    case quantities
-    case workout
-}
-
 class AppleHealthUtils: NSObject {
     
     static let global = AppleHealthUtils()
@@ -138,32 +132,24 @@ class AppleHealthUtils: NSObject {
         }
     }
     
-    func resume() {
-        
-        //callSendingService()
-    }
-    
     func requestPermissions(completion: @escaping (Bool, Error?) -> Void) {
-        
-        // May create a record if there was none
-        createRecordIfNone()
         
         dataFetcher.requestPermissions(completion: completion)
     }
     
-    func subscribeToUpdates(forced: Bool, completion: @escaping (Bool, Error?) -> Void) {
+    func fetchData(type: HealthKitFetchTypes, index: Int, result: @escaping (HealthKitDataBatch?, Error?) -> Void) {
         
-        /*if forced {
-            sharedMemory.appleHealthRecord!.serviceIsActive = true
-            AppleHealthUtils.saveRecord(sharedMemory.appleHealthRecord)
-        }*/
+        dataFetcher.fetchBatchData(for: type, index: index, result: result)
+    }
+    
+    func subscribeToUpdates(forced: Bool, completion: @escaping (Bool, Error?) -> Void) {
         
         dataFetcher.subscribeToUpdates(completion: completion)
     }
     
     private func fetchAllHistoricData(completion: @escaping (Bool, Error?) -> Void) {
         
-        dataFetcher.fetchAllHistoricData(record: statusRecord!, completion: completion)
+        //dataFetcher.fetchAllHistoricData(record: statusRecord!, completion: completion)
     }
     
     func connectToAppleHealth(permissionCompletion: @escaping (Bool, Error?) -> Void,
@@ -215,26 +201,7 @@ class AppleHealthUtils: NSObject {
         return statusRecord?.serviceIsActive ?? false
     }
     
-    /*func getSendServiceStatusSummary() -> String {
-        
-        let sendStatus = self.dataSender.getStatus()
-        switch sendStatus {
-        case .disconnected:
-            return "applehealth_status_disconnected"
-        case .sending:
-            return "applehealth_status_working"
-        case .will_send:
-            return "applehealth_status_working"
-        case .synched:
-            return "applehealth_status_sync_finished"
-        }
-    }*/
-    
     // MARK: Aux methods
-    
-    /*func callSendingService() {
-        dataSender.callSendingService()
-    }*/
     
     func createRecordIfNone() {
 

@@ -18,5 +18,11 @@ message HealthKitData {
 }
 
 message HealthKitDataBatch {
-   repeated HealthKitData type = 1;
+   repeated HealthKitData data = 1;
+}
+
+enum HealthKitFetchTypes {
+   CATEGORIES = 0;
+   QUANTITIES = 1;
+   WORKOUT = 2;
 }
