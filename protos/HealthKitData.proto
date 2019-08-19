@@ -17,4 +17,6 @@ message HealthKitData {
    double duration = 14;
 }
 
-
+message HealthKitDataBatch {
+   repeated HealthKitData type = 1;
+}

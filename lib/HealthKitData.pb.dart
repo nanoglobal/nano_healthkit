@@ -114,26 +114,3 @@ class HealthKitData extends $pb.GeneratedMessage {
   void clearDuration() => clearField(14);
 }
 
-class HealthKitDataBatch extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('HealthKitDataBatch')
-    ..pc<HealthKitData>(1, 'type', $pb.PbFieldType.PM,HealthKitData.create)
-    ..hasRequiredFields = false
-  ;
-
-  HealthKitDataBatch._() : super();
-  factory HealthKitDataBatch() => create();
-  factory HealthKitDataBatch.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory HealthKitDataBatch.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  HealthKitDataBatch clone() => HealthKitDataBatch()..mergeFromMessage(this);
-  HealthKitDataBatch copyWith(void Function(HealthKitDataBatch) updates) => super.copyWith((message) => updates(message as HealthKitDataBatch));
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static HealthKitDataBatch create() => HealthKitDataBatch._();
-  HealthKitDataBatch createEmptyInstance() => create();
-  static $pb.PbList<HealthKitDataBatch> createRepeated() => $pb.PbList<HealthKitDataBatch>();
-  static HealthKitDataBatch getDefault() => _defaultInstance ??= create()..freeze();
-  static HealthKitDataBatch _defaultInstance;
-
-  $core.List<HealthKitData> get type => $_getList(0);
-}
-
