@@ -127,7 +127,7 @@ class AppleHealthDataFetcher: NSObject {
     }
     
     
-    func fetchBatchData(for fetchType: HealthKitFetchTypes, index: Int, result: @escaping (HealthKitDataBatch?, Error?) -> Swift.Void) {
+    func fetchBatchData(for fetchType: HealthKitFetchTypes, index: Int, startDate: Date, endDate: Date, result: @escaping (HealthKitDataBatch?, Error?) -> Swift.Void) {
         
         // Get the object type
         let sampleType = getObjectType(for: fetchType, index: index)
@@ -138,8 +138,8 @@ class AppleHealthDataFetcher: NSObject {
         }
         
         // 1. Use HKQuery to load the most recent samples.
-        let mostRecentPredicate = HKQuery.predicateForSamples(withStart: Date.distantPast,
-                                                              end: Date(),
+        let mostRecentPredicate = HKQuery.predicateForSamples(withStart: startDate,
+                                                              end: endDate,
                                                               options: .strictEndDate)
         
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate,
@@ -335,5 +335,11 @@ extension Date {
     // Note: ISO8601 string format: yyyy-MM-dd'T'HH:mm:ss.SSSZ.
     var iso8601: String {
         return Formatter.iso8601.string(from: self)
+    }
+    
+    init(iso8601: String) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSX"
+        self = dateFormatter.date(from: iso8601) ?? Date()
     }
 }

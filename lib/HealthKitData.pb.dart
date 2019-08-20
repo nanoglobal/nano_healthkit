@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: HealthKitData.proto
+//  source: healthkitdata.proto
 //
 // @dart = 2.3
 // ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
@@ -9,6 +9,10 @@ import 'dart:core' as $core show bool, Deprecated, double, int, List, Map, overr
 
 import 'package:fixnum/fixnum.dart';
 import 'package:protobuf/protobuf.dart' as $pb;
+
+import 'healthkitdata.pbenum.dart';
+
+export 'healthkitdata.pbenum.dart';
 
 class HealthKitData extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('HealthKitData')
@@ -116,7 +120,7 @@ class HealthKitData extends $pb.GeneratedMessage {
 
 class HealthKitDataBatch extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('HealthKitDataBatch')
-    ..pc<HealthKitData>(1, 'type', $pb.PbFieldType.PM,HealthKitData.create)
+    ..pc<HealthKitData>(1, 'data', $pb.PbFieldType.PM,HealthKitData.create)
     ..hasRequiredFields = false
   ;
 
@@ -134,6 +138,50 @@ class HealthKitDataBatch extends $pb.GeneratedMessage {
   static HealthKitDataBatch getDefault() => _defaultInstance ??= create()..freeze();
   static HealthKitDataBatch _defaultInstance;
 
-  $core.List<HealthKitData> get type => $_getList(0);
+  $core.List<HealthKitData> get data => $_getList(0);
+}
+
+class HealthKitDataBatchRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('HealthKitDataBatchRequest')
+    ..e<HealthKitFetchTypes>(1, 'type', $pb.PbFieldType.OE, HealthKitFetchTypes.CATEGORIES, HealthKitFetchTypes.valueOf, HealthKitFetchTypes.values)
+    ..aInt64(2, 'index')
+    ..aOS(3, 'startDate')
+    ..aOS(4, 'endDate')
+    ..hasRequiredFields = false
+  ;
+
+  HealthKitDataBatchRequest._() : super();
+  factory HealthKitDataBatchRequest() => create();
+  factory HealthKitDataBatchRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory HealthKitDataBatchRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  HealthKitDataBatchRequest clone() => HealthKitDataBatchRequest()..mergeFromMessage(this);
+  HealthKitDataBatchRequest copyWith(void Function(HealthKitDataBatchRequest) updates) => super.copyWith((message) => updates(message as HealthKitDataBatchRequest));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static HealthKitDataBatchRequest create() => HealthKitDataBatchRequest._();
+  HealthKitDataBatchRequest createEmptyInstance() => create();
+  static $pb.PbList<HealthKitDataBatchRequest> createRepeated() => $pb.PbList<HealthKitDataBatchRequest>();
+  static HealthKitDataBatchRequest getDefault() => _defaultInstance ??= create()..freeze();
+  static HealthKitDataBatchRequest _defaultInstance;
+
+  HealthKitFetchTypes get type => $_getN(0);
+  set type(HealthKitFetchTypes v) { setField(1, v); }
+  $core.bool hasType() => $_has(0);
+  void clearType() => clearField(1);
+
+  Int64 get index => $_getI64(1);
+  set index(Int64 v) { $_setInt64(1, v); }
+  $core.bool hasIndex() => $_has(1);
+  void clearIndex() => clearField(2);
+
+  $core.String get startDate => $_getS(2, '');
+  set startDate($core.String v) { $_setString(2, v); }
+  $core.bool hasStartDate() => $_has(2);
+  void clearStartDate() => clearField(3);
+
+  $core.String get endDate => $_getS(3, '');
+  set endDate($core.String v) { $_setString(3, v); }
+  $core.bool hasEndDate() => $_has(3);
+  void clearEndDate() => clearField(4);
 }
 

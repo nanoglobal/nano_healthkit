@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:fixnum/fixnum.dart';
 
 import 'package:flutter/services.dart';
 import 'package:nano_healthkit_plugin/nano_healthkit_plugin.dart';
-import 'package:nano_healthkit_plugin/HealthKitData.pb.dart';
-import 'package:nano_healthkit_plugin/HealthKitData.pbenum.dart';
+import 'package:nano_healthkit_plugin/healthkitdata.pb.dart';
+import 'package:nano_healthkit_plugin/healthkitdata.pbenum.dart';
 
 void main() => runApp(MyApp());
 
@@ -64,8 +65,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   _getUserBasicHealthData() async {
-    var basicHealth = await NanoHealthkitPlugin.getDataBatch(
-        HealthKitFetchTypes.QUANTITIES, 2);
+    var request = HealthKitDataBatchRequest();
+    request.type = HealthKitFetchTypes.QUANTITIES;
+    request.index = Int64(2);
+    request.startDate = "2019-08-19T14:58:00.000Z";
+    request.endDate = "2019-08-19T17:58:00.000Z";
+    var basicHealth = await NanoHealthkitPlugin.getDataBatch(request);
     setState(() {
       _basicHealthString = basicHealth.toString();
     });

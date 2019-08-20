@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
-import 'package:nano_healthkit_plugin/HealthKitData.pb.dart';
-import 'package:nano_healthkit_plugin/HealthKitData.pbenum.dart';
+import 'package:nano_healthkit_plugin/healthkitdata.pb.dart';
+import 'package:nano_healthkit_plugin/healthkitdata.pbenum.dart';
 
 class NanoHealthkitPlugin {
   static const MethodChannel _channel =
@@ -19,9 +19,9 @@ class NanoHealthkitPlugin {
   }
 
   static Future<HealthKitDataBatch> getDataBatch(
-      HealthKitFetchTypes type, int index) async {
-    final Uint8List rawData = await _channel
-        .invokeMethod('getDataBatch', {"type": type.hashCode, "index": index});
+      HealthKitDataBatchRequest request) async {
+    final Uint8List rawData =
+        await _channel.invokeMethod('getDataBatch', request.writeToBuffer());
     final HealthKitDataBatch result = HealthKitDataBatch.fromBuffer(rawData);
     return result;
   }

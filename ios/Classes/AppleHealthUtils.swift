@@ -137,9 +137,11 @@ class AppleHealthUtils: NSObject {
         dataFetcher.requestPermissions(completion: completion)
     }
     
-    func fetchData(type: HealthKitFetchTypes, index: Int, result: @escaping (HealthKitDataBatch?, Error?) -> Void) {
+    func fetchData(request: HealthKitDataBatchRequest, result: @escaping (HealthKitDataBatch?, Error?) -> Void) {
         
-        dataFetcher.fetchBatchData(for: type, index: index, result: result)
+        let startDate = request.startDate.isEmpty ? Date.distantPast : Date(iso8601: request.startDate)
+        let endDate = request.endDate.isEmpty ? Date() : Date(iso8601: request.endDate)
+        dataFetcher.fetchBatchData(for: request.type, index: Int(request.index), startDate: startDate, endDate: endDate, result: result)
     }
     
     // MARK - Not yet used methods

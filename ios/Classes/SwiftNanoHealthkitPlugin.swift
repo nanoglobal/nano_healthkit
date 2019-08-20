@@ -31,38 +31,18 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
     }
     
     func getDataBatch(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
-        guard let params = call.arguments as? [String: Int] else {
+
+        guard let dataArgs = (call.arguments as? FlutterStandardTypedData)?.data, let request = try? HealthKitDataBatchRequest(serializedData: dataArgs) else {
             result(nil)
             return
         }
         
-        guard let typeInt = params["type"], let type = HealthKitFetchTypes(rawValue: typeInt) else {
-            result(nil)
-            return
-        }
-        
-        guard let index = params["index"] else {
-            result(nil)
-            return
-        }
-        
-        appleHealthUtils.fetchData(type: type, index: index, result: { batch, error in
+        appleHealthUtils.fetchData(request: request, result: { batch, error in
             do {
                 result(try batch?.serializedData())
             } catch {
                 result(nil)
             }
         })
-    }
-}
-
-extension Date {
-    var yesterday: Date {
-        return Calendar.current.date(byAdding: .day, value: -1, to: startDay)!
-    }
-    
-    var startDay: Date {
-        return Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: self)!
     }
 }
