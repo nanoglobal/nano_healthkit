@@ -1,29 +1,47 @@
 //
 import HealthKit
 import HealthKitUI
-//import RxSwift
 
 class AppleHealthDataFetcher: NSObject {
     
-    var isFetchingData = false
+    // MARK: Data fetching
     
-    override init() {
-        super.init()
-    }
-    
-    func requestPermissions(completion: @escaping (Bool, Error?) -> Void) {
+    func fetchBatchData(for fetchType: HealthKitFetchTypes, index: Int, startDate: Date, endDate: Date, result: @escaping (HealthKitDataBatch?, Error?) -> Swift.Void) {
         
-        // Make an all types set that
-        let allTypes = getSimpleAllSampleTypes(origin: getAllSampleTypes())
-        
-        AppleHealthUtils.healthStore?.requestAuthorization(toShare: nil, read: allTypes) { success, error in
-            completion(success, error)
+        // Get the object type
+        let sampleType = AppleHealthUtils.getObjectType(for: fetchType, index: index)
+        // Note: Here we would check for permissions for reading but apple doesnt grant information about it, only for writing
+        if sampleType == nil {
+            result(nil, SimpleLocalizedError("Invalid sample type"))
+            return
         }
+        
+        // Use HKQuery to load the most recent samples.
+        let mostRecentPredicate = HKQuery.predicateForSamples(withStart: startDate,
+                                                              end: endDate,
+                                                              options: .strictEndDate)
+        
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate,
+                                              ascending: false)
+        
+        let sampleQuery = HKSampleQuery(sampleType: sampleType!,
+                                        predicate: mostRecentPredicate,
+                                        limit: HKObjectQueryNoLimit,
+                                        sortDescriptors: [sortDescriptor]) { [weak self] query, samples, error in
+            
+            if error != nil {
+                result(nil, error)
+                return
+            }
+            
+            let data = self?.makeData(from: samples, fetchType: fetchType, index: index, sampleType: sampleType!)
+            result(data, nil)
+        }
+        
+        AppleHealthUtils.healthStore?.execute(sampleQuery)
     }
     
-    func sendData(_ data: [HealthKitData]?) {
-        //TODO: Send to Flutter
-    }
+    // MARK: Subscriptions
     
     func unsubscribeToUpdates() {
         
@@ -42,10 +60,10 @@ class AppleHealthDataFetcher: NSObject {
         unsubscribeToUpdates(completion: { success, error in
             
             // If service is not active, exit
-            //if !(self.sharedMemory.appleHealthRecord?.serviceIsActive ?? false) {
+            // if !(self.sharedMemory.appleHealthRecord?.serviceIsActive ?? false) {
             //    completion(false, SimpleLocalizedError("applehealth_cant_subscribe"))
             //    return
-            //}
+            // }
             
             // Subscribe
             self.subscribeToAllSampleTypes(completion: completion)
@@ -55,7 +73,7 @@ class AppleHealthDataFetcher: NSObject {
     private func subscribeToAllSampleTypes(completion: @escaping (Bool, Error?) -> Void) {
         
         // Make an all types set that
-        let allTypes = getAllSampleTypes()
+        let allTypes = AppleHealthUtils.getAllSampleTypes()
         
         // For each type, subscribe
         for (index, touple) in allTypes.enumerated() {
@@ -108,8 +126,8 @@ class AppleHealthDataFetcher: NSObject {
                 
                 if addedObjects != nil && addedObjects?.count ?? 0 > 0 {
                     print("There were samples for touple: \(touple.0.description)")
-                    let data = self?.makeData(from: addedObjects, fetchType: touple.1, index: touple.2, sampleType: touple.0)
-                    self?.sendData(data?.data)
+                    // let data = self?.makeData(from: addedObjects, fetchType: touple.1, index: touple.2, sampleType: touple.0)
+                    // self?.sendData(data?.data) //TODO: Send data
                 }
                 
                 // NOTE: There's no way to delete values on current api version so it will be ignored for now
@@ -125,51 +143,20 @@ class AppleHealthDataFetcher: NSObject {
             AppleHealthUtils.healthStore?.execute(anchoredQuery)
         }
     }
+}
+
+// MARK: Helpers
+
+extension AppleHealthDataFetcher {
     
-    
-    func fetchBatchData(for fetchType: HealthKitFetchTypes, index: Int, startDate: Date, endDate: Date, result: @escaping (HealthKitDataBatch?, Error?) -> Swift.Void) {
-        
-        // Get the object type
-        let sampleType = getObjectType(for: fetchType, index: index)
-        // Note: Here we would check for permissions for reading but apple doesnt grant information about it, only for writing
-        if sampleType == nil {
-            result(nil, SimpleLocalizedError("Invalid sample type"))
-            return
-        }
-        
-        // 1. Use HKQuery to load the most recent samples.
-        let mostRecentPredicate = HKQuery.predicateForSamples(withStart: startDate,
-                                                              end: endDate,
-                                                              options: .strictEndDate)
-        
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate,
-                                              ascending: false)
-        
-        let sampleQuery = HKSampleQuery(sampleType: sampleType!,
-                                        predicate: mostRecentPredicate,
-                                        limit: HKObjectQueryNoLimit,
-                                        sortDescriptors: [sortDescriptor]) { [weak self] query, samples, error in
-                                            
-                                            if error != nil {
-                                                result(nil, error)
-                                                return
-                                            }
-                                            
-                                            let data = self?.makeData(from: samples, fetchType: fetchType, index: index, sampleType: sampleType!)
-                                            result(data, nil)
-        }
-        
-        AppleHealthUtils.healthStore?.execute(sampleQuery)
-    }
-    
-    
+    // MARK: Data parsing
     
     func makeData(from samples: [HKSample]?, fetchType: HealthKitFetchTypes, index: Int, sampleType: HKSampleType) -> HealthKitDataBatch {
         
         var data = HealthKitDataBatch()
         for sample: HKSample in samples ?? [] {
             
-            var singleData: HealthKitData? = nil
+            var singleData: HealthKitData?
             if let workoutSample = sample as? HKWorkout {
                 singleData = saveAsData(type: sampleType, value: workoutSample, index: index)
             } else if let quantitySample = sample as? HKQuantitySample {
@@ -183,48 +170,6 @@ class AppleHealthDataFetcher: NSObject {
             }
         }
         return data
-        
-    }
-   
-    
-    // MARK: Aux methods
-    
-    private func getAllSampleTypes() -> [(HKSampleType, HealthKitFetchTypes, Int)] {
-        
-        var allTypes: [(HKSampleType, HealthKitFetchTypes, Int)] = []
-        for typeIndex in 0 ..< AppleHealthUtils.ALL_TYPES.count {
-            let fetchType = HealthKitFetchTypes(rawValue: typeIndex)!
-            let typeArray = AppleHealthUtils.ALL_TYPES[typeIndex]
-            for index in 0 ..< typeArray.count {
-                if let sampleType = getObjectType(for: fetchType, index: index) {
-                    let touple = (sampleType, fetchType, index)
-                    allTypes.append(touple)
-                }
-            }
-        }
-        return allTypes
-    }
-    
-    private func getSimpleAllSampleTypes(origin: [(HKSampleType, HealthKitFetchTypes, Int)]) -> Set<HKSampleType> {
-        
-        var allTypes: Set<HKSampleType> = Set()
-        for touple in origin {
-            allTypes.insert(touple.0)
-        }
-        return allTypes
-    }
-    
-    private func getObjectType(for fetchType: HealthKitFetchTypes, index: Int) -> HKSampleType? {
-        
-        var sampleType: HKSampleType?
-        if fetchType == .categories {
-            sampleType = HKObjectType.categoryType(forIdentifier: AppleHealthUtils.CATEGORY_TYPES[index])
-        } else if fetchType == .quantities {
-            sampleType = HKObjectType.quantityType(forIdentifier: AppleHealthUtils.QUANTITY_TYPES[index].0)
-        } else if fetchType == .workout {
-            sampleType = AppleHealthUtils.WORKOUT_TYPES[index]
-        }
-        return sampleType
     }
     
     func saveAsDataBase(type: HKSampleType, value: HKSample) -> HealthKitData {
@@ -236,16 +181,6 @@ class AppleHealthDataFetcher: NSObject {
         data.device = value.device?.name ?? ""
         data.metadata = jsonToString(value.metadata)
         return data
-    }
-    
-    private func jsonToString(_ jsonDictionary: [String: Any]?) -> String {
-        
-        if let jsonDictionary = jsonDictionary, let theJSONData = try? JSONSerialization.data(
-            withJSONObject: jsonDictionary, options: []) {
-            let theJSONText = String(data: theJSONData, encoding: .ascii)
-            return theJSONText ?? ""
-        }
-        return ""
     }
     
     func saveAsData(type: HKSampleType, value: HKQuantitySample, index: Int) -> HealthKitData {
@@ -279,6 +214,16 @@ class AppleHealthDataFetcher: NSObject {
         return data
     }
     
+    private func jsonToString(_ jsonDictionary: [String: Any]?) -> String {
+        
+        if let jsonDictionary = jsonDictionary, let theJSONData = try? JSONSerialization.data(
+            withJSONObject: jsonDictionary, options: []) {
+            let theJSONText = String(data: theJSONData, encoding: .ascii)
+            return theJSONText ?? ""
+        }
+        return ""
+    }
+    
     private func getAnchor(anchorKey: String) -> HKQueryAnchor? {
         
         let encoded = UserDefaults.standard.data(forKey: anchorKey)
@@ -295,11 +240,7 @@ class AppleHealthDataFetcher: NSObject {
         UserDefaults.standard.setValue(encoded, forKey: anchorKey)
         UserDefaults.standard.synchronize()
     }
-    
-    
 }
-
-// MARK - Helpers
 
 struct SimpleLocalizedError: LocalizedError {
     

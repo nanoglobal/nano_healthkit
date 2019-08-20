@@ -1,8 +1,10 @@
+//
 import Flutter
 import HealthKit
 import UIKit
 
 public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "nano_healthkit_plugin", binaryMessenger: registrar.messenger())
         let instance = SwiftNanoHealthkitPlugin()
@@ -31,7 +33,7 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
     }
     
     func getDataBatch(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-
+        
         guard let dataArgs = (call.arguments as? FlutterStandardTypedData)?.data, let request = try? HealthKitDataBatchRequest(serializedData: dataArgs) else {
             result(nil)
             return

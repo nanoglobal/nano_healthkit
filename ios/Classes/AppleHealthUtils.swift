@@ -6,11 +6,9 @@ class AppleHealthUtils: NSObject {
     
     static let global = AppleHealthUtils()
     static var healthStore: HKHealthStore?
-    //let sharedMemory: SharedMemory = SharedMemory.global
     
-    var statusRecord: AppleHealthStatusRecord? = nil
+    var statusRecord: AppleHealthStatusRecord?
     
-    //let dataSender = AppleHealthDataSender()
     let dataFetcher = AppleHealthDataFetcher()
     
     static var CATEGORY_TYPES: [HKCategoryTypeIdentifier] = [
@@ -132,9 +130,52 @@ class AppleHealthUtils: NSObject {
         }
     }
     
+    static func getAllSampleTypes() -> [(HKSampleType, HealthKitFetchTypes, Int)] {
+        
+        var allTypes: [(HKSampleType, HealthKitFetchTypes, Int)] = []
+        for typeIndex in 0 ..< AppleHealthUtils.ALL_TYPES.count {
+            let fetchType = HealthKitFetchTypes(rawValue: typeIndex)!
+            let typeArray = AppleHealthUtils.ALL_TYPES[typeIndex]
+            for index in 0 ..< typeArray.count {
+                if let sampleType = AppleHealthUtils.getObjectType(for: fetchType, index: index) {
+                    let touple = (sampleType, fetchType, index)
+                    allTypes.append(touple)
+                }
+            }
+        }
+        return allTypes
+    }
+    
+    static func getSimpleAllSampleTypes(origin: [(HKSampleType, HealthKitFetchTypes, Int)]) -> Set<HKSampleType> {
+        
+        var allTypes: Set<HKSampleType> = Set()
+        for touple in origin {
+            allTypes.insert(touple.0)
+        }
+        return allTypes
+    }
+    
+    static func getObjectType(for fetchType: HealthKitFetchTypes, index: Int) -> HKSampleType? {
+        
+        var sampleType: HKSampleType?
+        if fetchType == .categories {
+            sampleType = HKObjectType.categoryType(forIdentifier: AppleHealthUtils.CATEGORY_TYPES[index])
+        } else if fetchType == .quantities {
+            sampleType = HKObjectType.quantityType(forIdentifier: AppleHealthUtils.QUANTITY_TYPES[index].0)
+        } else if fetchType == .workout {
+            sampleType = AppleHealthUtils.WORKOUT_TYPES[index]
+        }
+        return sampleType
+    }
+    
     func requestPermissions(completion: @escaping (Bool, Error?) -> Void) {
         
-        dataFetcher.requestPermissions(completion: completion)
+        // Make an all types set that
+        let allTypes = AppleHealthUtils.getSimpleAllSampleTypes(origin: AppleHealthUtils.getAllSampleTypes())
+        
+        AppleHealthUtils.healthStore?.requestAuthorization(toShare: nil, read: allTypes) { success, error in
+            completion(success, error)
+        }
     }
     
     func fetchData(request: HealthKitDataBatchRequest, result: @escaping (HealthKitDataBatch?, Error?) -> Void) {
@@ -144,7 +185,7 @@ class AppleHealthUtils: NSObject {
         dataFetcher.fetchBatchData(for: request.type, index: Int(request.index), startDate: startDate, endDate: endDate, result: result)
     }
     
-    // MARK - Not yet used methods
+    // MARK: - Not yet used methods
     
     func subscribeToUpdates(forced: Bool, completion: @escaping (Bool, Error?) -> Void) {
         
@@ -153,7 +194,7 @@ class AppleHealthUtils: NSObject {
     
     private func fetchAllHistoricData(completion: @escaping (Bool, Error?) -> Void) {
         
-        //dataFetcher.fetchAllHistoricData(record: statusRecord!, completion: completion)
+        // dataFetcher.fetchAllHistoricData(record: statusRecord!, completion: completion)
     }
     
     func connectToAppleHealth(permissionCompletion: @escaping (Bool, Error?) -> Void,
@@ -178,7 +219,7 @@ class AppleHealthUtils: NSObject {
                 // Fetch all historic data
                 self?.fetchAllHistoricData { success, error in
                     
-                    //self?.callSendingService()
+                    // self?.callSendingService()
                     if error != nil {
                         self?.disconnectToAppleHealth()
                         abort()
@@ -208,7 +249,7 @@ class AppleHealthUtils: NSObject {
     // MARK: Aux methods
     
     func createRecordIfNone() {
-
+        
         if statusRecord == nil {
             statusRecord = AppleHealthStatusRecord()
             AppleHealthUtils.saveRecord(statusRecord!)
@@ -216,7 +257,7 @@ class AppleHealthUtils: NSObject {
     }
     
     static func saveRecord(_ record: AppleHealthStatusRecord?) {
-        //SharedMemory.global.appleHealthRecord = record
+        // SharedMemory.global.appleHealthRecord = record
         // TODO: Send the record to the caller
     }
 }
