@@ -1,0 +1,29 @@
+{
+  "name": "nano_healthkit_plugin",
+  "version": "0.0.1",
+  "summary": "Nano&#x27;s Healthkit Plugin for Flutter",
+  "description": "Nano&#x27;s Healthkit Plugin for Flutter",
+  "homepage": "http://example.com",
+  "license": {
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "Your Company": "email@example.com"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "Classes/**/*",
+  "public_header_files": "Classes/**/*.h",
+  "dependencies": {
+    "Flutter": [
+
+    ],
+    "SwiftProtobuf": [
+
+    ]
+  },
+  "platforms": {
+    "ios": "11.2"
+  }
+}

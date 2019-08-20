@@ -1,0 +1,6 @@
+framework module nano_healthkit_plugin {
+  umbrella header "nano_healthkit_plugin-umbrella.h"
+
+  export *
+  module * { export * }
+}
