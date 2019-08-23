@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:nano_healthkit_plugin/healthdata.pb.dart';
-import 'package:nano_healthkit_plugin/healthdata.pbenum.dart';
 
 class NanoHealthkitPlugin {
   static const MethodChannel _channel =

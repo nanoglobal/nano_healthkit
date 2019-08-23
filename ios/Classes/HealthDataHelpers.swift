@@ -126,10 +126,16 @@ struct SimpleLocalizedError: LocalizedError {
 
 extension Formatter {
     
-    static let iso8601: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return formatter
+    static let iso8601: DateFormatter = {
+        
+        let dateFormatter = DateFormatter()
+        let enUSPosixLocale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.locale = enUSPosixLocale
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSX"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormatter.calendar = Calendar(identifier: .gregorian)
+        
+        return dateFormatter
     }()
 }
 

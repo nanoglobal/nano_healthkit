@@ -1,8 +1,8 @@
 //
 import Flutter
 import HealthKit
-import UIKit
 import SwiftProtobuf
+import UIKit
 
 public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
     
@@ -30,35 +30,37 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
         
         guard let dataArgs = (call.arguments as? FlutterStandardTypedData)?.data,
             let request = try? T(serializedData: dataArgs) else {
-                return nil
+            return nil
         }
         return request
     }
     
     func requestPermissions(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
-        guard let request: HealthTypeList = deserializeArguments(call) else {
-            result(nil)
-            return
-        }
-        
+        let request: HealthTypeList? = deserializeArguments(call)
         healthUtils.requestPermissions(for: request, completion: { permissionResult, error in
+            
+            if error != nil {
+                result(error!)
+                return
+            }
             result(permissionResult)
         })
     }
     
     func fetchData(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
-        guard let request: HealthDataRequest = deserializeArguments(call) else {
-            result(nil)
-            return
-        }
-        
+        let request: HealthDataRequest? = deserializeArguments(call)
         healthUtils.fetchData(request: request, result: { batch, error in
+            
+            if error != nil {
+                result(error!)
+                return
+            }
             do {
                 result(try batch?.serializedData())
             } catch {
-                result(nil)
+                result(SimpleLocalizedError("Cant serialize data to send"))
             }
         })
     }

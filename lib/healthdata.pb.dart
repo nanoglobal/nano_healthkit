@@ -100,21 +100,21 @@ class HealthDataRequestList extends $pb.GeneratedMessage {
 
 class HealthData extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('HealthData')
-    ..aOS(1, 'sampleType')
-    ..aOS(2, 'startDate')
-    ..aOS(3, 'endDate')
-    ..aOS(4, 'device')
-    ..aOS(5, 'metadata')
-    ..aInt64(6, 'count')
-    ..aOS(7, 'quantityUnit')
-    ..a<$core.double>(8, 'quantity', $pb.PbFieldType.OD)
-    ..aInt64(9, 'value')
-    ..a<$core.double>(10, 'totalEnergyBurned', $pb.PbFieldType.OD)
-    ..aOS(11, 'totalEnergyBurnedUnit')
-    ..a<$core.double>(12, 'totalDistance', $pb.PbFieldType.OD)
-    ..aOS(13, 'totalDistanceUnit')
-    ..a<$core.double>(14, 'duration', $pb.PbFieldType.OD)
-    ..e<HealthTypes>(15, 'type', $pb.PbFieldType.OE, HealthTypes.WORKOUT_MAIN, HealthTypes.valueOf, HealthTypes.values)
+    ..e<HealthTypes>(1, 'type', $pb.PbFieldType.OE, HealthTypes.WORKOUT_MAIN, HealthTypes.valueOf, HealthTypes.values)
+    ..aOS(2, 'sampleType')
+    ..aOS(3, 'startDate')
+    ..aOS(4, 'endDate')
+    ..aOS(5, 'device')
+    ..aOS(6, 'metadata')
+    ..aInt64(7, 'count')
+    ..aOS(8, 'quantityUnit')
+    ..a<$core.double>(9, 'quantity', $pb.PbFieldType.OD)
+    ..aInt64(10, 'value')
+    ..a<$core.double>(11, 'totalEnergyBurned', $pb.PbFieldType.OD)
+    ..aOS(12, 'totalEnergyBurnedUnit')
+    ..a<$core.double>(13, 'totalDistance', $pb.PbFieldType.OD)
+    ..aOS(14, 'totalDistanceUnit')
+    ..a<$core.double>(15, 'duration', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -132,80 +132,80 @@ class HealthData extends $pb.GeneratedMessage {
   static HealthData getDefault() => _defaultInstance ??= create()..freeze();
   static HealthData _defaultInstance;
 
-  $core.String get sampleType => $_getS(0, '');
-  set sampleType($core.String v) { $_setString(0, v); }
-  $core.bool hasSampleType() => $_has(0);
-  void clearSampleType() => clearField(1);
+  HealthTypes get type => $_getN(0);
+  set type(HealthTypes v) { setField(1, v); }
+  $core.bool hasType() => $_has(0);
+  void clearType() => clearField(1);
 
-  $core.String get startDate => $_getS(1, '');
-  set startDate($core.String v) { $_setString(1, v); }
-  $core.bool hasStartDate() => $_has(1);
-  void clearStartDate() => clearField(2);
+  $core.String get sampleType => $_getS(1, '');
+  set sampleType($core.String v) { $_setString(1, v); }
+  $core.bool hasSampleType() => $_has(1);
+  void clearSampleType() => clearField(2);
 
-  $core.String get endDate => $_getS(2, '');
-  set endDate($core.String v) { $_setString(2, v); }
-  $core.bool hasEndDate() => $_has(2);
-  void clearEndDate() => clearField(3);
+  $core.String get startDate => $_getS(2, '');
+  set startDate($core.String v) { $_setString(2, v); }
+  $core.bool hasStartDate() => $_has(2);
+  void clearStartDate() => clearField(3);
 
-  $core.String get device => $_getS(3, '');
-  set device($core.String v) { $_setString(3, v); }
-  $core.bool hasDevice() => $_has(3);
-  void clearDevice() => clearField(4);
+  $core.String get endDate => $_getS(3, '');
+  set endDate($core.String v) { $_setString(3, v); }
+  $core.bool hasEndDate() => $_has(3);
+  void clearEndDate() => clearField(4);
 
-  $core.String get metadata => $_getS(4, '');
-  set metadata($core.String v) { $_setString(4, v); }
-  $core.bool hasMetadata() => $_has(4);
-  void clearMetadata() => clearField(5);
+  $core.String get device => $_getS(4, '');
+  set device($core.String v) { $_setString(4, v); }
+  $core.bool hasDevice() => $_has(4);
+  void clearDevice() => clearField(5);
 
-  Int64 get count => $_getI64(5);
-  set count(Int64 v) { $_setInt64(5, v); }
-  $core.bool hasCount() => $_has(5);
-  void clearCount() => clearField(6);
+  $core.String get metadata => $_getS(5, '');
+  set metadata($core.String v) { $_setString(5, v); }
+  $core.bool hasMetadata() => $_has(5);
+  void clearMetadata() => clearField(6);
 
-  $core.String get quantityUnit => $_getS(6, '');
-  set quantityUnit($core.String v) { $_setString(6, v); }
-  $core.bool hasQuantityUnit() => $_has(6);
-  void clearQuantityUnit() => clearField(7);
+  Int64 get count => $_getI64(6);
+  set count(Int64 v) { $_setInt64(6, v); }
+  $core.bool hasCount() => $_has(6);
+  void clearCount() => clearField(7);
 
-  $core.double get quantity => $_getN(7);
-  set quantity($core.double v) { $_setDouble(7, v); }
-  $core.bool hasQuantity() => $_has(7);
-  void clearQuantity() => clearField(8);
+  $core.String get quantityUnit => $_getS(7, '');
+  set quantityUnit($core.String v) { $_setString(7, v); }
+  $core.bool hasQuantityUnit() => $_has(7);
+  void clearQuantityUnit() => clearField(8);
 
-  Int64 get value => $_getI64(8);
-  set value(Int64 v) { $_setInt64(8, v); }
-  $core.bool hasValue() => $_has(8);
-  void clearValue() => clearField(9);
+  $core.double get quantity => $_getN(8);
+  set quantity($core.double v) { $_setDouble(8, v); }
+  $core.bool hasQuantity() => $_has(8);
+  void clearQuantity() => clearField(9);
 
-  $core.double get totalEnergyBurned => $_getN(9);
-  set totalEnergyBurned($core.double v) { $_setDouble(9, v); }
-  $core.bool hasTotalEnergyBurned() => $_has(9);
-  void clearTotalEnergyBurned() => clearField(10);
+  Int64 get value => $_getI64(9);
+  set value(Int64 v) { $_setInt64(9, v); }
+  $core.bool hasValue() => $_has(9);
+  void clearValue() => clearField(10);
 
-  $core.String get totalEnergyBurnedUnit => $_getS(10, '');
-  set totalEnergyBurnedUnit($core.String v) { $_setString(10, v); }
-  $core.bool hasTotalEnergyBurnedUnit() => $_has(10);
-  void clearTotalEnergyBurnedUnit() => clearField(11);
+  $core.double get totalEnergyBurned => $_getN(10);
+  set totalEnergyBurned($core.double v) { $_setDouble(10, v); }
+  $core.bool hasTotalEnergyBurned() => $_has(10);
+  void clearTotalEnergyBurned() => clearField(11);
 
-  $core.double get totalDistance => $_getN(11);
-  set totalDistance($core.double v) { $_setDouble(11, v); }
-  $core.bool hasTotalDistance() => $_has(11);
-  void clearTotalDistance() => clearField(12);
+  $core.String get totalEnergyBurnedUnit => $_getS(11, '');
+  set totalEnergyBurnedUnit($core.String v) { $_setString(11, v); }
+  $core.bool hasTotalEnergyBurnedUnit() => $_has(11);
+  void clearTotalEnergyBurnedUnit() => clearField(12);
 
-  $core.String get totalDistanceUnit => $_getS(12, '');
-  set totalDistanceUnit($core.String v) { $_setString(12, v); }
-  $core.bool hasTotalDistanceUnit() => $_has(12);
-  void clearTotalDistanceUnit() => clearField(13);
+  $core.double get totalDistance => $_getN(12);
+  set totalDistance($core.double v) { $_setDouble(12, v); }
+  $core.bool hasTotalDistance() => $_has(12);
+  void clearTotalDistance() => clearField(13);
 
-  $core.double get duration => $_getN(13);
-  set duration($core.double v) { $_setDouble(13, v); }
-  $core.bool hasDuration() => $_has(13);
-  void clearDuration() => clearField(14);
+  $core.String get totalDistanceUnit => $_getS(13, '');
+  set totalDistanceUnit($core.String v) { $_setString(13, v); }
+  $core.bool hasTotalDistanceUnit() => $_has(13);
+  void clearTotalDistanceUnit() => clearField(14);
 
-  HealthTypes get type => $_getN(14);
-  set type(HealthTypes v) { setField(15, v); }
-  $core.bool hasType() => $_has(14);
-  void clearType() => clearField(15);
+  $core.double get duration => $_getN(14);
+  set duration($core.double v) { $_setDouble(14, v); }
+  $core.bool hasDuration() => $_has(14);
+  void clearDuration() => clearField(15);
 }
 
 class HealthDataList extends $pb.GeneratedMessage {
