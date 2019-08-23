@@ -2,6 +2,7 @@
 import Flutter
 import HealthKit
 import UIKit
+import SwiftProtobuf
 
 public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
     
@@ -18,28 +19,42 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
             self.requestPermissions(call, result: result)
         }
         
-        if call.method == "getDataBatch" {
-            self.getDataBatch(call, result: result)
+        if call.method == "fetchData" {
+            self.fetchData(call, result: result)
         }
     }
     
-    let appleHealthUtils = AppleHealthUtils.global
+    let healthUtils = HealthDataUtils.global
+    
+    func deserializeArguments<T: Message>(_ call: FlutterMethodCall) -> T? {
+        
+        guard let dataArgs = (call.arguments as? FlutterStandardTypedData)?.data,
+            let request = try? T(serializedData: dataArgs) else {
+                return nil
+        }
+        return request
+    }
     
     func requestPermissions(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
-        appleHealthUtils.requestPermissions { permissionResult, error in
-            result(permissionResult)
-        }
-    }
-    
-    func getDataBatch(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
-        guard let dataArgs = (call.arguments as? FlutterStandardTypedData)?.data, let request = try? HealthKitDataBatchRequest(serializedData: dataArgs) else {
+        guard let request: HealthTypeList = deserializeArguments(call) else {
             result(nil)
             return
         }
         
-        appleHealthUtils.fetchData(request: request, result: { batch, error in
+        healthUtils.requestPermissions(for: request, completion: { permissionResult, error in
+            result(permissionResult)
+        })
+    }
+    
+    func fetchData(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        guard let request: HealthDataRequest = deserializeArguments(call) else {
+            result(nil)
+            return
+        }
+        
+        healthUtils.fetchData(request: request, result: { batch, error in
             do {
                 result(try batch?.serializedData())
             } catch {

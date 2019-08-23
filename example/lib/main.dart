@@ -4,8 +4,8 @@ import 'package:fixnum/fixnum.dart';
 
 import 'package:flutter/services.dart';
 import 'package:nano_healthkit_plugin/nano_healthkit_plugin.dart';
-import 'package:nano_healthkit_plugin/healthkitdata.pb.dart';
-import 'package:nano_healthkit_plugin/healthkitdata.pbenum.dart';
+import 'package:nano_healthkit_plugin/healthdata.pb.dart';
+import 'package:nano_healthkit_plugin/healthdata.pbenum.dart';
 
 void main() => runApp(MyApp());
 
@@ -58,19 +58,20 @@ class _MyAppState extends State<MyApp> {
   }*/
 
   _authorizeHealthOrFit() async {
-    bool isAuthorized = await NanoHealthkitPlugin.authorize;
+    var request = HealthTypeList();
+    request.types.addAll(HealthTypes.values); // All the items
+    bool isAuthorized = await NanoHealthkitPlugin.authorize(request);
     setState(() {
       _isAuthorized = isAuthorized;
     });
   }
 
   _getUserBasicHealthData() async {
-    var request = HealthKitDataBatchRequest();
-    request.type = HealthKitFetchTypes.QUANTITIES;
-    request.index = Int64(2);
+    var request = HealthDataRequest();
+    request.type = HealthTypes.QUANTITY_HEIGHT;
     request.startDate = "2019-08-19T14:58:00.000Z";
     request.endDate = "2019-08-19T17:58:00.000Z";
-    var basicHealth = await NanoHealthkitPlugin.getDataBatch(request);
+    var basicHealth = await NanoHealthkitPlugin.fetchData(request);
     setState(() {
       _basicHealthString = basicHealth.toString();
     });

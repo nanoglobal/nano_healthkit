@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+enum HealthTypes {
+   WORKOUT_MAIN = 0;
+   CATEGORY_SLEEP_ANALYSIS = 1;
+   CATEGORY_APPLE_STAND_HOUR = 2;
+   CATEGORY_CervicalMucusQuality = 3;
+   QUANTITY_BodyMassIndex = 4;
+   QUANTITY_BodyFatPercentage = 5;
+   QUANTITY_HEIGHT = 6;
+}
+
+message HealthTypeList {
+   repeated HealthTypes types = 1;
+}
+
+message HealthDataRequest {
+   HealthTypes type = 1;
+   string startDate = 2;
+   string endDate = 3;
+}
+
+message HealthDataRequestList {
+   repeated HealthDataRequest requests = 1;
+}
+
+message HealthData {
+   string sampleType = 1;
+   string startDate = 2;
+   string endDate = 3;
+   string device = 4;
+   string metadata = 5;
+   int64 count = 6;
+   string quantityUnit = 7;
+   double quantity = 8;
+   int64 value = 9;
+   double totalEnergyBurned = 10;
+   string totalEnergyBurnedUnit = 11;
+   double totalDistance = 12;
+   string totalDistanceUnit = 13;
+   double duration = 14;
+   HealthTypes type = 15;
+}
+
+message HealthDataList {
+   repeated HealthData data = 1;
+}
