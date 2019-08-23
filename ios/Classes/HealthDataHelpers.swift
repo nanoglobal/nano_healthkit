@@ -47,7 +47,7 @@ extension HealthDataFetcher {
         if #available(iOS 12.0, *) {
             data.count = Int64(value.count)
         }
-        if let unit = HealthDataUtils.QUANTITY_TYPES[index].1 {
+        if let unit = HealthDataUtils.QUANTITY_TYPES[index.0].1 {
             data.quantityUnit = unit.unitString
             data.quantity = value.quantity.doubleValue(for: unit)
         }

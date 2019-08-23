@@ -1,6 +1,5 @@
 //
 import HealthKit
-import HealthKitUI
 
 class HealthDataFetcher: NSObject {
     
@@ -37,6 +36,12 @@ class HealthDataFetcher: NSObject {
         }
         
         HealthDataUtils.healthStore?.execute(sampleQuery)
+    }
+    
+    func fetchCharacteristicData(for healthType: HealthTypes, healthStore: HKHealthStore?, result: @escaping (HealthDataList?, Error?) -> Swift.Void) {
+        //TODO
+        
+        healthStore?.wheelchairUse().wheelchairUse
     }
     
     // MARK: Subscriptions

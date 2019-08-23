@@ -12,6 +12,7 @@ class HealthDataUtils: NSObject {
     static var WORKOUT_TYPES: [HKSampleType] = []
     static var CATEGORY_TYPES: [HKCategoryTypeIdentifier] = []
     static var QUANTITY_TYPES: [(HKQuantityTypeIdentifier, HKUnit?)] = []
+    static var CHARACTERISTIC_TYPES: [HKCharacteristicTypeIdentifier] = []
     
     override init() {
         super.init()
@@ -45,6 +46,11 @@ class HealthDataUtils: NSObject {
             return
         }
         
+        let index = HealthDataUtils.TYPE_INDEXES[request.type]
+        if (index?.1 == .characteristic) {
+            dataFetcher.fetchCharacteristicData(for: request.type, healthStore: healthStore, result: result)
+            return
+        }
         let startDate = request.startDate.isEmpty ? Date.distantPast : Date(iso8601: request.startDate)
         let endDate = request.endDate.isEmpty ? Date() : Date(iso8601: request.endDate)
         dataFetcher.fetchBatchData(for: request.type, startDate: startDate, endDate: endDate, result: result)
