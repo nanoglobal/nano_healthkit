@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'package:fixnum/fixnum.dart';
 
-import 'package:flutter/services.dart';
 import 'package:nano_healthkit_plugin/nano_healthkit_plugin.dart';
-import 'package:nano_healthkit_plugin/healthkitdata.pb.dart';
-import 'package:nano_healthkit_plugin/healthkitdata.pbenum.dart';
+import 'package:nano_healthkit_plugin/healthdata.pb.dart';
+import 'package:nano_healthkit_plugin/healthdata.pbenum.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,52 +22,23 @@ class _MyAppState extends State<MyApp> {
     initPlatformState();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  initPlatformState() async {
-//    String platformVersion;
-//    // Platform messages may fail, so we use a try/catch PlatformException.
-//    try {
-//      platformVersion = await FlutterHealthFit.platformVersion;
-//    } on PlatformException {
-//      platformVersion = 'Failed to get platform version.';
-//    }
-//
-//    // If the widget was removed from the tree while the asynchronous platform
-//    // message was in flight, we want to discard the reply rather than calling
-//    // setState to update our non-existent appearance.
-//    if (!mounted) return;
-  }
-
-  /* @override
-  Widget build(BuildContext context) {
-    final plat = _platformVersion as HealthKitData;
-    var title = plat == null ? "Waiting" : plat.title;
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(
-          child: Text('Running on: ' + title),
-        ),
-      ),
-    );
-  }*/
+  initPlatformState() async {}
 
   _authorizeHealthOrFit() async {
-    bool isAuthorized = await NanoHealthkitPlugin.authorize;
+    var request = HealthTypeList();
+    request.types.addAll(HealthTypes.values); // Permissions to read everything
+    bool isAuthorized = await NanoHealthkitPlugin.authorize(request);
     setState(() {
       _isAuthorized = isAuthorized;
     });
   }
 
   _getUserBasicHealthData() async {
-    var request = HealthKitDataBatchRequest();
-    request.type = HealthKitFetchTypes.QUANTITIES;
-    request.index = Int64(2);
-    request.startDate = "2019-08-19T14:58:00.000Z";
-    request.endDate = "2019-08-19T17:58:00.000Z";
-    var basicHealth = await NanoHealthkitPlugin.getDataBatch(request);
+    var request = HealthDataRequest();
+    request.type = HealthTypes.QUANTITY_HEIGHT;
+    request.startDate = "2019-08-19T18:58:00.000Z";
+    request.endDate = "2019-08-19T20:58:00.000Z";
+    var basicHealth = await NanoHealthkitPlugin.fetchData(request);
     setState(() {
       _basicHealthString = basicHealth.toString();
     });
@@ -97,10 +65,6 @@ class _MyAppState extends State<MyApp> {
                   child: Text("Get basic data"),
                   onPressed: _getUserBasicHealthData),
               Text('Basic health: $_basicHealthString\n'),
-              RaisedButton(
-                  child: Text("Get Activity Data"),
-                  onPressed: _getUserBasicHealthData),
-              Text('\n$_activityData\n'),
             ],
           ),
         ),

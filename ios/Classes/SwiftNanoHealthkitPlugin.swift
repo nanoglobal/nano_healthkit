@@ -1,6 +1,7 @@
 //
 import Flutter
 import HealthKit
+import SwiftProtobuf
 import UIKit
 
 public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
@@ -18,32 +19,48 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
             self.requestPermissions(call, result: result)
         }
         
-        if call.method == "getDataBatch" {
-            self.getDataBatch(call, result: result)
+        if call.method == "fetchData" {
+            self.fetchData(call, result: result)
         }
     }
     
-    let appleHealthUtils = AppleHealthUtils.global
+    let healthUtils = HealthDataUtils.global
+    
+    func deserializeArguments<T: Message>(_ call: FlutterMethodCall) -> T? {
+        
+        guard let dataArgs = (call.arguments as? FlutterStandardTypedData)?.data,
+            let request = try? T(serializedData: dataArgs) else {
+            return nil
+        }
+        return request
+    }
     
     func requestPermissions(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
-        appleHealthUtils.requestPermissions { permissionResult, error in
+        let request: HealthTypeList? = deserializeArguments(call)
+        healthUtils.requestPermissions(for: request, completion: { permissionResult, error in
+            
+            if error != nil {
+                result(error!)
+                return
+            }
             result(permissionResult)
-        }
+        })
     }
     
-    func getDataBatch(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func fetchData(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
-        guard let dataArgs = (call.arguments as? FlutterStandardTypedData)?.data, let request = try? HealthKitDataBatchRequest(serializedData: dataArgs) else {
-            result(nil)
-            return
-        }
-        
-        appleHealthUtils.fetchData(request: request, result: { batch, error in
+        let request: HealthDataRequest? = deserializeArguments(call)
+        healthUtils.fetchData(request: request, result: { batch, error in
+            
+            if error != nil {
+                result(error!)
+                return
+            }
             do {
                 result(try batch?.serializedData())
             } catch {
-                result(nil)
+                result(SimpleLocalizedError("Cant serialize data to send"))
             }
         })
     }

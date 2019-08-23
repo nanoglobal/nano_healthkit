@@ -18,7 +18,7 @@ Nano&#x27;s Healthkit Plugin for Flutter
   s.dependency 'SwiftProtobuf'
 
   
-  s.ios.deployment_target = '11.2'
+  s.ios.deployment_target = '9.0'
  
 end
 

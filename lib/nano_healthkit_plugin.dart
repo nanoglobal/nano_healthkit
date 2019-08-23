@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
-import 'package:nano_healthkit_plugin/healthkitdata.pb.dart';
-import 'package:nano_healthkit_plugin/healthkitdata.pbenum.dart';
+import 'package:nano_healthkit_plugin/healthdata.pb.dart';
 
 class NanoHealthkitPlugin {
   static const MethodChannel _channel =
@@ -14,15 +13,15 @@ class NanoHealthkitPlugin {
     return version;
   }
 
-  static Future<bool> get authorize async {
-    return await _channel.invokeMethod('requestPermissions');
+  static Future<bool> authorize(HealthTypeList request) async {
+    return await _channel.invokeMethod(
+        'requestPermissions', request.writeToBuffer());
   }
 
-  static Future<HealthKitDataBatch> getDataBatch(
-      HealthKitDataBatchRequest request) async {
+  static Future<HealthDataList> fetchData(HealthDataRequest request) async {
     final Uint8List rawData =
-        await _channel.invokeMethod('getDataBatch', request.writeToBuffer());
-    final HealthKitDataBatch result = HealthKitDataBatch.fromBuffer(rawData);
+        await _channel.invokeMethod('fetchData', request.writeToBuffer());
+    final HealthDataList result = HealthDataList.fromBuffer(rawData);
     return result;
   }
 }
