@@ -93,6 +93,11 @@ enum HealthTypes {
    QUANTITY_HEART_RATE_VARIABILITY_SDNN = 89;
    QUANTITY_INSULIN_DELIVERY = 90;
    QUANTITY_DISTANCE_DOWNHILL_SNOW_SPORTS = 91;
+   CHARACTERISTIC_BIOLOGICAL_SEX = 92;
+   CHARACTERISTIC_BLOOD_TYPE = 93;
+   CHARACTERISTIC_DATE_OF_BIRTH = 94;
+   CHARACTERISTIC_FITZPATRICK_SKIN_TYPE = 95;
+   CHARACTERISTIC_WHEELCHAIR_USE = 96;
 }
 
 message HealthTypeList {
@@ -103,6 +108,7 @@ message HealthDataRequest {
    HealthTypes type = 1;
    string startDate = 2;
    string endDate = 3;
+   int32 limit = 4;
 }
 
 message HealthDataRequestList {
@@ -125,6 +131,7 @@ message HealthData {
    double totalDistance = 13;
    string totalDistanceUnit = 14;
    double duration = 15;
+   string customValue = 16;
 }
 
 message HealthDataList {

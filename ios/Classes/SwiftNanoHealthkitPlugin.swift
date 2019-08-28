@@ -22,6 +22,10 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
         if call.method == "fetchData" {
             self.fetchData(call, result: result)
         }
+        
+        if call.method == "filterExistingTypes" {
+            self.filterExistingTypes(call, result: result)
+        }
     }
     
     let healthUtils = HealthDataUtils.global
@@ -38,7 +42,7 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
     func requestPermissions(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
         let request: HealthTypeList? = deserializeArguments(call)
-        healthUtils.requestPermissions(for: request, completion: { permissionResult, error in
+        healthUtils.requestPermissions(for: request, result: { permissionResult, error in
             
             if error != nil {
                 result(error!)
@@ -51,7 +55,7 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
     func fetchData(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
         let request: HealthDataRequest? = deserializeArguments(call)
-        healthUtils.fetchData(request: request, result: { batch, error in
+        healthUtils.fetchData(for: request, result: { batch, error in
             
             if error != nil {
                 result(error!)
@@ -62,6 +66,19 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
             } catch {
                 result(SimpleLocalizedError("Cant serialize data to send"))
             }
+        })
+    }
+    
+    func filterExistingTypes(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        let request: HealthTypeList? = deserializeArguments(call)
+        healthUtils.filterExistingTypes(for: request, result: { filteredList, error in
+            
+            if error != nil {
+                result(error!)
+                return
+            }
+            result(filteredList)
         })
     }
 }

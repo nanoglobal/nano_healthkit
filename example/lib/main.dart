@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
 
   _getUserBasicHealthData() async {
     var request = HealthDataRequest();
-    request.type = HealthTypes.QUANTITY_HEIGHT;
+    request.type = HealthTypes.CHARACTERISTIC_BIOLOGICAL_SEX;
     request.startDate = "2019-08-19T18:58:00.000Z";
     request.endDate = "2019-08-19T20:58:00.000Z";
     var basicHealth = await NanoHealthkitPlugin.fetchData(request);

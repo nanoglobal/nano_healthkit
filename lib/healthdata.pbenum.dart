@@ -102,6 +102,11 @@ class HealthTypes extends $pb.ProtobufEnum {
   static const HealthTypes QUANTITY_HEART_RATE_VARIABILITY_SDNN = HealthTypes._(89, 'QUANTITY_HEART_RATE_VARIABILITY_SDNN');
   static const HealthTypes QUANTITY_INSULIN_DELIVERY = HealthTypes._(90, 'QUANTITY_INSULIN_DELIVERY');
   static const HealthTypes QUANTITY_DISTANCE_DOWNHILL_SNOW_SPORTS = HealthTypes._(91, 'QUANTITY_DISTANCE_DOWNHILL_SNOW_SPORTS');
+  static const HealthTypes CHARACTERISTIC_BIOLOGICAL_SEX = HealthTypes._(92, 'CHARACTERISTIC_BIOLOGICAL_SEX');
+  static const HealthTypes CHARACTERISTIC_BLOOD_TYPE = HealthTypes._(93, 'CHARACTERISTIC_BLOOD_TYPE');
+  static const HealthTypes CHARACTERISTIC_DATE_OF_BIRTH = HealthTypes._(94, 'CHARACTERISTIC_DATE_OF_BIRTH');
+  static const HealthTypes CHARACTERISTIC_FITZPATRICK_SKIN_TYPE = HealthTypes._(95, 'CHARACTERISTIC_FITZPATRICK_SKIN_TYPE');
+  static const HealthTypes CHARACTERISTIC_WHEELCHAIR_USE = HealthTypes._(96, 'CHARACTERISTIC_WHEELCHAIR_USE');
 
   static const $core.List<HealthTypes> values = <HealthTypes> [
     WORKOUT_MAIN,
@@ -196,6 +201,11 @@ class HealthTypes extends $pb.ProtobufEnum {
     QUANTITY_HEART_RATE_VARIABILITY_SDNN,
     QUANTITY_INSULIN_DELIVERY,
     QUANTITY_DISTANCE_DOWNHILL_SNOW_SPORTS,
+    CHARACTERISTIC_BIOLOGICAL_SEX,
+    CHARACTERISTIC_BLOOD_TYPE,
+    CHARACTERISTIC_DATE_OF_BIRTH,
+    CHARACTERISTIC_FITZPATRICK_SKIN_TYPE,
+    CHARACTERISTIC_WHEELCHAIR_USE,
   ];
 
   static final $core.Map<$core.int, HealthTypes> _byValue = $pb.ProtobufEnum.initByValue(values);

@@ -113,6 +113,11 @@ enum HealthTypes: SwiftProtobuf.Enum {
   case quantityHeartRateVariabilitySdnn // = 89
   case quantityInsulinDelivery // = 90
   case quantityDistanceDownhillSnowSports // = 91
+  case characteristicBiologicalSex // = 92
+  case characteristicBloodType // = 93
+  case characteristicDateOfBirth // = 94
+  case characteristicFitzpatrickSkinType // = 95
+  case characteristicWheelchairUse // = 96
   case UNRECOGNIZED(Int)
 
   init() {
@@ -213,6 +218,11 @@ enum HealthTypes: SwiftProtobuf.Enum {
     case 89: self = .quantityHeartRateVariabilitySdnn
     case 90: self = .quantityInsulinDelivery
     case 91: self = .quantityDistanceDownhillSnowSports
+    case 92: self = .characteristicBiologicalSex
+    case 93: self = .characteristicBloodType
+    case 94: self = .characteristicDateOfBirth
+    case 95: self = .characteristicFitzpatrickSkinType
+    case 96: self = .characteristicWheelchairUse
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -311,6 +321,11 @@ enum HealthTypes: SwiftProtobuf.Enum {
     case .quantityHeartRateVariabilitySdnn: return 89
     case .quantityInsulinDelivery: return 90
     case .quantityDistanceDownhillSnowSports: return 91
+    case .characteristicBiologicalSex: return 92
+    case .characteristicBloodType: return 93
+    case .characteristicDateOfBirth: return 94
+    case .characteristicFitzpatrickSkinType: return 95
+    case .characteristicWheelchairUse: return 96
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -414,6 +429,11 @@ extension HealthTypes: CaseIterable {
     .quantityHeartRateVariabilitySdnn,
     .quantityInsulinDelivery,
     .quantityDistanceDownhillSnowSports,
+    .characteristicBiologicalSex,
+    .characteristicBloodType,
+    .characteristicDateOfBirth,
+    .characteristicFitzpatrickSkinType,
+    .characteristicWheelchairUse,
   ]
 }
 
@@ -441,6 +461,8 @@ struct HealthDataRequest {
   var startDate: String = String()
 
   var endDate: String = String()
+
+  var limit: Int32 = 0
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -493,6 +515,8 @@ struct HealthData {
   var totalDistanceUnit: String = String()
 
   var duration: Double = 0
+
+  var customValue: String = String()
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -607,6 +631,11 @@ extension HealthTypes: SwiftProtobuf._ProtoNameProviding {
     89: .same(proto: "QUANTITY_HEART_RATE_VARIABILITY_SDNN"),
     90: .same(proto: "QUANTITY_INSULIN_DELIVERY"),
     91: .same(proto: "QUANTITY_DISTANCE_DOWNHILL_SNOW_SPORTS"),
+    92: .same(proto: "CHARACTERISTIC_BIOLOGICAL_SEX"),
+    93: .same(proto: "CHARACTERISTIC_BLOOD_TYPE"),
+    94: .same(proto: "CHARACTERISTIC_DATE_OF_BIRTH"),
+    95: .same(proto: "CHARACTERISTIC_FITZPATRICK_SKIN_TYPE"),
+    96: .same(proto: "CHARACTERISTIC_WHEELCHAIR_USE"),
   ]
 }
 
@@ -645,6 +674,7 @@ extension HealthDataRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     1: .same(proto: "type"),
     2: .same(proto: "startDate"),
     3: .same(proto: "endDate"),
+    4: .same(proto: "limit"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -653,6 +683,7 @@ extension HealthDataRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
       case 1: try decoder.decodeSingularEnumField(value: &self.type)
       case 2: try decoder.decodeSingularStringField(value: &self.startDate)
       case 3: try decoder.decodeSingularStringField(value: &self.endDate)
+      case 4: try decoder.decodeSingularInt32Field(value: &self.limit)
       default: break
       }
     }
@@ -668,6 +699,9 @@ extension HealthDataRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     if !self.endDate.isEmpty {
       try visitor.visitSingularStringField(value: self.endDate, fieldNumber: 3)
     }
+    if self.limit != 0 {
+      try visitor.visitSingularInt32Field(value: self.limit, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -675,6 +709,7 @@ extension HealthDataRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     if lhs.type != rhs.type {return false}
     if lhs.startDate != rhs.startDate {return false}
     if lhs.endDate != rhs.endDate {return false}
+    if lhs.limit != rhs.limit {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -727,6 +762,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     13: .same(proto: "totalDistance"),
     14: .same(proto: "totalDistanceUnit"),
     15: .same(proto: "duration"),
+    16: .same(proto: "customValue"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -747,6 +783,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
       case 13: try decoder.decodeSingularDoubleField(value: &self.totalDistance)
       case 14: try decoder.decodeSingularStringField(value: &self.totalDistanceUnit)
       case 15: try decoder.decodeSingularDoubleField(value: &self.duration)
+      case 16: try decoder.decodeSingularStringField(value: &self.customValue)
       default: break
       }
     }
@@ -798,6 +835,9 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     if self.duration != 0 {
       try visitor.visitSingularDoubleField(value: self.duration, fieldNumber: 15)
     }
+    if !self.customValue.isEmpty {
+      try visitor.visitSingularStringField(value: self.customValue, fieldNumber: 16)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -817,6 +857,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     if lhs.totalDistance != rhs.totalDistance {return false}
     if lhs.totalDistanceUnit != rhs.totalDistanceUnit {return false}
     if lhs.duration != rhs.duration {return false}
+    if lhs.customValue != rhs.customValue {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

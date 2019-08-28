@@ -11,11 +11,11 @@ extension HealthDataUtils {
     }
 
     
-    static var WORKOUT_TYPES_V8_0: [HKSampleType] = [
+    private static var WORKOUT_TYPES_V8_0: [HKSampleType] = [
         HKObjectType.workoutType(),
     ]
     
-    static var CATEGORY_TYPES_V8_0: [HKCategoryTypeIdentifier] = [
+    private static var CATEGORY_TYPES_V8_0: [HKCategoryTypeIdentifier] = [
         .sleepAnalysis,
         .appleStandHour,
         .cervicalMucusQuality,
@@ -26,19 +26,18 @@ extension HealthDataUtils {
     ]
     
     @available(iOS 10.0, *)
-    static var CATEGORY_TYPES_V10_0: [HKCategoryTypeIdentifier] = [
+    private static var CATEGORY_TYPES_V10_0: [HKCategoryTypeIdentifier] = [
         .mindfulSession,
     ]
     
     @available(iOS 12.2, *)
-    static var CATEGORY_TYPES_V12_2: [HKCategoryTypeIdentifier] = [
+    private static var CATEGORY_TYPES_V12_2: [HKCategoryTypeIdentifier] = [
         .highHeartRateEvent,
         .lowHeartRateEvent,
         .irregularHeartRhythmEvent,
     ]
     
-    // Note: Dont change the order
-    static var QUANTITY_TYPES_V8_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
+    private static var QUANTITY_TYPES_V8_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
         (.bodyMassIndex, nil),
         (.bodyFatPercentage, .percent()),
         (.height, .meter()),
@@ -114,12 +113,12 @@ extension HealthDataUtils {
     ]
     
     @available(iOS 9.3, *)
-    static var QUANTITY_TYPES_V9_3: [(HKQuantityTypeIdentifier, HKUnit?)] = [
+    private static var QUANTITY_TYPES_V9_3: [(HKQuantityTypeIdentifier, HKUnit?)] = [
         (.appleExerciseTime, .second()),
     ]
     
     @available(iOS 10.0, *)
-    static var QUANTITY_TYPES_V10_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
+    private static var QUANTITY_TYPES_V10_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
         (.distanceWheelchair, .meter()),
         (.pushCount, .count()),
         (.distanceSwimming, .meter()),
@@ -127,7 +126,7 @@ extension HealthDataUtils {
     ]
     
     @available(iOS 11.0, *)
-    static var QUANTITY_TYPES_V11_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
+    private static var QUANTITY_TYPES_V11_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
         (.waistCircumference, .meter()),
         (.vo2Max, HKUnit(from: "ml/kg*min")), // ml/(kg*min)
         // Beats per minute estimate of a user's lowest heart rate while at rest
@@ -140,28 +139,28 @@ extension HealthDataUtils {
     ]
     
     @available(iOS 11.2, *)
-    static var QUANTITY_TYPES_V11_2: [(HKQuantityTypeIdentifier, HKUnit?)] = [
+    private static var QUANTITY_TYPES_V11_2: [(HKQuantityTypeIdentifier, HKUnit?)] = [
         (.distanceDownhillSnowSports, .meter()),
     ]
     
     @available(iOS 8.0, *)
-    static var CHARACTERISTIC_TYPES_V8_0: [HKCharacteristicTypeIdentifier] = [
-        (.biologicalSex), // Enum, Int
-        (.bloodType), // Enum, Int
-        (.dateOfBirth), // Date
+    private static var CHARACTERISTIC_TYPES_V8_0: [(HKCharacteristicTypeIdentifier, ((HKHealthStore) -> Any?))] = [
+        (.biologicalSex, {return try? $0.biologicalSex()}), // Enum, Int
+        (.bloodType, {return try? $0.bloodType().bloodType.rawValue }), // Enum, Int
+        (.dateOfBirth, {return try? $0.dateOfBirth().timeIntervalSince1970 }), // Date, Double
     ]
     
     @available(iOS 9.0, *)
-    static var CHARACTERISTIC_TYPES_V9_0: [HKCharacteristicTypeIdentifier] = [
-        (.fitzpatrickSkinType), // Enum, Int
+    private static var CHARACTERISTIC_TYPES_V9_0: [(HKCharacteristicTypeIdentifier, ((HKHealthStore) -> Any?))] = [
+        (.fitzpatrickSkinType, {return try? $0.fitzpatrickSkinType().skinType.rawValue}), // Enum, Int
     ]
     
     @available(iOS 10.0, *)
-    static var CHARACTERISTIC_TYPES_V10_0: [HKCharacteristicTypeIdentifier] = [
-        (.wheelchairUse), // Enum, Int
+    private static var CHARACTERISTIC_TYPES_V10_0: [(HKCharacteristicTypeIdentifier, ((HKHealthStore) -> Any?))] = [
+        (.wheelchairUse, {return try? $0.wheelchairUse().wheelchairUse.rawValue}), // Enum, Int
     ]
     
-    static var TYPE_INDEXES: [HealthTypes: (Int, SampleTypes)] = [
+    private static var TYPE_INDEXES: [HealthTypes: (Int, SampleTypes)] = [
         .workoutMain: (0, .workout),
         .categorySleepAnalysis: (0, .category),
         .categoryAppleStandHour: (1, .category),
@@ -254,6 +253,11 @@ extension HealthDataUtils {
         .quantityHeartRateVariabilitySdnn: (77, .quantity),
         .quantityInsulinDelivery: (78, .quantity),
         .quantityDistanceDownhillSnowSports: (79, .quantity),
+        .characteristicBiologicalSex: (0, .characteristic),
+        .characteristicBloodType: (1, .characteristic),
+        .characteristicDateOfBirth: (2, .characteristic),
+        .characteristicFitzpatrickSkinType: (3, .characteristic),
+        .characteristicWheelchairUse: (4, .characteristic),
     ]
     
     func fillTypes() {
@@ -292,11 +296,36 @@ extension HealthDataUtils {
         }
     }
     
+    static func getTypeIndex(_ healthType: HealthTypes) -> (Int, SampleTypes)? {
+        
+        guard let index = TYPE_INDEXES[healthType] else {
+            return nil
+        }
+        var totalAmount = 0
+        switch index.1 {
+        case .workout:
+            totalAmount = HealthDataUtils.WORKOUT_TYPES.count
+        case .quantity:
+            totalAmount = HealthDataUtils.QUANTITY_TYPES.count
+        case .category:
+            totalAmount = HealthDataUtils.CATEGORY_TYPES.count
+        case .characteristic:
+            totalAmount = HealthDataUtils.CHARACTERISTIC_TYPES.count
+        }
+        return totalAmount <= index.0 ? nil : index
+    }
+    
+    static func typeExists(_ healthType: HealthTypes) -> Bool {
+        return getTypeIndex(healthType) != nil
+    }
+    
     // MARK: Type manupulation
     
-    static func getSampleType(for healthType: HealthTypes) -> HKSampleType? {
+    static func getSampleType(for healthType: HealthTypes) -> HKObjectType? {
         
-        let index = TYPE_INDEXES[healthType]!
+        guard let index = getTypeIndex(healthType)else {
+            return nil
+        }
         switch index.1 {
         case .workout:
             return HealthDataUtils.WORKOUT_TYPES[index.0]
@@ -305,33 +334,31 @@ extension HealthDataUtils {
         case .category:
             return getCategoryType(index.0)
         case .characteristic:
-            return nil //TODO: CHANGE ME
+            return getCharacteristicType(index.0)
         }
     }
     
     private static func getCategoryType(_ index: Int) -> HKSampleType? {
-        
-        // It could be false if the requested type is not available for a given iOS version
-        if HealthDataUtils.CATEGORY_TYPES.count <= index {
-            return nil
-        }
+
         let identifier = HealthDataUtils.CATEGORY_TYPES[index]
         return HKObjectType.categoryType(forIdentifier: identifier)
     }
     
     private static func getQuantityType(_ index: Int) -> HKSampleType? {
-        
-        // It could be false if the requested type is not available for a given iOS version
-        if HealthDataUtils.QUANTITY_TYPES.count <= index {
-            return nil
-        }
+
         let identifier = HealthDataUtils.QUANTITY_TYPES[index].0
         return HKObjectType.quantityType(forIdentifier: identifier)
     }
     
-    static func makeSampleSet(from list: HealthTypeList) -> Set<HKSampleType> {
+    private static func getCharacteristicType(_ index: Int) -> HKCharacteristicType? {
+
+        let identifier = HealthDataUtils.CHARACTERISTIC_TYPES[index].0
+        return HKObjectType.characteristicType(forIdentifier: identifier)
+    }
+    
+    static func makeSampleSet(from list: HealthTypeList) -> Set<HKObjectType> {
         
-        return Set(list.types.map { (helthType) -> HKSampleType? in
+        return Set(list.types.map { (helthType) -> HKObjectType? in
             HealthDataUtils.getSampleType(for: helthType)
         }.compactMap { $0 })
     }

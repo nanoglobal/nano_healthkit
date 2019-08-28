@@ -100,6 +100,11 @@ const HealthTypes$json = const {
     const {'1': 'QUANTITY_HEART_RATE_VARIABILITY_SDNN', '2': 89},
     const {'1': 'QUANTITY_INSULIN_DELIVERY', '2': 90},
     const {'1': 'QUANTITY_DISTANCE_DOWNHILL_SNOW_SPORTS', '2': 91},
+    const {'1': 'CHARACTERISTIC_BIOLOGICAL_SEX', '2': 92},
+    const {'1': 'CHARACTERISTIC_BLOOD_TYPE', '2': 93},
+    const {'1': 'CHARACTERISTIC_DATE_OF_BIRTH', '2': 94},
+    const {'1': 'CHARACTERISTIC_FITZPATRICK_SKIN_TYPE', '2': 95},
+    const {'1': 'CHARACTERISTIC_WHEELCHAIR_USE', '2': 96},
   ],
 };
 
@@ -116,6 +121,7 @@ const HealthDataRequest$json = const {
     const {'1': 'type', '3': 1, '4': 1, '5': 14, '6': '.HealthTypes', '10': 'type'},
     const {'1': 'startDate', '3': 2, '4': 1, '5': 9, '10': 'startDate'},
     const {'1': 'endDate', '3': 3, '4': 1, '5': 9, '10': 'endDate'},
+    const {'1': 'limit', '3': 4, '4': 1, '5': 5, '10': 'limit'},
   ],
 };
 
@@ -144,6 +150,7 @@ const HealthData$json = const {
     const {'1': 'totalDistance', '3': 13, '4': 1, '5': 1, '10': 'totalDistance'},
     const {'1': 'totalDistanceUnit', '3': 14, '4': 1, '5': 9, '10': 'totalDistanceUnit'},
     const {'1': 'duration', '3': 15, '4': 1, '5': 1, '10': 'duration'},
+    const {'1': 'customValue', '3': 16, '4': 1, '5': 9, '10': 'customValue'},
   ],
 };
 

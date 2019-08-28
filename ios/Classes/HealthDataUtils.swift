@@ -12,7 +12,7 @@ class HealthDataUtils: NSObject {
     static var WORKOUT_TYPES: [HKSampleType] = []
     static var CATEGORY_TYPES: [HKCategoryTypeIdentifier] = []
     static var QUANTITY_TYPES: [(HKQuantityTypeIdentifier, HKUnit?)] = []
-    static var CHARACTERISTIC_TYPES: [HKCharacteristicTypeIdentifier] = []
+    static var CHARACTERISTIC_TYPES: [(HKCharacteristicTypeIdentifier, ((HKHealthStore) -> Any?))] = []
     
     override init() {
         super.init()
@@ -26,35 +26,56 @@ class HealthDataUtils: NSObject {
         }
     }
     
-    func requestPermissions(for list: HealthTypeList?, completion: @escaping (Bool, Error?) -> Void) {
+    func requestPermissions(for list: HealthTypeList?, result: @escaping (Bool, Error?) -> Void) {
         
         guard let list = list else {
-            completion(false, SimpleLocalizedError("Invalid list of params"))
+            result(false, SimpleLocalizedError("Invalid list of params"))
             return
         }
         
         let typeSet = HealthDataUtils.makeSampleSet(from: list)
         HealthDataUtils.healthStore?.requestAuthorization(toShare: nil, read: typeSet) { success, error in
-            completion(success, error)
+            result(success, error)
         }
     }
     
-    func fetchData(request: HealthDataRequest?, result: @escaping (HealthDataList?, Error?) -> Void) {
+    func fetchData(for request: HealthDataRequest?, result: @escaping (HealthDataList?, Error?) -> Void) {
         
         guard let request = request else {
             result(nil, SimpleLocalizedError("Invalid request"))
             return
         }
         
-        let index = HealthDataUtils.TYPE_INDEXES[request.type]
-        if (index?.1 == .characteristic) {
-            dataFetcher.fetchCharacteristicData(for: request.type, healthStore: healthStore, result: result)
+        guard let index = HealthDataUtils.getTypeIndex(request.type) else {
+            result(nil, SimpleLocalizedError("Requested type is not available"))
+            return
+        }
+        
+        if (index.1 == .characteristic) {
+            dataFetcher.fetchCharacteristicData(for: request.type, healthStore: HealthDataUtils.healthStore!, result: result)
             return
         }
         let startDate = request.startDate.isEmpty ? Date.distantPast : Date(iso8601: request.startDate)
         let endDate = request.endDate.isEmpty ? Date() : Date(iso8601: request.endDate)
         dataFetcher.fetchBatchData(for: request.type, startDate: startDate, endDate: endDate, result: result)
     }
+    
+    func filterExistingTypes(for list: HealthTypeList?, result: @escaping (HealthTypeList?, Error?) -> Void) {
+  
+        guard let list = list else {
+            result(nil, SimpleLocalizedError("Invalid list of params"))
+            return
+        }
+        
+        var filteredList = HealthTypeList()
+        for elem in list.types {
+            if HealthDataUtils.typeExists(elem) {
+                filteredList.types.append(elem)
+            }
+        }
+        result(filteredList, nil)
+    }
+    
     
     // MARK: - Not yet used methods
     
