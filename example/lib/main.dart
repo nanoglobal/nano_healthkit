@@ -15,6 +15,7 @@ class _MyAppState extends State<MyApp> {
   bool _isAuthorized = false;
   String _basicHealthString = "";
   String _activityData;
+  String _exisitngTypesString = "";
 
   @override
   void initState() {
@@ -24,7 +25,7 @@ class _MyAppState extends State<MyApp> {
 
   initPlatformState() async {}
 
-  _authorizeHealthOrFit() async {
+  _authorize() async {
     var request = HealthTypeList();
     request.types.addAll(HealthTypes.values); // Permissions to read everything
     bool isAuthorized = await NanoHealthkitPlugin.authorize(request);
@@ -35,12 +36,21 @@ class _MyAppState extends State<MyApp> {
 
   _getUserBasicHealthData() async {
     var request = HealthDataRequest();
-    request.type = HealthTypes.CHARACTERISTIC_BIOLOGICAL_SEX;
+    request.type = HealthTypes.CHARACTERISTIC_DATE_OF_BIRTH;
     request.startDate = "2019-08-19T18:58:00.000Z";
     request.endDate = "2019-08-19T20:58:00.000Z";
     var basicHealth = await NanoHealthkitPlugin.fetchData(request);
     setState(() {
       _basicHealthString = basicHealth.toString();
+    });
+  }
+
+  _filterExistingTypes() async {
+    var request = HealthTypeList();
+    request.types.addAll(HealthTypes.values); // Permissions to read everything
+    var filtered = await NanoHealthkitPlugin.filterExistingTypes(request);
+    setState(() {
+      _exisitngTypesString = filtered.toString();
     });
   }
 
@@ -53,14 +63,20 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              RaisedButton(
+                  child: Text("Authorize"),
+                  onPressed: () {
+                    _authorize();
+                  }),
               Text('Authorized: $_isAuthorized\n'),
               RaisedButton(
-                  child: Text("Authorize Health"),
+                  child: Text("Filter Only Existing Types"),
                   onPressed: () {
-                    _authorizeHealthOrFit();
+                    _filterExistingTypes();
                   }),
+              Text('Valid types: $_exisitngTypesString\n'),
               RaisedButton(
                   child: Text("Get basic data"),
                   onPressed: _getUserBasicHealthData),

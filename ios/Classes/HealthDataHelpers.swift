@@ -34,7 +34,7 @@ extension HealthDataFetcher {
         var data = HealthData()
         data.type = healthType
         data.sampleType = characteristicType.description
-        data.metadata = "\(characteristicValue ?? "")"
+        data.customValue = "\(characteristicValue ?? "")"
         dataList.data.append(data)
         return dataList
     }

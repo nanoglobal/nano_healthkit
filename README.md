@@ -15,19 +15,13 @@ If couldn't find 'pub' then add to your path:
 {YOUR FLUTTER DIR}/flutter/bin/cache/dart-sdk/bin
 ```
 
-### To convert a .proto file to Swift *:
+### To convert all proto files:
 First cd to the proto folder
 ```
-protoc --swift_out=. HealthKitData.proto
+./auto_proto.sh --dart=../lib --swift=../ios/Classes
 ```
 
-### To convert a .proto file to Dart *:
-First cd to the proto folder
-```
-protoc --dart_out=. HealthKitData.proto
-```
-
-\* Remember to move the generated files to the correct project folders (both in Swift and in Flutter).
+\* You can also indicate a different origin folder, different destinies and also add a java option if needed.
 
 ## Requirements
 
@@ -53,6 +47,19 @@ HealthTypeList: Contains a list of HealthTypes to request for reading permission
 
 #### Return
 Bool: False only in case of an error and true in any other case.
+
+### Filter Existing Types
+```
+filterExistingTypes(HealthDataList request) -> HealthDataList
+```
+Will check if the requested types are available in the user's phone model. The fact that a type exists doesn't mean that there are enough permissions to read that value (this is due to the fact that you can't check if permissions to read where given or not).
+
+#### Params
+HealthDataList: Contains a list of HealthTypes to check. 
+
+#### Return
+HealthDataList: Contains a similar list to the requested one that only contains valid items to fetch.
+
 
 ### Fetch data
 ```

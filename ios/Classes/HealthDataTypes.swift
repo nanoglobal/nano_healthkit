@@ -145,7 +145,7 @@ extension HealthDataUtils {
     
     @available(iOS 8.0, *)
     private static var CHARACTERISTIC_TYPES_V8_0: [(HKCharacteristicTypeIdentifier, ((HKHealthStore) -> Any?))] = [
-        (.biologicalSex, {return try? $0.biologicalSex()}), // Enum, Int
+        (.biologicalSex, {return try? $0.biologicalSex().biologicalSex.rawValue}), // Enum, Int
         (.bloodType, {return try? $0.bloodType().bloodType.rawValue }), // Enum, Int
         (.dateOfBirth, {return try? $0.dateOfBirth().timeIntervalSince1970 }), // Date, Double
     ]

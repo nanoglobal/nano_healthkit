@@ -30,25 +30,13 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
     
     let healthUtils = HealthDataUtils.global
     
-    func deserializeArguments<T: Message>(_ call: FlutterMethodCall) -> T? {
-        
-        guard let dataArgs = (call.arguments as? FlutterStandardTypedData)?.data,
-            let request = try? T(serializedData: dataArgs) else {
-            return nil
-        }
-        return request
-    }
+    // MARK: Remote methods
     
     func requestPermissions(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
         let request: HealthTypeList? = deserializeArguments(call)
         healthUtils.requestPermissions(for: request, result: { permissionResult, error in
-            
-            if error != nil {
-                result(error!)
-                return
-            }
-            result(permissionResult)
+            self.sendResult(target: result, response: permissionResult, error: error)
         })
     }
     
@@ -56,16 +44,7 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
         
         let request: HealthDataRequest? = deserializeArguments(call)
         healthUtils.fetchData(for: request, result: { batch, error in
-            
-            if error != nil {
-                result(error!)
-                return
-            }
-            do {
-                result(try batch?.serializedData())
-            } catch {
-                result(SimpleLocalizedError("Cant serialize data to send"))
-            }
+            self.sendResult(target: result, response: batch, error: error)
         })
     }
     
@@ -73,12 +52,36 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
         
         let request: HealthTypeList? = deserializeArguments(call)
         healthUtils.filterExistingTypes(for: request, result: { filteredList, error in
-            
-            if error != nil {
-                result(error!)
+            self.sendResult(target: result, response: filteredList, error: error)
+        })
+    }
+    
+    // MARK: Aux methods
+    
+    private func deserializeArguments<T: Message>(_ call: FlutterMethodCall) -> T? {
+        
+        guard let dataArgs = (call.arguments as? FlutterStandardTypedData)?.data,
+            let request = try? T(serializedData: dataArgs) else {
+                return nil
+        }
+        return request
+    }
+    
+    private func sendResult(target: @escaping FlutterResult, response origin: Any?, error: Error?) {
+        
+        if error != nil {
+            target(error!)
+            return
+        }
+        var response = origin
+        if let originMessage = origin as? Message {
+            do {
+                response = try originMessage.serializedData()
+            } catch {
+                target(SimpleLocalizedError("Can't serialize data to send"))
                 return
             }
-            result(filteredList)
-        })
+        }
+        target(response)
     }
 }
