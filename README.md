@@ -15,13 +15,13 @@ If couldn't find 'pub' then add to your path:
 {YOUR FLUTTER DIR}/flutter/bin/cache/dart-sdk/bin
 ```
 
-### To convert all proto files:
+### Convert all Proto files:
 First cd to the proto folder
 ```
 ./auto_proto.sh --dart=../lib --swift=../ios/Classes
 ```
 
-\* You can also indicate a different origin folder, different destinies and also add a java option if needed.
+\* You can also indicate a different origin folder, other destinies and also add a java option if needed.
 
 ## Requirements
 
@@ -52,7 +52,7 @@ Bool: False only in case of an error and true in any other case.
 ```
 filterExistingTypes(HealthDataList request) -> HealthDataList
 ```
-Will check if the requested types are available in the user's phone model. The fact that a type exists doesn't mean that there are enough permissions to read that value (this is due to the fact that you can't check if permissions to read where given or not).
+Will check if the requested types are available in the user's phone model. The fact that a type exists doesn't mean that there are enough permissions to read that value (this is due to the fact that you can't check if permissions to read were given or not).
 
 #### Params
 HealthDataList: Contains a list of HealthTypes to check. 
