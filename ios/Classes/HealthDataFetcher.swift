@@ -5,7 +5,7 @@ class HealthDataFetcher: NSObject {
     
     // MARK: Data fetching
     
-    func fetchBatchData(for healthType: HealthTypes, startDate: Date, endDate: Date, result: @escaping (HealthDataList?, Error?) -> Swift.Void) {
+    func fetchBatchData(for healthType: HealthTypes, startDate: Date, endDate: Date, limit: Int, result: @escaping (HealthDataList?, Error?) -> Swift.Void) {
         
         // Note: Here we would check for permissions for reading but apple doesnt grant information about it, only for writing
         guard let sampleType = HealthDataUtils.getSampleType(for: healthType) as? HKSampleType else {
@@ -14,16 +14,16 @@ class HealthDataFetcher: NSObject {
         }
         
         // Use HKQuery to load the most recent samples.
-        let mostRecentPredicate = HKQuery.predicateForSamples(withStart: startDate,
-                                                              end: endDate,
-                                                              options: .strictEndDate)
+        let timePredicate = HKQuery.predicateForSamples(withStart: startDate,
+                                                        end: endDate,
+                                                        options: .strictEndDate)
         
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate,
                                               ascending: false)
         
         let sampleQuery = HKSampleQuery(sampleType: sampleType,
-                                        predicate: mostRecentPredicate,
-                                        limit: HKObjectQueryNoLimit,
+                                        predicate: timePredicate,
+                                        limit: limit,
                                         sortDescriptors: [sortDescriptor]) { [weak self] query, samples, error in
             
             if error != nil {
@@ -52,7 +52,7 @@ class HealthDataFetcher: NSObject {
         result(data, nil)
     }
     
-    //var characteristicRead: (HealthTypes, HKHealthStore) -> String?
+    // var characteristicRead: (HealthTypes, HKHealthStore) -> String?
     
     // MARK: Subscriptions
     

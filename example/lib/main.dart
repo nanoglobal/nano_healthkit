@@ -36,9 +36,10 @@ class _MyAppState extends State<MyApp> {
 
   _getUserBasicHealthData() async {
     var request = HealthDataRequest();
-    request.type = HealthTypes.CHARACTERISTIC_DATE_OF_BIRTH;
-    request.startDate = "2019-08-19T18:58:00.000Z";
-    request.endDate = "2019-08-19T20:58:00.000Z";
+    request.type = HealthTypes.QUANTITY_HEIGHT;
+    request.startDate = "2019-06-19T18:58:00.000Z";
+    request.endDate = "2019-09-19T20:58:00.000Z";
+    request.limit = 2;
     var basicHealth = await NanoHealthkitPlugin.fetchData(request);
     setState(() {
       _basicHealthString = basicHealth.toString();
@@ -62,24 +63,34 @@ class _MyAppState extends State<MyApp> {
           title: Text('Plugin example app'),
         ),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+          child: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.all(15.0),
             children: <Widget>[
-              RaisedButton(
-                  child: Text("Authorize"),
-                  onPressed: () {
-                    _authorize();
-                  }),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: RaisedButton(
+                    child: Text("Authorize"),
+                    onPressed: () {
+                      _authorize();
+                    }),
+              ),
               Text('Authorized: $_isAuthorized\n'),
-              RaisedButton(
-                  child: Text("Filter Only Existing Types"),
-                  onPressed: () {
-                    _filterExistingTypes();
-                  }),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: RaisedButton(
+                    child: Text("Filter Only Existing Types"),
+                    onPressed: () {
+                      _filterExistingTypes();
+                    }),
+              ),
               Text('Valid types: $_exisitngTypesString\n'),
-              RaisedButton(
-                  child: Text("Get basic data"),
-                  onPressed: _getUserBasicHealthData),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: RaisedButton(
+                    child: Text("Get basic data"),
+                    onPressed: _getUserBasicHealthData),
+              ),
               Text('Basic health: $_basicHealthString\n'),
             ],
           ),

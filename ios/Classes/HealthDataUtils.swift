@@ -12,7 +12,7 @@ class HealthDataUtils: NSObject {
     static var WORKOUT_TYPES: [HKSampleType] = []
     static var CATEGORY_TYPES: [HKCategoryTypeIdentifier] = []
     static var QUANTITY_TYPES: [(HKQuantityTypeIdentifier, HKUnit?)] = []
-    static var CHARACTERISTIC_TYPES: [(HKCharacteristicTypeIdentifier, ((HKHealthStore) -> Any?))] = []
+    static var CHARACTERISTIC_TYPES: [(HKCharacteristicTypeIdentifier, (HKHealthStore) -> Any?)] = []
     
     override init() {
         super.init()
@@ -51,17 +51,21 @@ class HealthDataUtils: NSObject {
             return
         }
         
-        if (index.1 == .characteristic) {
+        // Characteristics
+        if index.1 == .characteristic {
             dataFetcher.fetchCharacteristicData(for: request.type, healthStore: HealthDataUtils.healthStore!, result: result)
             return
         }
+        
+        // Other types
         let startDate = request.startDate.isEmpty ? Date.distantPast : Date(iso8601: request.startDate)
         let endDate = request.endDate.isEmpty ? Date() : Date(iso8601: request.endDate)
-        dataFetcher.fetchBatchData(for: request.type, startDate: startDate, endDate: endDate, result: result)
+        let limit = request.limit <= 0 ? HKObjectQueryNoLimit : Int(request.limit)
+        dataFetcher.fetchBatchData(for: request.type, startDate: startDate, endDate: endDate, limit: limit, result: result)
     }
     
     func filterExistingTypes(for list: HealthTypeList?, result: @escaping (HealthTypeList?, Error?) -> Void) {
-  
+        
         guard let list = list else {
             result(nil, SimpleLocalizedError("Invalid list of params"))
             return
@@ -75,7 +79,6 @@ class HealthDataUtils: NSObject {
         }
         result(filteredList, nil)
     }
-    
     
     // MARK: - Not yet used methods
     

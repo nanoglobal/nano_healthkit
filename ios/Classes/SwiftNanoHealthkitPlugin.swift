@@ -62,7 +62,7 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin {
         
         guard let dataArgs = (call.arguments as? FlutterStandardTypedData)?.data,
             let request = try? T(serializedData: dataArgs) else {
-                return nil
+            return nil
         }
         return request
     }

@@ -70,7 +70,7 @@ The requested type gets fetched from Apple's HealthKit and returned.
 If querying for an invalid type (because the iOS version is lower than the requested type) an exception will be thrown.
 
 #### Params
-HealthDataRequest: Indicate the type of data wanted to be read (see HealthTypes), startDate and endDate. The dates can be empty strings to fetch all historical data, otherwise use ISO8601 format ("yyyy-MM-dd'T'HH:mm:ss.SSSX").
+HealthDataRequest: Indicate the type of data wanted to be read (see HealthTypes), startDate, endDate and limit. The dates can be empty strings to fetch all historical data, otherwise use ISO8601 format ("yyyy-MM-dd'T'HH:mm:ss.SSSX"). Limit must be higher than 0 otherwise HKObjectQueryNoLimit will be used.
 
 #### Return
 HealthDataList: Contains a list of HealthData.

@@ -9,7 +9,6 @@ extension HealthDataUtils {
         case workout
         case characteristic
     }
-
     
     private static var WORKOUT_TYPES_V8_0: [HKSampleType] = [
         HKObjectType.workoutType(),
@@ -144,20 +143,20 @@ extension HealthDataUtils {
     ]
     
     @available(iOS 8.0, *)
-    private static var CHARACTERISTIC_TYPES_V8_0: [(HKCharacteristicTypeIdentifier, ((HKHealthStore) -> Any?))] = [
-        (.biologicalSex, {return try? $0.biologicalSex().biologicalSex.rawValue}), // Enum, Int
-        (.bloodType, {return try? $0.bloodType().bloodType.rawValue }), // Enum, Int
-        (.dateOfBirth, {return try? $0.dateOfBirth().timeIntervalSince1970 }), // Date, Double
+    private static var CHARACTERISTIC_TYPES_V8_0: [(HKCharacteristicTypeIdentifier, (HKHealthStore) -> Any?)] = [
+        (.biologicalSex, { try? $0.biologicalSex().biologicalSex.rawValue }), // Enum, Int
+        (.bloodType, { try? $0.bloodType().bloodType.rawValue }), // Enum, Int
+        (.dateOfBirth, { try? $0.dateOfBirth().timeIntervalSince1970 }), // Date, Double
     ]
     
     @available(iOS 9.0, *)
-    private static var CHARACTERISTIC_TYPES_V9_0: [(HKCharacteristicTypeIdentifier, ((HKHealthStore) -> Any?))] = [
-        (.fitzpatrickSkinType, {return try? $0.fitzpatrickSkinType().skinType.rawValue}), // Enum, Int
+    private static var CHARACTERISTIC_TYPES_V9_0: [(HKCharacteristicTypeIdentifier, (HKHealthStore) -> Any?)] = [
+        (.fitzpatrickSkinType, { try? $0.fitzpatrickSkinType().skinType.rawValue }), // Enum, Int
     ]
     
     @available(iOS 10.0, *)
-    private static var CHARACTERISTIC_TYPES_V10_0: [(HKCharacteristicTypeIdentifier, ((HKHealthStore) -> Any?))] = [
-        (.wheelchairUse, {return try? $0.wheelchairUse().wheelchairUse.rawValue}), // Enum, Int
+    private static var CHARACTERISTIC_TYPES_V10_0: [(HKCharacteristicTypeIdentifier, (HKHealthStore) -> Any?)] = [
+        (.wheelchairUse, { try? $0.wheelchairUse().wheelchairUse.rawValue }), // Enum, Int
     ]
     
     private static var TYPE_INDEXES: [HealthTypes: (Int, SampleTypes)] = [
@@ -323,7 +322,7 @@ extension HealthDataUtils {
     
     static func getSampleType(for healthType: HealthTypes) -> HKObjectType? {
         
-        guard let index = getTypeIndex(healthType)else {
+        guard let index = getTypeIndex(healthType) else {
             return nil
         }
         switch index.1 {
@@ -339,19 +338,19 @@ extension HealthDataUtils {
     }
     
     private static func getCategoryType(_ index: Int) -> HKSampleType? {
-
+        
         let identifier = HealthDataUtils.CATEGORY_TYPES[index]
         return HKObjectType.categoryType(forIdentifier: identifier)
     }
     
     private static func getQuantityType(_ index: Int) -> HKSampleType? {
-
+        
         let identifier = HealthDataUtils.QUANTITY_TYPES[index].0
         return HKObjectType.quantityType(forIdentifier: identifier)
     }
     
     private static func getCharacteristicType(_ index: Int) -> HKCharacteristicType? {
-
+        
         let identifier = HealthDataUtils.CHARACTERISTIC_TYPES[index].0
         return HKObjectType.characteristicType(forIdentifier: identifier)
     }
