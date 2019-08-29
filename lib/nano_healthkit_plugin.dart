@@ -24,4 +24,12 @@ class NanoHealthkitPlugin {
     final HealthDataList result = HealthDataList.fromBuffer(rawData);
     return result;
   }
+
+  static Future<HealthTypeList> filterExistingTypes(
+      HealthTypeList request) async {
+    final Uint8List rawData = await _channel.invokeMethod(
+        'filterExistingTypes', request.writeToBuffer());
+    final HealthTypeList result = HealthTypeList.fromBuffer(rawData);
+    return result;
+  }
 }

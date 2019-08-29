@@ -9,7 +9,7 @@ extension HealthDataFetcher {
     
     func makeData(from samples: [HKSample]?, sampleType: HKSampleType, healthType: HealthTypes) -> HealthDataList {
         
-        var data = HealthDataList()
+        var dataList = HealthDataList()
         for sample: HKSample in samples ?? [] {
             
             var singleData: HealthData?
@@ -22,10 +22,21 @@ extension HealthDataFetcher {
             }
             
             if singleData != nil {
-                data.data.append(singleData!)
+                dataList.data.append(singleData!)
             }
         }
-        return data
+        return dataList
+    }
+    
+    func makeData(from characteristicValue: Any?, characteristicType: HKCharacteristicType, healthType: HealthTypes) -> HealthDataList {
+        
+        var dataList = HealthDataList()
+        var data = HealthData()
+        data.type = healthType
+        data.sampleType = characteristicType.description
+        data.customValue = "\(characteristicValue ?? "")"
+        dataList.data.append(data)
+        return dataList
     }
     
     private func saveAsDataBase(sampleType: HKSampleType, value: HKSample, healthType: HealthTypes) -> HealthData {
@@ -43,11 +54,11 @@ extension HealthDataFetcher {
     func saveAsData(sampleType: HKSampleType, value: HKQuantitySample, healthType: HealthTypes) -> HealthData {
         
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
-        let index = HealthDataUtils.TYPE_INDEXES[healthType]!
+        let index = HealthDataUtils.getTypeIndex(healthType)!
         if #available(iOS 12.0, *) {
             data.count = Int64(value.count)
         }
-        if let unit = HealthDataUtils.QUANTITY_TYPES[index].1 {
+        if let unit = HealthDataUtils.QUANTITY_TYPES[index.0].1 {
             data.quantityUnit = unit.unitString
             data.quantity = value.quantity.doubleValue(for: unit)
         }

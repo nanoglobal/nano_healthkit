@@ -1,30 +1,29 @@
 //
 import HealthKit
-import HealthKitUI
 
 class HealthDataFetcher: NSObject {
     
     // MARK: Data fetching
     
-    func fetchBatchData(for healthType: HealthTypes, startDate: Date, endDate: Date, result: @escaping (HealthDataList?, Error?) -> Swift.Void) {
+    func fetchBatchData(for healthType: HealthTypes, startDate: Date, endDate: Date, limit: Int, result: @escaping (HealthDataList?, Error?) -> Swift.Void) {
         
         // Note: Here we would check for permissions for reading but apple doesnt grant information about it, only for writing
-        guard let sampleType = HealthDataUtils.getSampleType(for: healthType) else {
+        guard let sampleType = HealthDataUtils.getSampleType(for: healthType) as? HKSampleType else {
             result(nil, SimpleLocalizedError("Invalid sample type"))
             return
         }
         
         // Use HKQuery to load the most recent samples.
-        let mostRecentPredicate = HKQuery.predicateForSamples(withStart: startDate,
-                                                              end: endDate,
-                                                              options: .strictEndDate)
+        let timePredicate = HKQuery.predicateForSamples(withStart: startDate,
+                                                        end: endDate,
+                                                        options: .strictEndDate)
         
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate,
                                               ascending: false)
         
         let sampleQuery = HKSampleQuery(sampleType: sampleType,
-                                        predicate: mostRecentPredicate,
-                                        limit: HKObjectQueryNoLimit,
+                                        predicate: timePredicate,
+                                        limit: limit,
                                         sortDescriptors: [sortDescriptor]) { [weak self] query, samples, error in
             
             if error != nil {
@@ -38,6 +37,22 @@ class HealthDataFetcher: NSObject {
         
         HealthDataUtils.healthStore?.execute(sampleQuery)
     }
+    
+    func fetchCharacteristicData(for healthType: HealthTypes, healthStore: HKHealthStore, result: @escaping (HealthDataList?, Error?) -> Swift.Void) {
+        
+        guard let index = HealthDataUtils.getTypeIndex(healthType),
+            let characteristicType = HealthDataUtils.getSampleType(for: healthType) as? HKCharacteristicType else {
+            result(nil, SimpleLocalizedError("Invalid sample type"))
+            return
+        }
+        
+        let characteristic = HealthDataUtils.CHARACTERISTIC_TYPES[index.0]
+        let evaluatedValue = characteristic.1(healthStore)
+        let data = makeData(from: evaluatedValue, characteristicType: characteristicType, healthType: healthType)
+        result(data, nil)
+    }
+    
+    // var characteristicRead: (HealthTypes, HKHealthStore) -> String?
     
     // MARK: Subscriptions
     

@@ -3,11 +3,18 @@ import HealthKit
 
 extension HealthDataUtils {
     
-    static var WORKOUT_TYPES_V8_0: [HKSampleType] = [
+    enum SampleTypes: Int {
+        case category = 0
+        case quantity
+        case workout
+        case characteristic
+    }
+    
+    private static var WORKOUT_TYPES_V8_0: [HKSampleType] = [
         HKObjectType.workoutType(),
     ]
     
-    static var CATEGORY_TYPES_V8_0: [HKCategoryTypeIdentifier] = [
+    private static var CATEGORY_TYPES_V8_0: [HKCategoryTypeIdentifier] = [
         .sleepAnalysis,
         .appleStandHour,
         .cervicalMucusQuality,
@@ -18,19 +25,18 @@ extension HealthDataUtils {
     ]
     
     @available(iOS 10.0, *)
-    static var CATEGORY_TYPES_V10_0: [HKCategoryTypeIdentifier] = [
+    private static var CATEGORY_TYPES_V10_0: [HKCategoryTypeIdentifier] = [
         .mindfulSession,
     ]
     
     @available(iOS 12.2, *)
-    static var CATEGORY_TYPES_V12_2: [HKCategoryTypeIdentifier] = [
+    private static var CATEGORY_TYPES_V12_2: [HKCategoryTypeIdentifier] = [
         .highHeartRateEvent,
         .lowHeartRateEvent,
         .irregularHeartRhythmEvent,
     ]
     
-    // Note: Dont change the order
-    static var QUANTITY_TYPES_V8_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
+    private static var QUANTITY_TYPES_V8_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
         (.bodyMassIndex, nil),
         (.bodyFatPercentage, .percent()),
         (.height, .meter()),
@@ -106,12 +112,12 @@ extension HealthDataUtils {
     ]
     
     @available(iOS 9.3, *)
-    static var QUANTITY_TYPES_V9_3: [(HKQuantityTypeIdentifier, HKUnit?)] = [
+    private static var QUANTITY_TYPES_V9_3: [(HKQuantityTypeIdentifier, HKUnit?)] = [
         (.appleExerciseTime, .second()),
     ]
     
     @available(iOS 10.0, *)
-    static var QUANTITY_TYPES_V10_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
+    private static var QUANTITY_TYPES_V10_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
         (.distanceWheelchair, .meter()),
         (.pushCount, .count()),
         (.distanceSwimming, .meter()),
@@ -119,7 +125,7 @@ extension HealthDataUtils {
     ]
     
     @available(iOS 11.0, *)
-    static var QUANTITY_TYPES_V11_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
+    private static var QUANTITY_TYPES_V11_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
         (.waistCircumference, .meter()),
         (.vo2Max, HKUnit(from: "ml/kg*min")), // ml/(kg*min)
         // Beats per minute estimate of a user's lowest heart rate while at rest
@@ -132,103 +138,125 @@ extension HealthDataUtils {
     ]
     
     @available(iOS 11.2, *)
-    static var QUANTITY_TYPES_V11_2: [(HKQuantityTypeIdentifier, HKUnit?)] = [
+    private static var QUANTITY_TYPES_V11_2: [(HKQuantityTypeIdentifier, HKUnit?)] = [
         (.distanceDownhillSnowSports, .meter()),
     ]
     
-    static var TYPE_INDEXES: [HealthTypes: Int] = [
-        .workoutMain: 0,
-        .categorySleepAnalysis: 0,
-        .categoryAppleStandHour: 1,
-        .categoryCervicalMucusQuality: 2,
-        .categoryOvulationTestResult: 3,
-        .categoryMenstrualFlow: 4,
-        .categoryIntermenstrualBleeding: 5,
-        .categorySexualActivity: 6,
-        .categoryMindfulSession: 7,
-        .categoryHighHeartRateEvent: 8,
-        .categoryLowHeartRateEvent: 9,
-        .categoryIrregularHeartRhythmEvent: 10,
-        .quantityBodyMassIndex: 0,
-        .quantityBodyFatPercentage: 1,
-        .quantityHeight: 2,
-        .quantityBodyMass: 3,
-        .quantityLeanBodyMass: 4,
-        .quantityStepCount: 5,
-        .quantityDistanceWalkingRunning: 6,
-        .quantityDistanceCycling: 7,
-        .quantityBasalEnergyBurned: 8,
-        .quantityActiveEnergyBurned: 9,
-        .quantityFlightsClimbed: 10,
-        .quantityNikeFuel: 11,
-        .quantityHeartRate: 12,
-        .quantityBodyTemperature: 13,
-        .quantityBasalBodyTemperature: 14,
-        .quantityBloodPressureSystolic: 15,
-        .quantityBloodPressureDiastolic: 16,
-        .quantityRespiratoryRate: 17,
-        .quantityOxygenSaturation: 18,
-        .quantityPeripheralPerfusionIndex: 19,
-        .quantityBloodGlucose: 20,
-        .quantityNumberOfTimesFallen: 21,
-        .quantityElectrodermalActivity: 22,
-        .quantityInhalerUsage: 23,
-        .quantityBloodAlcoholContent: 24,
-        .quantityForcedVitalCapacity: 25,
-        .quantityForcedExpiratoryVolume1: 26,
-        .quantityPeakExpiratoryFlowRate: 27,
-        .quantityDietaryFatTotal: 28,
-        .quantityDietaryFatPolyunsaturated: 29,
-        .quantityDietaryFatMonounsaturated: 30,
-        .quantityDietaryFatSaturated: 31,
-        .quantityDietaryCholesterol: 32,
-        .quantityDietarySodium: 33,
-        .quantityDietaryCarbohydrates: 34,
-        .quantityDietaryFiber: 35,
-        .quantityDietarySugar: 36,
-        .quantityDietaryEnergyConsumed: 37,
-        .quantityDietaryProtein: 38,
-        .quantityDietaryVitaminA: 39,
-        .quantityDietaryVitaminB6: 40,
-        .quantityDietaryVitaminB12: 41,
-        .quantityDietaryVitaminC: 42,
-        .quantityDietaryVitaminD: 43,
-        .quantityDietaryVitaminE: 44,
-        .quantityDietaryVitaminK: 45,
-        .quantityDietaryCalcium: 46,
-        .quantityDietaryIron: 47,
-        .quantityDietaryThiamin: 48,
-        .quantityDietaryRiboflavin: 49,
-        .quantityDietaryNiacin: 50,
-        .quantityDietaryFolate: 51,
-        .quantityDietaryBiotin: 52,
-        .quantityDietaryPantothenicAcid: 53,
-        .quantityDietaryPhosphorus: 54,
-        .quantityDietaryIodine: 55,
-        .quantityDietaryMagnesium: 56,
-        .quantityDietaryZinc: 57,
-        .quantityDietarySelenium: 58,
-        .quantityDietaryCopper: 59,
-        .quantityDietaryManganese: 60,
-        .quantityDietaryChromium: 61,
-        .quantityDietaryMolybdenum: 62,
-        .quantityDietaryChloride: 63,
-        .quantityDietaryPotassium: 64,
-        .quantityDietaryCaffeine: 65,
-        .quantityDietaryWater: 66,
-        .quantityUvExposure: 67,
-        .quantityAppleExerciseTime: 68,
-        .quantityDistanceWheelchair: 69,
-        .quantityPushCount: 70,
-        .quantityDistanceSwimming: 71,
-        .quantitySwimmingStrokeCount: 72,
-        .quantityWaistCircumference: 73,
-        .quantityVo2Max: 74,
-        .quantityRestingHeartRate: 75,
-        .quantityWalkingHeartRateAverage: 76,
-        .quantityHeartRateVariabilitySdnn: 77,
-        .quantityInsulinDelivery: 78,
-        .quantityDistanceDownhillSnowSports: 79,
+    @available(iOS 8.0, *)
+    private static var CHARACTERISTIC_TYPES_V8_0: [(HKCharacteristicTypeIdentifier, (HKHealthStore) -> Any?)] = [
+        (.biologicalSex, { try? $0.biologicalSex().biologicalSex.rawValue }), // Enum, Int
+        (.bloodType, { try? $0.bloodType().bloodType.rawValue }), // Enum, Int
+        (.dateOfBirth, { try? $0.dateOfBirth().timeIntervalSince1970 }), // Date, Double
+    ]
+    
+    @available(iOS 9.0, *)
+    private static var CHARACTERISTIC_TYPES_V9_0: [(HKCharacteristicTypeIdentifier, (HKHealthStore) -> Any?)] = [
+        (.fitzpatrickSkinType, { try? $0.fitzpatrickSkinType().skinType.rawValue }), // Enum, Int
+    ]
+    
+    @available(iOS 10.0, *)
+    private static var CHARACTERISTIC_TYPES_V10_0: [(HKCharacteristicTypeIdentifier, (HKHealthStore) -> Any?)] = [
+        (.wheelchairUse, { try? $0.wheelchairUse().wheelchairUse.rawValue }), // Enum, Int
+    ]
+    
+    private static var TYPE_INDEXES: [HealthTypes: (Int, SampleTypes)] = [
+        .workoutMain: (0, .workout),
+        .categorySleepAnalysis: (0, .category),
+        .categoryAppleStandHour: (1, .category),
+        .categoryCervicalMucusQuality: (2, .category),
+        .categoryOvulationTestResult: (3, .category),
+        .categoryMenstrualFlow: (4, .category),
+        .categoryIntermenstrualBleeding: (5, .category),
+        .categorySexualActivity: (6, .category),
+        .categoryMindfulSession: (7, .category),
+        .categoryHighHeartRateEvent: (8, .category),
+        .categoryLowHeartRateEvent: (9, .category),
+        .categoryIrregularHeartRhythmEvent: (10, .category),
+        .quantityBodyMassIndex: (0, .quantity),
+        .quantityBodyFatPercentage: (1, .quantity),
+        .quantityHeight: (2, .quantity),
+        .quantityBodyMass: (3, .quantity),
+        .quantityLeanBodyMass: (4, .quantity),
+        .quantityStepCount: (5, .quantity),
+        .quantityDistanceWalkingRunning: (6, .quantity),
+        .quantityDistanceCycling: (7, .quantity),
+        .quantityBasalEnergyBurned: (8, .quantity),
+        .quantityActiveEnergyBurned: (9, .quantity),
+        .quantityFlightsClimbed: (10, .quantity),
+        .quantityNikeFuel: (11, .quantity),
+        .quantityHeartRate: (12, .quantity),
+        .quantityBodyTemperature: (13, .quantity),
+        .quantityBasalBodyTemperature: (14, .quantity),
+        .quantityBloodPressureSystolic: (15, .quantity),
+        .quantityBloodPressureDiastolic: (16, .quantity),
+        .quantityRespiratoryRate: (17, .quantity),
+        .quantityOxygenSaturation: (18, .quantity),
+        .quantityPeripheralPerfusionIndex: (19, .quantity),
+        .quantityBloodGlucose: (20, .quantity),
+        .quantityNumberOfTimesFallen: (21, .quantity),
+        .quantityElectrodermalActivity: (22, .quantity),
+        .quantityInhalerUsage: (23, .quantity),
+        .quantityBloodAlcoholContent: (24, .quantity),
+        .quantityForcedVitalCapacity: (25, .quantity),
+        .quantityForcedExpiratoryVolume1: (26, .quantity),
+        .quantityPeakExpiratoryFlowRate: (27, .quantity),
+        .quantityDietaryFatTotal: (28, .quantity),
+        .quantityDietaryFatPolyunsaturated: (29, .quantity),
+        .quantityDietaryFatMonounsaturated: (30, .quantity),
+        .quantityDietaryFatSaturated: (31, .quantity),
+        .quantityDietaryCholesterol: (32, .quantity),
+        .quantityDietarySodium: (33, .quantity),
+        .quantityDietaryCarbohydrates: (34, .quantity),
+        .quantityDietaryFiber: (35, .quantity),
+        .quantityDietarySugar: (36, .quantity),
+        .quantityDietaryEnergyConsumed: (37, .quantity),
+        .quantityDietaryProtein: (38, .quantity),
+        .quantityDietaryVitaminA: (39, .quantity),
+        .quantityDietaryVitaminB6: (40, .quantity),
+        .quantityDietaryVitaminB12: (41, .quantity),
+        .quantityDietaryVitaminC: (42, .quantity),
+        .quantityDietaryVitaminD: (43, .quantity),
+        .quantityDietaryVitaminE: (44, .quantity),
+        .quantityDietaryVitaminK: (45, .quantity),
+        .quantityDietaryCalcium: (46, .quantity),
+        .quantityDietaryIron: (47, .quantity),
+        .quantityDietaryThiamin: (48, .quantity),
+        .quantityDietaryRiboflavin: (49, .quantity),
+        .quantityDietaryNiacin: (50, .quantity),
+        .quantityDietaryFolate: (51, .quantity),
+        .quantityDietaryBiotin: (52, .quantity),
+        .quantityDietaryPantothenicAcid: (53, .quantity),
+        .quantityDietaryPhosphorus: (54, .quantity),
+        .quantityDietaryIodine: (55, .quantity),
+        .quantityDietaryMagnesium: (56, .quantity),
+        .quantityDietaryZinc: (57, .quantity),
+        .quantityDietarySelenium: (58, .quantity),
+        .quantityDietaryCopper: (59, .quantity),
+        .quantityDietaryManganese: (60, .quantity),
+        .quantityDietaryChromium: (61, .quantity),
+        .quantityDietaryMolybdenum: (62, .quantity),
+        .quantityDietaryChloride: (63, .quantity),
+        .quantityDietaryPotassium: (64, .quantity),
+        .quantityDietaryCaffeine: (65, .quantity),
+        .quantityDietaryWater: (66, .quantity),
+        .quantityUvExposure: (67, .quantity),
+        .quantityAppleExerciseTime: (68, .quantity),
+        .quantityDistanceWheelchair: (69, .quantity),
+        .quantityPushCount: (70, .quantity),
+        .quantityDistanceSwimming: (71, .quantity),
+        .quantitySwimmingStrokeCount: (72, .quantity),
+        .quantityWaistCircumference: (73, .quantity),
+        .quantityVo2Max: (74, .quantity),
+        .quantityRestingHeartRate: (75, .quantity),
+        .quantityWalkingHeartRateAverage: (76, .quantity),
+        .quantityHeartRateVariabilitySdnn: (77, .quantity),
+        .quantityInsulinDelivery: (78, .quantity),
+        .quantityDistanceDownhillSnowSports: (79, .quantity),
+        .characteristicBiologicalSex: (0, .characteristic),
+        .characteristicBloodType: (1, .characteristic),
+        .characteristicDateOfBirth: (2, .characteristic),
+        .characteristicFitzpatrickSkinType: (3, .characteristic),
+        .characteristicWheelchairUse: (4, .characteristic),
     ]
     
     func fillTypes() {
@@ -237,6 +265,11 @@ extension HealthDataUtils {
             HealthDataUtils.WORKOUT_TYPES.append(contentsOf: HealthDataUtils.WORKOUT_TYPES_V8_0)
             HealthDataUtils.CATEGORY_TYPES.append(contentsOf: HealthDataUtils.CATEGORY_TYPES_V8_0)
             HealthDataUtils.QUANTITY_TYPES.append(contentsOf: HealthDataUtils.QUANTITY_TYPES_V8_0)
+            HealthDataUtils.CHARACTERISTIC_TYPES.append(contentsOf: HealthDataUtils.CHARACTERISTIC_TYPES_V8_0)
+        }
+        
+        if #available(iOS 9.0, *) {
+            HealthDataUtils.CHARACTERISTIC_TYPES.append(contentsOf: HealthDataUtils.CHARACTERISTIC_TYPES_V9_0)
         }
         
         if #available(iOS 9.3, *) {
@@ -246,6 +279,7 @@ extension HealthDataUtils {
         if #available(iOS 10.0, *) {
             HealthDataUtils.CATEGORY_TYPES.append(contentsOf: HealthDataUtils.CATEGORY_TYPES_V10_0)
             HealthDataUtils.QUANTITY_TYPES.append(contentsOf: HealthDataUtils.QUANTITY_TYPES_V10_0)
+            HealthDataUtils.CHARACTERISTIC_TYPES.append(contentsOf: HealthDataUtils.CHARACTERISTIC_TYPES_V10_0)
         }
         
         if #available(iOS 11.0, *) {
@@ -261,43 +295,69 @@ extension HealthDataUtils {
         }
     }
     
+    static func getTypeIndex(_ healthType: HealthTypes) -> (Int, SampleTypes)? {
+        
+        guard let index = TYPE_INDEXES[healthType] else {
+            return nil
+        }
+        var totalAmount = 0
+        switch index.1 {
+        case .workout:
+            totalAmount = HealthDataUtils.WORKOUT_TYPES.count
+        case .quantity:
+            totalAmount = HealthDataUtils.QUANTITY_TYPES.count
+        case .category:
+            totalAmount = HealthDataUtils.CATEGORY_TYPES.count
+        case .characteristic:
+            totalAmount = HealthDataUtils.CHARACTERISTIC_TYPES.count
+        }
+        return totalAmount <= index.0 ? nil : index
+    }
+    
+    static func typeExists(_ healthType: HealthTypes) -> Bool {
+        return getTypeIndex(healthType) != nil
+    }
+    
     // MARK: Type manupulation
     
-    static func getSampleType(for healthType: HealthTypes) -> HKSampleType? {
+    static func getSampleType(for healthType: HealthTypes) -> HKObjectType? {
         
-        let index = TYPE_INDEXES[healthType]!
-        if healthType.rawValue <= HealthTypes.workoutMain.rawValue {
-            return HealthDataUtils.WORKOUT_TYPES[index]
-        } else if healthType.rawValue >= HealthTypes.quantityBodyMassIndex.rawValue {
-            return getQuantityType(index)
-        } else {
-            return getCategoryType(index)
+        guard let index = getTypeIndex(healthType) else {
+            return nil
+        }
+        switch index.1 {
+        case .workout:
+            return HealthDataUtils.WORKOUT_TYPES[index.0]
+        case .quantity:
+            return getQuantityType(index.0)
+        case .category:
+            return getCategoryType(index.0)
+        case .characteristic:
+            return getCharacteristicType(index.0)
         }
     }
     
     private static func getCategoryType(_ index: Int) -> HKSampleType? {
         
-        // It could be false if the requested type is not available for a given iOS version
-        if HealthDataUtils.CATEGORY_TYPES.count <= index {
-            return nil
-        }
         let identifier = HealthDataUtils.CATEGORY_TYPES[index]
         return HKObjectType.categoryType(forIdentifier: identifier)
     }
     
     private static func getQuantityType(_ index: Int) -> HKSampleType? {
         
-        // It could be false if the requested type is not available for a given iOS version
-        if HealthDataUtils.QUANTITY_TYPES.count <= index {
-            return nil
-        }
         let identifier = HealthDataUtils.QUANTITY_TYPES[index].0
         return HKObjectType.quantityType(forIdentifier: identifier)
     }
     
-    static func makeSampleSet(from list: HealthTypeList) -> Set<HKSampleType> {
+    private static func getCharacteristicType(_ index: Int) -> HKCharacteristicType? {
         
-        return Set(list.types.map { (helthType) -> HKSampleType? in
+        let identifier = HealthDataUtils.CHARACTERISTIC_TYPES[index].0
+        return HKObjectType.characteristicType(forIdentifier: identifier)
+    }
+    
+    static func makeSampleSet(from list: HealthTypeList) -> Set<HKObjectType> {
+        
+        return Set(list.types.map { (helthType) -> HKObjectType? in
             HealthDataUtils.getSampleType(for: helthType)
         }.compactMap { $0 })
     }

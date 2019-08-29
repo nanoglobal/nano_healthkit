@@ -42,6 +42,7 @@ class HealthDataRequest extends $pb.GeneratedMessage {
     ..e<HealthTypes>(1, 'type', $pb.PbFieldType.OE, HealthTypes.WORKOUT_MAIN, HealthTypes.valueOf, HealthTypes.values)
     ..aOS(2, 'startDate')
     ..aOS(3, 'endDate')
+    ..a<$core.int>(4, 'limit', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -73,6 +74,11 @@ class HealthDataRequest extends $pb.GeneratedMessage {
   set endDate($core.String v) { $_setString(2, v); }
   $core.bool hasEndDate() => $_has(2);
   void clearEndDate() => clearField(3);
+
+  $core.int get limit => $_get(3, 0);
+  set limit($core.int v) { $_setSignedInt32(3, v); }
+  $core.bool hasLimit() => $_has(3);
+  void clearLimit() => clearField(4);
 }
 
 class HealthDataRequestList extends $pb.GeneratedMessage {
@@ -115,6 +121,7 @@ class HealthData extends $pb.GeneratedMessage {
     ..a<$core.double>(13, 'totalDistance', $pb.PbFieldType.OD)
     ..aOS(14, 'totalDistanceUnit')
     ..a<$core.double>(15, 'duration', $pb.PbFieldType.OD)
+    ..aOS(16, 'customValue')
     ..hasRequiredFields = false
   ;
 
@@ -206,6 +213,11 @@ class HealthData extends $pb.GeneratedMessage {
   set duration($core.double v) { $_setDouble(14, v); }
   $core.bool hasDuration() => $_has(14);
   void clearDuration() => clearField(15);
+
+  $core.String get customValue => $_getS(15, '');
+  set customValue($core.String v) { $_setString(15, v); }
+  $core.bool hasCustomValue() => $_has(15);
+  void clearCustomValue() => clearField(16);
 }
 
 class HealthDataList extends $pb.GeneratedMessage {
