@@ -370,7 +370,7 @@ extension HealthDataUtils {
                 return (helthType, obj)
             }
             return nil
-            }.compactMap { $0 }
+        }.compactMap { $0 }
     }
     
     static func filterExistingTypes(_ list: HealthTypeList) -> HealthTypeList {

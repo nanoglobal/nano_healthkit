@@ -96,7 +96,7 @@ class HealthDataFetcher: NSObject {
     }
     
     private func subscribeQuery(for touple: (HealthTypes, HKSampleType), healthStore: HKHealthStore, result: @escaping (Bool, Error?) -> Void) -> HKObserverQuery {
-
+        
         return HKObserverQuery(sampleType: touple.1, predicate: nil) {
             [weak self] query, completionHandler, error in
             

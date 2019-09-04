@@ -6,7 +6,7 @@ class HealthDataUtils: NSObject {
     static let global = HealthDataUtils()
     static var healthStore: HKHealthStore?
     let dataFetcher = HealthDataFetcher()
-    var updateHandler: ((Any?, Error?)-> Void)? = nil
+    var updateHandler: ((Any?, Error?) -> Void)?
     
     var statusRecord: HealthStatusRecord? = HealthStatusRecord()
     
@@ -76,9 +76,7 @@ class HealthDataUtils: NSObject {
         result(filteredList, nil)
     }
     
-    
-    
-    func subscribeToUpdates(for list: HealthTypeList?, updateHandler: @escaping (Any?, Error?)-> Void, result: @escaping (Bool, Error?) -> Void) {
+    func subscribeToUpdates(for list: HealthTypeList?, updateHandler: @escaping (Any?, Error?) -> Void, result: @escaping (Bool, Error?) -> Void) {
         
         self.updateHandler = updateHandler
         guard let list = list else {
