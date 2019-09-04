@@ -117,7 +117,7 @@ message HealthDataRequestList {
 
 message HealthData {
    HealthTypes type = 1;
-   string sampleType = 2;
+   string objectType = 2;
    string startDate = 3;
    string endDate = 4;
    string device = 5;

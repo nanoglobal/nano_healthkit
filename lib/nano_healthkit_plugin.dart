@@ -47,7 +47,7 @@ class NanoHealthkitPlugin {
 
   static void _updatesReceived(updates) {
     if (_subscriberMethod != null) {
-      final HealthTypeList result = HealthTypeList.fromBuffer(updates);
+      final HealthDataList result = HealthDataList.fromBuffer(updates);
       _subscriberMethod(result);
     }
   }

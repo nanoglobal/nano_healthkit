@@ -136,7 +136,7 @@ const HealthData$json = const {
   '1': 'HealthData',
   '2': const [
     const {'1': 'type', '3': 1, '4': 1, '5': 14, '6': '.HealthTypes', '10': 'type'},
-    const {'1': 'sampleType', '3': 2, '4': 1, '5': 9, '10': 'sampleType'},
+    const {'1': 'objectType', '3': 2, '4': 1, '5': 9, '10': 'objectType'},
     const {'1': 'startDate', '3': 3, '4': 1, '5': 9, '10': 'startDate'},
     const {'1': 'endDate', '3': 4, '4': 1, '5': 9, '10': 'endDate'},
     const {'1': 'device', '3': 5, '4': 1, '5': 9, '10': 'device'},

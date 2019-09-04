@@ -75,17 +75,6 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
     
     // MARK: Subscription methods
     
-    // It wont respond anything unless something went wrong and there is an exception
-    func subscribeToUpdates(withArguments arguments: Any?) {
-        
-        let request: HealthTypeList? = deserializeArguments(arguments)
-        healthUtils.subscribeToUpdates(for: request) { subscribeResult, error in
-            if error != nil, let eventSink = self.eventSink {
-                self.sendResult(target: eventSink, response: nil, error: error)
-            }
-        }
-    }
-    
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         self.eventSink = events
         subscribeToUpdates(withArguments: arguments)
@@ -102,6 +91,17 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
             return
         }
         sendResult(target: eventSink, response: update, error: error)
+    }
+    
+    // It wont respond anything unless something went wrong and there is an exception
+    private func subscribeToUpdates(withArguments arguments: Any?) {
+        
+        let request: HealthTypeList? = deserializeArguments(arguments)
+        healthUtils.subscribeToUpdates(for: request, updateHandler: sendUpdateEvent(update:error:)) { subscribeResult, error in
+            if error != nil, let eventSink = self.eventSink {
+                self.sendResult(target: eventSink, response: nil, error: error)
+            }
+        }
     }
     
     // MARK: Aux methods

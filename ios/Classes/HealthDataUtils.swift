@@ -6,6 +6,7 @@ class HealthDataUtils: NSObject {
     static let global = HealthDataUtils()
     static var healthStore: HKHealthStore?
     let dataFetcher = HealthDataFetcher()
+    var updateHandler: ((Any?, Error?)-> Void)? = nil
     
     var statusRecord: HealthStatusRecord? = HealthStatusRecord()
     
@@ -33,7 +34,7 @@ class HealthDataUtils: NSObject {
             return
         }
         
-        let typeSet = HealthDataUtils.makeSampleSet(from: list)
+        let typeSet = HealthDataUtils.makeHKObjectSet(from: list)
         HealthDataUtils.healthStore?.requestAuthorization(toShare: nil, read: typeSet) { success, error in
             result(success, error)
         }
@@ -71,30 +72,31 @@ class HealthDataUtils: NSObject {
             return
         }
         
-        var filteredList = HealthTypeList()
-        for elem in list.types {
-            if HealthDataUtils.typeExists(elem) {
-                filteredList.types.append(elem)
-            }
-        }
+        let filteredList = HealthDataUtils.filterExistingTypes(list)
         result(filteredList, nil)
     }
     
-    // MARK: - Not yet used methods
     
-    func subscribeToUpdates(for list: HealthTypeList?, result: @escaping (Bool, Error?) -> Void) {
+    
+    func subscribeToUpdates(for list: HealthTypeList?, updateHandler: @escaping (Any?, Error?)-> Void, result: @escaping (Bool, Error?) -> Void) {
         
+        self.updateHandler = updateHandler
         guard let list = list else {
             result(false, SimpleLocalizedError("Invalid list of params"))
             return
         }
         
-        dataFetcher.subscribeToUpdates(result: result)
+        dataFetcher.subscribeToUpdates(for: list, healthStore: HealthDataUtils.healthStore!, result: result)
     }
     
     func unsubscribeToUpdates(result: @escaping (Bool, Error?) -> Void) {
         
+        self.updateHandler = nil
         dataFetcher.unsubscribeToUpdates(result: result)
-        // completion(true, nil)
+    }
+    
+    func sendUpdateEvent(_ dataList: HealthDataList?, error: Error?) {
+        
+        self.updateHandler?(dataList, error)
     }
 }

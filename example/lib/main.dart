@@ -81,8 +81,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  _updatesReceived(HealthTypeList updates) {
-    //TODO: PARSE THE UPDATES
+  _updatesReceived(HealthDataList updates) {
     setState(() {
       _updateMessageString = updates.toString();
     });

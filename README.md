@@ -4,25 +4,6 @@
 
 To modify the model, change the .proto files.
 
-### Install Protobuf:
-```
-brew install protobuf
-pub global activate protoc_plugin
-```
-
-If couldn't find 'pub' then add to your path:
-```
-{YOUR FLUTTER DIR}/flutter/bin/cache/dart-sdk/bin
-```
-
-### Convert all Proto files:
-First cd to the proto folder
-```
-./auto_proto.sh --dart=../lib --swift=../ios/Classes
-```
-
-\* You can also indicate a different origin folder, other destinies and also add a java option if needed.
-
 ## Requirements
 
 The plugin needs a deployment target of at least iOS 9.0.
@@ -43,7 +24,7 @@ The user will be presented with a native modal that request permissions to read 
 All invalid permission types (because the iOS version is lower than the requested type) will be ignored.
 
 #### Params
-HealthTypeList: Contains a list of HealthTypes to request for reading permissions. 
+HealthTypeList: Contains a list of HealthTypes to request for reading permissions.
 
 #### Return
 Bool: False only in case of an error and true in any other case.
@@ -55,7 +36,7 @@ filterExistingTypes(HealthDataList request) -> HealthDataList
 Will check if the requested types are available in the user's phone model. The fact that a type exists doesn't mean that there are enough permissions to read that value (this is due to the fact that you can't check if permissions to read were given or not).
 
 #### Params
-HealthDataList: Contains a list of HealthTypes to check. 
+HealthDataList: Contains a list of HealthTypes to check.
 
 #### Return
 HealthDataList: Contains a similar list to the requested one that only contains valid items to fetch.
@@ -75,9 +56,65 @@ HealthDataRequest: Indicate the type of data wanted to be read (see HealthTypes)
 #### Return
 HealthDataList: Contains a list of HealthData.
 
+
+### Subscribe
+```
+subscribeToUpdates(HealthTypeList request, (onData(HealthDataList event) -> void) updateFunction) -> StreamSubscription
+```
+Requests a subscription to all types indicated in the request. The caller must save the StreamSubscription returned in case of a later request to unsubscribe. On each new data event, the updateFunction gets called with the new data.
+
+All invalid types and all characteristic types will be ignored.
+
+Nothing will be returned and neither the updateFunction will be called in case of a successful subscription. However, the updateFunction will be called with an exception in case there was an error while subscribing.
+
+#### Params
+HealthTypeList: Contains a list of HealthTypes to request for subscription.
+
+(onData(HealthDataList event) -> void): Needs to be a method that receives a HealthDataList as argument and returns void. This is the update function that gets called each time new data is available. The returned data is in the same format as the one calling for "fetch data".
+
+
+#### Return
+StreamSubscription: The stream that will receive each new event.
+
+### Unsubscribe
+```
+unsubscribeToUpdates(StreamSubscription stream) -> Bool
+```
+Request an unsubscription to all types.
+
+#### Params
+StreamSubscription: The stream needs to be the one received by the subscription method.
+
+#### Return
+Bool: True if success, false + an exception otherwise.
+
+
 ## A word about Timezones
 
 The values in Apple Health are stored in the local time of the phone at the moment they are written but they don't hold timezone information. That means that if you record something at 13:00 in timezone -3 it will be retrieved as 10:00 in GMT and when showed, considering the user is still at that same timezone it will be shown as 13:00. However, the timezone the user currently is doesn't necessary matches the timezone in which he/she made the record and this might lead to misunderstandings.
 
 Depending on the source, Apple Health sometimes saves information about the timezone in which the record was made inside the metadata.
+
+## Further development?
+
+The data model that is passed from Flutter to iOS and back is written using proto buffers. In case that model needs to be changed, Protobuf will be needed both for Dart and Swift. There's a helpful script located in the proto folder to help with converting files.
+
+#### Install Protobuf:
+```
+brew install protobuf
+pub global activate protoc_plugin
+```
+
+If couldn't find 'pub' then add to your path:
+```
+{YOUR FLUTTER DIR}/flutter/bin/cache/dart-sdk/bin
+```
+
+#### Convert all Proto files:
+First cd to the proto folder
+```
+./auto_proto.sh --dart=../lib --swift=../ios/Classes
+```
+
+\* You can also indicate a different origin folder, other destinies and also add a java option if needed.
 
