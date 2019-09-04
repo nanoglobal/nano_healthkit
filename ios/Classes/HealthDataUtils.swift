@@ -82,62 +82,19 @@ class HealthDataUtils: NSObject {
     
     // MARK: - Not yet used methods
     
-    /* func subscribeToUpdates(forced: Bool, completion: @escaping (Bool, Error?) -> Void) {
-     
-         dataFetcher.subscribeToUpdates(completion: completion)
-     }
-     
-     private func fetchAllHistoricData(completion: @escaping (Bool, Error?) -> Void) {
-     
-         // dataFetcher.fetchAllHistoricData(record: statusRecord!, completion: completion)
-     }
-     
-     func connectToAppleHealth(permissionCompletion: @escaping (Bool, Error?) -> Void,
-                               subscribeCompletion: @escaping (Bool, Error?) -> Void) {
-     
-         requestPermissions { [weak self] success, error in
-     
-             permissionCompletion(success, error)
-     
-             if error == nil {
-     
-                 // Subscribe to updates
-                 self?.subscribeToUpdates(forced: true) { success, error in
-     
-                     subscribeCompletion(success, error)
-                     if error != nil {
-                         self?.disconnectToAppleHealth()
-                         abort()
-                     }
-                 }
-     
-                 // Fetch all historic data
-                 self?.fetchAllHistoricData { success, error in
-     
-                     // self?.callSendingService()
-                     if error != nil {
-                         self?.disconnectToAppleHealth()
-                         abort()
-                     }
-                 }
-             }
-         }
-     }
-     
-     func disconnectToAppleHealth() {
-     
-         if statusRecord != nil {
-             statusRecord?.serviceIsActive = false
-             HealthDataUtils.saveRecord(statusRecord!)
-         }
-     
-         // NOTE: Fetcher will stop as soon as the service is inactive
-     
-         // Remove subscription
-         dataFetcher.unsubscribeToUpdates()
-     }
-     
-     func isConnectedToAppleHealth() -> Bool {
-         return statusRecord?.serviceIsActive ?? false
-     } */
+    func subscribeToUpdates(for list: HealthTypeList?, result: @escaping (Bool, Error?) -> Void) {
+        
+        guard let list = list else {
+            result(false, SimpleLocalizedError("Invalid list of params"))
+            return
+        }
+        
+        dataFetcher.subscribeToUpdates(result: result)
+    }
+    
+    func unsubscribeToUpdates(result: @escaping (Bool, Error?) -> Void) {
+        
+        dataFetcher.unsubscribeToUpdates(result: result)
+        // completion(true, nil)
+    }
 }

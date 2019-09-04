@@ -52,18 +52,9 @@ class HealthDataFetcher: NSObject {
         result(data, nil)
     }
     
-    // var characteristicRead: (HealthTypes, HKHealthStore) -> String?
-    
     // MARK: Subscriptions
-    
-    /* func unsubscribeToUpdates() {
      
-         unsubscribeToUpdates(completion: { success, error in
-             // Do nothing extra
-         })
-     }
-     
-     private func unsubscribeToUpdates(completion: @escaping (Bool, Error?) -> Void) {
+     func unsubscribeToUpdates(completion: @escaping (Bool, Error?) -> Void) {
          HealthDataUtils.healthStore?.disableAllBackgroundDelivery(completion: completion)
      }
      
@@ -155,5 +146,5 @@ class HealthDataFetcher: NSObject {
              let anchoredQuery = HKAnchoredObjectQuery(type: touple.0, predicate: nil, anchor: hkAnchor, limit: HKObjectQueryNoLimit, resultsHandler: onAnchorQueryResults)
              HealthDataUtils.healthStore?.execute(anchoredQuery)
          }
-     } */
+     }
 }
