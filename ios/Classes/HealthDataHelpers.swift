@@ -33,7 +33,7 @@ extension HealthDataFetcher {
         var dataList = HealthDataList()
         var data = HealthData()
         data.type = healthType
-        data.sampleType = characteristicType.description
+        data.objectType = characteristicType.description
         data.customValue = "\(characteristicValue ?? "")"
         dataList.data.append(data)
         return dataList
@@ -43,7 +43,7 @@ extension HealthDataFetcher {
         
         var data = HealthData()
         data.type = healthType
-        data.sampleType = sampleType.description
+        data.objectType = sampleType.description
         data.startDate = value.startDate.iso8601
         data.endDate = value.endDate.iso8601
         data.device = value.device?.name ?? ""
@@ -93,7 +93,7 @@ extension HealthDataFetcher {
         return ""
     }
     
-    private func getAnchor(anchorKey: String) -> HKQueryAnchor? {
+    func getAnchor(anchorKey: String) -> HKQueryAnchor? {
         
         let encoded = UserDefaults.standard.data(forKey: anchorKey)
         if encoded == nil {
@@ -103,7 +103,7 @@ extension HealthDataFetcher {
         return anchor
     }
     
-    private func saveAnchor(anchor: HKQueryAnchor, anchorKey: String) {
+    func saveAnchor(anchor: HKQueryAnchor, anchorKey: String) {
         
         let encoded = NSKeyedArchiver.archivedData(withRootObject: anchor)
         UserDefaults.standard.setValue(encoded, forKey: anchorKey)

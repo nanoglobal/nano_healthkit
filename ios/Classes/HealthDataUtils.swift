@@ -6,6 +6,7 @@ class HealthDataUtils: NSObject {
     static let global = HealthDataUtils()
     static var healthStore: HKHealthStore?
     let dataFetcher = HealthDataFetcher()
+    var updateHandler: ((Any?, Error?) -> Void)?
     
     var statusRecord: HealthStatusRecord? = HealthStatusRecord()
     
@@ -33,7 +34,7 @@ class HealthDataUtils: NSObject {
             return
         }
         
-        let typeSet = HealthDataUtils.makeSampleSet(from: list)
+        let typeSet = HealthDataUtils.makeHKObjectSet(from: list)
         HealthDataUtils.healthStore?.requestAuthorization(toShare: nil, read: typeSet) { success, error in
             result(success, error)
         }
@@ -71,73 +72,29 @@ class HealthDataUtils: NSObject {
             return
         }
         
-        var filteredList = HealthTypeList()
-        for elem in list.types {
-            if HealthDataUtils.typeExists(elem) {
-                filteredList.types.append(elem)
-            }
-        }
+        let filteredList = HealthDataUtils.filterExistingTypes(list)
         result(filteredList, nil)
     }
     
-    // MARK: - Not yet used methods
+    func subscribeToUpdates(for list: HealthTypeList?, updateHandler: @escaping (Any?, Error?) -> Void, result: @escaping (Bool, Error?) -> Void) {
+        
+        self.updateHandler = updateHandler
+        guard let list = list else {
+            result(false, SimpleLocalizedError("Invalid list of params"))
+            return
+        }
+        
+        dataFetcher.subscribeToUpdates(for: list, healthStore: HealthDataUtils.healthStore!, result: result)
+    }
     
-    /* func subscribeToUpdates(forced: Bool, completion: @escaping (Bool, Error?) -> Void) {
-     
-         dataFetcher.subscribeToUpdates(completion: completion)
-     }
-     
-     private func fetchAllHistoricData(completion: @escaping (Bool, Error?) -> Void) {
-     
-         // dataFetcher.fetchAllHistoricData(record: statusRecord!, completion: completion)
-     }
-     
-     func connectToAppleHealth(permissionCompletion: @escaping (Bool, Error?) -> Void,
-                               subscribeCompletion: @escaping (Bool, Error?) -> Void) {
-     
-         requestPermissions { [weak self] success, error in
-     
-             permissionCompletion(success, error)
-     
-             if error == nil {
-     
-                 // Subscribe to updates
-                 self?.subscribeToUpdates(forced: true) { success, error in
-     
-                     subscribeCompletion(success, error)
-                     if error != nil {
-                         self?.disconnectToAppleHealth()
-                         abort()
-                     }
-                 }
-     
-                 // Fetch all historic data
-                 self?.fetchAllHistoricData { success, error in
-     
-                     // self?.callSendingService()
-                     if error != nil {
-                         self?.disconnectToAppleHealth()
-                         abort()
-                     }
-                 }
-             }
-         }
-     }
-     
-     func disconnectToAppleHealth() {
-     
-         if statusRecord != nil {
-             statusRecord?.serviceIsActive = false
-             HealthDataUtils.saveRecord(statusRecord!)
-         }
-     
-         // NOTE: Fetcher will stop as soon as the service is inactive
-     
-         // Remove subscription
-         dataFetcher.unsubscribeToUpdates()
-     }
-     
-     func isConnectedToAppleHealth() -> Bool {
-         return statusRecord?.serviceIsActive ?? false
-     } */
+    func unsubscribeToUpdates(result: @escaping (Bool, Error?) -> Void) {
+        
+        self.updateHandler = nil
+        dataFetcher.unsubscribeToUpdates(result: result)
+    }
+    
+    func sendUpdateEvent(_ dataList: HealthDataList?, error: Error?) {
+        
+        self.updateHandler?(dataList, error)
+    }
 }

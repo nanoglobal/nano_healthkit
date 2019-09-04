@@ -5,13 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:nano_healthkit_plugin/healthdata.pb.dart';
 
 class NanoHealthkitPlugin {
-  static const MethodChannel _channel =
-      const MethodChannel('nano_healthkit_plugin');
-
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
+  static const _channel = const MethodChannel('nano_healthkit_plugin');
+  static const _stream = const EventChannel('nano_healthkit_plugin_stream');
+  static var _subscriberMethod;
 
   static Future<bool> authorize(HealthTypeList request) async {
     return await _channel.invokeMethod(
@@ -31,5 +27,28 @@ class NanoHealthkitPlugin {
         'filterExistingTypes', request.writeToBuffer());
     final HealthTypeList result = HealthTypeList.fromBuffer(rawData);
     return result;
+  }
+
+  static StreamSubscription subscribeToUpdates<T>(
+      HealthTypeList request, void onData(T event)) {
+    _subscriberMethod = onData;
+    return _stream
+        .receiveBroadcastStream(request.writeToBuffer())
+        .listen(_updatesReceived);
+  }
+
+  static Future<bool> unsubscribeToUpdates(StreamSubscription stream) async {
+    if (stream != null) {
+      stream.cancel();
+      _subscriberMethod = null;
+    }
+    return await _channel.invokeMethod('unsubscribeToUpdates');
+  }
+
+  static void _updatesReceived(updates) {
+    if (_subscriberMethod != null) {
+      final HealthDataList result = HealthDataList.fromBuffer(updates);
+      _subscriberMethod(result);
+    }
   }
 }

@@ -320,7 +320,7 @@ extension HealthDataUtils {
     
     // MARK: Type manupulation
     
-    static func getSampleType(for healthType: HealthTypes) -> HKObjectType? {
+    static func getHKObjectType(for healthType: HealthTypes) -> HKObjectType? {
         
         guard let index = getTypeIndex(healthType) else {
             return nil
@@ -355,10 +355,32 @@ extension HealthDataUtils {
         return HKObjectType.characteristicType(forIdentifier: identifier)
     }
     
-    static func makeSampleSet(from list: HealthTypeList) -> Set<HKObjectType> {
+    static func makeHKObjectSet(from list: HealthTypeList) -> Set<HKObjectType> {
         
         return Set(list.types.map { (helthType) -> HKObjectType? in
-            HealthDataUtils.getSampleType(for: helthType)
+            HealthDataUtils.getHKObjectType(for: helthType)
         }.compactMap { $0 })
+    }
+    
+    static func makeFilteredToupleList<T: HKObjectType>(from list: HealthTypeList) -> [(HealthTypes, T)] {
+        
+        let filteredList = filterExistingTypes(list)
+        return filteredList.types.map { (helthType) -> (HealthTypes, T)? in
+            if let obj = HealthDataUtils.getHKObjectType(for: helthType) as? T {
+                return (helthType, obj)
+            }
+            return nil
+        }.compactMap { $0 }
+    }
+    
+    static func filterExistingTypes(_ list: HealthTypeList) -> HealthTypeList {
+        
+        var filteredList = HealthTypeList()
+        for elem in list.types {
+            if HealthDataUtils.typeExists(elem) {
+                filteredList.types.append(elem)
+            }
+        }
+        return filteredList
     }
 }

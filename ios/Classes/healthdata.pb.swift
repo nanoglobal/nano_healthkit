@@ -488,7 +488,7 @@ struct HealthData {
 
   var type: HealthTypes = .workoutMain
 
-  var sampleType: String = String()
+  var objectType: String = String()
 
   var startDate: String = String()
 
@@ -748,7 +748,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
   static let protoMessageName: String = "HealthData"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "type"),
-    2: .same(proto: "sampleType"),
+    2: .same(proto: "objectType"),
     3: .same(proto: "startDate"),
     4: .same(proto: "endDate"),
     5: .same(proto: "device"),
@@ -769,7 +769,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularEnumField(value: &self.type)
-      case 2: try decoder.decodeSingularStringField(value: &self.sampleType)
+      case 2: try decoder.decodeSingularStringField(value: &self.objectType)
       case 3: try decoder.decodeSingularStringField(value: &self.startDate)
       case 4: try decoder.decodeSingularStringField(value: &self.endDate)
       case 5: try decoder.decodeSingularStringField(value: &self.device)
@@ -793,8 +793,8 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     if self.type != .workoutMain {
       try visitor.visitSingularEnumField(value: self.type, fieldNumber: 1)
     }
-    if !self.sampleType.isEmpty {
-      try visitor.visitSingularStringField(value: self.sampleType, fieldNumber: 2)
+    if !self.objectType.isEmpty {
+      try visitor.visitSingularStringField(value: self.objectType, fieldNumber: 2)
     }
     if !self.startDate.isEmpty {
       try visitor.visitSingularStringField(value: self.startDate, fieldNumber: 3)
@@ -843,7 +843,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
 
   static func ==(lhs: HealthData, rhs: HealthData) -> Bool {
     if lhs.type != rhs.type {return false}
-    if lhs.sampleType != rhs.sampleType {return false}
+    if lhs.objectType != rhs.objectType {return false}
     if lhs.startDate != rhs.startDate {return false}
     if lhs.endDate != rhs.endDate {return false}
     if lhs.device != rhs.device {return false}

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:nano_healthkit_plugin/nano_healthkit_plugin.dart';
@@ -16,6 +18,11 @@ class _MyAppState extends State<MyApp> {
   String _basicHealthString = "";
   String _activityData;
   String _exisitngTypesString = "";
+  String _updateStatusString = "";
+  String _updateMessageString = "";
+  bool _isSubscribed = false;
+
+  StreamSubscription _subscription = null;
 
   @override
   void initState() {
@@ -55,6 +62,31 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  _subscribeToUpdates() {
+    var request = HealthTypeList();
+    request.types.addAll(HealthTypes.values); // Subscribe to everything
+    _subscription =
+        NanoHealthkitPlugin.subscribeToUpdates(request, _updatesReceived);
+    setState(() {
+      _isSubscribed = true;
+      _updateMessageString = "";
+    });
+  }
+
+  _unsubscribeToUpdates() {
+    NanoHealthkitPlugin.unsubscribeToUpdates(_subscription);
+    setState(() {
+      _isSubscribed = false;
+      _updateMessageString = "";
+    });
+  }
+
+  _updatesReceived(HealthDataList updates) {
+    setState(() {
+      _updateMessageString = updates.toString();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -85,6 +117,17 @@ class _MyAppState extends State<MyApp> {
                     }),
               ),
               Text('Valid types: $_exisitngTypesString\n'),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: RaisedButton(
+                    child: Text(_isSubscribed
+                        ? "Unsubscribe to updates"
+                        : "Subscribe to updates"),
+                    onPressed: _isSubscribed
+                        ? _unsubscribeToUpdates
+                        : _subscribeToUpdates),
+              ),
+              Text('$_updateMessageString\n'),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: RaisedButton(

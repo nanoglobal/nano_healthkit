@@ -107,7 +107,7 @@ class HealthDataRequestList extends $pb.GeneratedMessage {
 class HealthData extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('HealthData')
     ..e<HealthTypes>(1, 'type', $pb.PbFieldType.OE, HealthTypes.WORKOUT_MAIN, HealthTypes.valueOf, HealthTypes.values)
-    ..aOS(2, 'sampleType')
+    ..aOS(2, 'objectType')
     ..aOS(3, 'startDate')
     ..aOS(4, 'endDate')
     ..aOS(5, 'device')
@@ -144,10 +144,10 @@ class HealthData extends $pb.GeneratedMessage {
   $core.bool hasType() => $_has(0);
   void clearType() => clearField(1);
 
-  $core.String get sampleType => $_getS(1, '');
-  set sampleType($core.String v) { $_setString(1, v); }
-  $core.bool hasSampleType() => $_has(1);
-  void clearSampleType() => clearField(2);
+  $core.String get objectType => $_getS(1, '');
+  set objectType($core.String v) { $_setString(1, v); }
+  $core.bool hasObjectType() => $_has(1);
+  void clearObjectType() => clearField(2);
 
   $core.String get startDate => $_getS(2, '');
   set startDate($core.String v) { $_setString(2, v); }
