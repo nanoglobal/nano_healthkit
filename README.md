@@ -4,11 +4,28 @@
 
 To modify the model, change the .proto files.
 
+Add the plugin to your project's `pubspec.yaml`:
+
+```yaml
+dependencies:
+  git:
+    url: git@github.com:nanoglobal/nano-healthkit-plugin-flutter.git
+    ref: develop
+```
+
 ## Requirements
 
 The plugin needs a deployment target of at least iOS 9.0.
 
+HealthKit must be enabled through Xcode and entitlements must be added to the project `Info.plist`:
+
+![alt text](https://docs-assets.developer.apple.com/published/749e5c40bb/c46af629-7d07-4402-98fc-c9657cfc5594.png "Enable HealthKit capabilities")
+
+For more information about enabling HealthKit, [read the Apple Documentation](https://developer.apple.com/documentation/healthkit/setting_up_healthkit)
+
 For more information check out the Example project.
+
+## Importing into existing Flutter application
 
 
 ## Usage
