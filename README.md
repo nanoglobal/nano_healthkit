@@ -17,6 +17,8 @@ dependencies:
 
 The plugin needs a deployment target of at least iOS 9.0.
 
+The flutter project must be created with Swift enabled for iOS.
+
 HealthKit must be enabled through Xcode and entitlements must be added to the project `Info.plist`:
 
 ![alt text](https://docs-assets.developer.apple.com/published/749e5c40bb/c46af629-7d07-4402-98fc-c9657cfc5594.png "Enable HealthKit capabilities")
