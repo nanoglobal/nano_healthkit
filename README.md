@@ -2,8 +2,6 @@
 
 ## Installation
 
-To modify the model, change the .proto files.
-
 Add the plugin to your project's `pubspec.yaml`:
 
 ```yaml
