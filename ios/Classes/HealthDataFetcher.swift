@@ -55,20 +55,34 @@ class HealthDataFetcher: NSObject {
     // MARK: Subscriptions
     
     func unsubscribeToUpdates(result: @escaping (Bool, Error?) -> Void) {
+        
+        for query in HealthDataUtils.subscriptionQueries {
+            HealthDataUtils.healthStore?.stop(query)
+        }
         HealthDataUtils.healthStore?.disableAllBackgroundDelivery(completion: result)
     }
     
     func subscribeToUpdates(for healthTypeList: HealthTypeList, healthStore: HKHealthStore, result: @escaping (Bool, Error?) -> Void) {
         
         // First unsubscribe, once finished subscribe
-        unsubscribeToUpdates(result: { success, error in
+        unsubscribeToUpdates(result: { [weak self] success, error in
+            
+            if self == nil {
+                return
+            }
             
             // Subscribe
+            HealthDataUtils.subscriptionQueries = []
             
             // Filter all unexisting types and only types that can be Sampled
             let filteredTypes: [(HealthTypes, HKSampleType)] = HealthDataUtils.makeFilteredToupleList(from: healthTypeList)
             // For each type, subscribe
             for (index, touple) in filteredTypes.enumerated() {
+                
+                // Make data fetch query for the current touple value
+                let query = self!.subscribeQuery(for: touple, healthStore: healthStore, result: result)
+                HealthDataUtils.subscriptionQueries.append(query)
+                healthStore.execute(query)
                 
                 healthStore.enableBackgroundDelivery(for: touple.1, frequency: .immediate, withCompletion: {
                     [weak self] success, error in
@@ -82,14 +96,10 @@ class HealthDataFetcher: NSObject {
                         abort()
                     }
                     
-                    let query = self!.subscribeQuery(for: touple, healthStore: healthStore, result: result)
-                    healthStore.execute(query)
-                    
                     // On last subscribe, call completion
                     if index == (filteredTypes.count - 1) {
                         result(true, nil)
                     }
-                    
                 })
             }
         })
@@ -126,7 +136,6 @@ class HealthDataFetcher: NSObject {
                 }
                 
                 // NOTE: There's no way to delete values on current api version so it will be ignored for now
-                
                 if newAnchor != nil && newAnchor != hkAnchor {
                     self?.saveAnchor(anchor: newAnchor!, anchorKey: touple.1.description)
                 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:nano_healthkit_plugin/nano_healthkit_plugin.dart';
 import 'package:nano_healthkit_plugin/healthdata.pb.dart';
 import 'package:nano_healthkit_plugin/healthdata.pbenum.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,6 +22,7 @@ class _MyAppState extends State<MyApp> {
   String _updateStatusString = "";
   String _updateMessageString = "";
   bool _isSubscribed = false;
+  String _pulledBackgroundDataString = "";
 
   StreamSubscription _subscription = null;
 
@@ -75,6 +77,7 @@ class _MyAppState extends State<MyApp> {
 
   _unsubscribeToUpdates() {
     NanoHealthkitPlugin.unsubscribeToUpdates(_subscription);
+    _subscription = null;
     setState(() {
       _isSubscribed = false;
       _updateMessageString = "";
@@ -82,9 +85,26 @@ class _MyAppState extends State<MyApp> {
   }
 
   _updatesReceived(HealthDataList updates) {
+    _saveUpdateData(updates);
     setState(() {
       _updateMessageString = updates.toString();
     });
+  }
+
+  _saveUpdateData(HealthDataList updates) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> saves = prefs.getStringList("savedUpdates") ?? List<String>();
+    saves.add(updates.toString() + "\n");
+    prefs.setStringList("savedUpdates", saves);
+  }
+
+  _pullSavedData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> saves = prefs.getStringList("savedUpdates") ?? List<String>();
+    setState(() {
+      _pulledBackgroundDataString = saves.toString();
+    });
+    saves.clear();
   }
 
   @override
@@ -128,6 +148,13 @@ class _MyAppState extends State<MyApp> {
                         : _subscribeToUpdates),
               ),
               Text('$_updateMessageString\n'),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: RaisedButton(
+                    child: Text("Pull saved updates"),
+                    onPressed: _pullSavedData),
+              ),
+              Text('Saved data: $_pulledBackgroundDataString\n'),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: RaisedButton(

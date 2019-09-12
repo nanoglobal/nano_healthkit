@@ -5,6 +5,7 @@ class HealthDataUtils: NSObject {
     
     static let global = HealthDataUtils()
     static var healthStore: HKHealthStore?
+    static var subscriptionQueries:[HKObserverQuery] = []
     let dataFetcher = HealthDataFetcher()
     var updateHandler: ((Any?, Error?) -> Void)?
     
