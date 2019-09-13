@@ -49,9 +49,15 @@ class _MyAppState extends State<MyApp> {
     request.startDate = "2019-06-19T18:58:00.000Z";
     request.endDate = "2019-09-19T20:58:00.000Z";
     request.limit = 2;
-    var basicHealth = await NanoHealthkitPlugin.fetchData(request);
+    var resultToShow = "";
+    try {
+      var basicHealth = await NanoHealthkitPlugin.fetchData(request);
+      resultToShow = basicHealth.toString();
+    } on Exception catch (error) {
+      resultToShow = error.toString();
+    }
     setState(() {
-      _basicHealthString = basicHealth.toString();
+      _basicHealthString = resultToShow;
     });
   }
 
