@@ -118,7 +118,7 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
     private func sendResult(target: @escaping FlutterResult, response origin: Any?, error: Error?) {
         
         if error != nil {
-            target(error!)
+            target(error!.convertToFlutter())
             return
         }
         var response = origin
@@ -126,10 +126,25 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
             do {
                 response = try originMessage.serializedData()
             } catch {
-                target(SimpleLocalizedError("Can't serialize data to send"))
+                target(SimpleLocalizedError("Can't serialize data to send").convertToFlutter())
                 return
             }
         }
         target(response)
+    }
+}
+
+extension Error {
+    
+    func convertToFlutter() -> FlutterError {
+        
+        let nserror = self as NSError
+        var code = "\(nserror.code)"
+        var message = nserror.domain
+        if let simpleerror = (self as? SimpleLocalizedError) {
+            code = "\(simpleerror.code)"
+            message = (simpleerror.title?.isEmpty ?? true) ? message : simpleerror.title!
+        }
+        return FlutterError(code: code, message: message, details: self.localizedDescription)
     }
 }

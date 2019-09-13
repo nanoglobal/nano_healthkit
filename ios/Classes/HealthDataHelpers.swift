@@ -129,7 +129,7 @@ struct SimpleLocalizedError: LocalizedError {
     private var _description: String
     
     init(title: String? = nil, _ description: String, code: Int = 0) {
-        self.title = title == nil ? "error_generic_title" : title
+        self.title = title == nil ? "" : title
         self._description = description
         self.code = code
     }
