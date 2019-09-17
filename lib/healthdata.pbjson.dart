@@ -105,6 +105,13 @@ const HealthTypes$json = const {
     const {'1': 'CHARACTERISTIC_DATE_OF_BIRTH', '2': 94},
     const {'1': 'CHARACTERISTIC_FITZPATRICK_SKIN_TYPE', '2': 95},
     const {'1': 'CHARACTERISTIC_WHEELCHAIR_USE', '2': 96},
+    const {'1': 'CLINICAL_ALLERGY_RECORD', '2': 97},
+    const {'1': 'CLINICAL_CONDITION_RECORD', '2': 98},
+    const {'1': 'CLINICAL_IMMUNIZATION_RECORD', '2': 99},
+    const {'1': 'CLINICAL_LAB_RESULT_RECORD', '2': 100},
+    const {'1': 'CLINICAL_MEDICATION_RECORD', '2': 101},
+    const {'1': 'CLINICAL_PROCEDURE_RECORD', '2': 102},
+    const {'1': 'CLINICAL_VITAL_SIGN_RECORD', '2': 103},
   ],
 };
 
@@ -151,6 +158,8 @@ const HealthData$json = const {
     const {'1': 'totalDistanceUnit', '3': 14, '4': 1, '5': 9, '10': 'totalDistanceUnit'},
     const {'1': 'duration', '3': 15, '4': 1, '5': 1, '10': 'duration'},
     const {'1': 'customValue', '3': 16, '4': 1, '5': 9, '10': 'customValue'},
+    const {'1': 'displayName', '3': 17, '4': 1, '5': 9, '10': 'displayName'},
+    const {'1': 'fhirResource', '3': 18, '4': 1, '5': 9, '10': 'fhirResource'},
   ],
 };
 

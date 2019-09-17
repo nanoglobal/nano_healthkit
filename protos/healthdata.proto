@@ -98,6 +98,13 @@ enum HealthTypes {
    CHARACTERISTIC_DATE_OF_BIRTH = 94;
    CHARACTERISTIC_FITZPATRICK_SKIN_TYPE = 95;
    CHARACTERISTIC_WHEELCHAIR_USE = 96;
+   CLINICAL_ALLERGY_RECORD = 97;
+   CLINICAL_CONDITION_RECORD = 98;
+   CLINICAL_IMMUNIZATION_RECORD = 99;
+   CLINICAL_LAB_RESULT_RECORD = 100;
+   CLINICAL_MEDICATION_RECORD = 101;
+   CLINICAL_PROCEDURE_RECORD = 102;
+   CLINICAL_VITAL_SIGN_RECORD = 103;
 }
 
 message HealthTypeList {
@@ -132,6 +139,8 @@ message HealthData {
    string totalDistanceUnit = 14;
    double duration = 15;
    string customValue = 16;
+   string displayName = 17;
+   string fhirResource = 18;
 }
 
 message HealthDataList {

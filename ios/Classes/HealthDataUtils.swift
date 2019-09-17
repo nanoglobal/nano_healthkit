@@ -5,7 +5,7 @@ class HealthDataUtils: NSObject {
     
     static let global = HealthDataUtils()
     static var healthStore: HKHealthStore?
-    static var subscriptionQueries:[HKObserverQuery] = []
+    static var subscriptionQueries: [HKObserverQuery] = []
     let dataFetcher = HealthDataFetcher()
     var updateHandler: ((Any?, Error?) -> Void)?
     
@@ -15,6 +15,7 @@ class HealthDataUtils: NSObject {
     static var CATEGORY_TYPES: [HKCategoryTypeIdentifier] = []
     static var QUANTITY_TYPES: [(HKQuantityTypeIdentifier, HKUnit?)] = []
     static var CHARACTERISTIC_TYPES: [(HKCharacteristicTypeIdentifier, (HKHealthStore) -> Any?)] = []
+    static var CLINICAL_TYPES: [Any] = []
     
     override init() {
         super.init()

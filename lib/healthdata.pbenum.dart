@@ -107,6 +107,13 @@ class HealthTypes extends $pb.ProtobufEnum {
   static const HealthTypes CHARACTERISTIC_DATE_OF_BIRTH = HealthTypes._(94, 'CHARACTERISTIC_DATE_OF_BIRTH');
   static const HealthTypes CHARACTERISTIC_FITZPATRICK_SKIN_TYPE = HealthTypes._(95, 'CHARACTERISTIC_FITZPATRICK_SKIN_TYPE');
   static const HealthTypes CHARACTERISTIC_WHEELCHAIR_USE = HealthTypes._(96, 'CHARACTERISTIC_WHEELCHAIR_USE');
+  static const HealthTypes CLINICAL_ALLERGY_RECORD = HealthTypes._(97, 'CLINICAL_ALLERGY_RECORD');
+  static const HealthTypes CLINICAL_CONDITION_RECORD = HealthTypes._(98, 'CLINICAL_CONDITION_RECORD');
+  static const HealthTypes CLINICAL_IMMUNIZATION_RECORD = HealthTypes._(99, 'CLINICAL_IMMUNIZATION_RECORD');
+  static const HealthTypes CLINICAL_LAB_RESULT_RECORD = HealthTypes._(100, 'CLINICAL_LAB_RESULT_RECORD');
+  static const HealthTypes CLINICAL_MEDICATION_RECORD = HealthTypes._(101, 'CLINICAL_MEDICATION_RECORD');
+  static const HealthTypes CLINICAL_PROCEDURE_RECORD = HealthTypes._(102, 'CLINICAL_PROCEDURE_RECORD');
+  static const HealthTypes CLINICAL_VITAL_SIGN_RECORD = HealthTypes._(103, 'CLINICAL_VITAL_SIGN_RECORD');
 
   static const $core.List<HealthTypes> values = <HealthTypes> [
     WORKOUT_MAIN,
@@ -206,6 +213,13 @@ class HealthTypes extends $pb.ProtobufEnum {
     CHARACTERISTIC_DATE_OF_BIRTH,
     CHARACTERISTIC_FITZPATRICK_SKIN_TYPE,
     CHARACTERISTIC_WHEELCHAIR_USE,
+    CLINICAL_ALLERGY_RECORD,
+    CLINICAL_CONDITION_RECORD,
+    CLINICAL_IMMUNIZATION_RECORD,
+    CLINICAL_LAB_RESULT_RECORD,
+    CLINICAL_MEDICATION_RECORD,
+    CLINICAL_PROCEDURE_RECORD,
+    CLINICAL_VITAL_SIGN_RECORD,
   ];
 
   static final $core.Map<$core.int, HealthTypes> _byValue = $pb.ProtobufEnum.initByValue(values);
