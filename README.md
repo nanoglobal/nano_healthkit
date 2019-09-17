@@ -30,7 +30,20 @@ NSHealthUpdateUsageDescription, NSHealthShareUsageDescription and optionally (if
 
 For more information check out the Example project.
 
-## Importing into existing Flutter application
+## HealthTypes
+
+The full list of [supported HealthTypes can be found here](https://github.com/nanoglobal/nano-healthkit-plugin-flutter/blob/feat/health_records/protos/healthdata.proto)
+
+Depending on the nature of the sample type, the HealthType will have a suffix that indicates so. Currently there are:
+- Category
+- Quantity
+- Workout
+- Characteristic
+- Clinical\*
+
+Each of them have many subtypes inside (except for Workout). 
+
+\*	If not planing on reading any clinical records (aka Health Records), just don't use any HealthType that has the _CLINICAL_ suffix on it (no need to add it on the Capabilities of the app neither).
 
 
 ## Usage
