@@ -19,6 +19,8 @@ extension HealthDataFetcher {
                 singleData = saveAsData(sampleType: sampleType, value: quantitySample, healthType: healthType)
             } else if let categorySample = sample as? HKCategorySample {
                 singleData = saveAsData(sampleType: sampleType, value: categorySample, healthType: healthType)
+            } else if #available(iOS 12.0, *), let clinicalSample = sample as? HKClinicalRecord {
+                singleData = saveAsData(sampleType: sampleType, value: clinicalSample, healthType: healthType)
             }
             
             if singleData != nil {
@@ -80,6 +82,17 @@ extension HealthDataFetcher {
         data.totalDistance = value.totalDistance?.doubleValue(for: .meter()) ?? 0
         data.totalDistanceUnit = HKUnit.meter().unitString
         data.duration = value.duration
+        return data
+    }
+    
+    @available(iOS 12.0, *)
+    func saveAsData(sampleType: HKSampleType, value: HKClinicalRecord, healthType: HealthTypes) -> HealthData {
+        
+        var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
+        data.displayName = value.displayName
+        if let fhirData = value.fhirResource?.data, let fhirJson = String(data: fhirData, encoding: .ascii) {
+            data.fhirResource = fhirJson
+        }
         return data
     }
     

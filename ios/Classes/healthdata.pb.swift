@@ -118,6 +118,13 @@ enum HealthTypes: SwiftProtobuf.Enum {
   case characteristicDateOfBirth // = 94
   case characteristicFitzpatrickSkinType // = 95
   case characteristicWheelchairUse // = 96
+  case clinicalAllergyRecord // = 97
+  case clinicalConditionRecord // = 98
+  case clinicalImmunizationRecord // = 99
+  case clinicalLabResultRecord // = 100
+  case clinicalMedicationRecord // = 101
+  case clinicalProcedureRecord // = 102
+  case clinicalVitalSignRecord // = 103
   case UNRECOGNIZED(Int)
 
   init() {
@@ -223,6 +230,13 @@ enum HealthTypes: SwiftProtobuf.Enum {
     case 94: self = .characteristicDateOfBirth
     case 95: self = .characteristicFitzpatrickSkinType
     case 96: self = .characteristicWheelchairUse
+    case 97: self = .clinicalAllergyRecord
+    case 98: self = .clinicalConditionRecord
+    case 99: self = .clinicalImmunizationRecord
+    case 100: self = .clinicalLabResultRecord
+    case 101: self = .clinicalMedicationRecord
+    case 102: self = .clinicalProcedureRecord
+    case 103: self = .clinicalVitalSignRecord
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -326,6 +340,13 @@ enum HealthTypes: SwiftProtobuf.Enum {
     case .characteristicDateOfBirth: return 94
     case .characteristicFitzpatrickSkinType: return 95
     case .characteristicWheelchairUse: return 96
+    case .clinicalAllergyRecord: return 97
+    case .clinicalConditionRecord: return 98
+    case .clinicalImmunizationRecord: return 99
+    case .clinicalLabResultRecord: return 100
+    case .clinicalMedicationRecord: return 101
+    case .clinicalProcedureRecord: return 102
+    case .clinicalVitalSignRecord: return 103
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -434,6 +455,13 @@ extension HealthTypes: CaseIterable {
     .characteristicDateOfBirth,
     .characteristicFitzpatrickSkinType,
     .characteristicWheelchairUse,
+    .clinicalAllergyRecord,
+    .clinicalConditionRecord,
+    .clinicalImmunizationRecord,
+    .clinicalLabResultRecord,
+    .clinicalMedicationRecord,
+    .clinicalProcedureRecord,
+    .clinicalVitalSignRecord,
   ]
 }
 
@@ -486,41 +514,101 @@ struct HealthData {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var type: HealthTypes = .workoutMain
+  var type: HealthTypes {
+    get {return _storage._type}
+    set {_uniqueStorage()._type = newValue}
+  }
 
-  var objectType: String = String()
+  var objectType: String {
+    get {return _storage._objectType}
+    set {_uniqueStorage()._objectType = newValue}
+  }
 
-  var startDate: String = String()
+  var startDate: String {
+    get {return _storage._startDate}
+    set {_uniqueStorage()._startDate = newValue}
+  }
 
-  var endDate: String = String()
+  var endDate: String {
+    get {return _storage._endDate}
+    set {_uniqueStorage()._endDate = newValue}
+  }
 
-  var device: String = String()
+  var device: String {
+    get {return _storage._device}
+    set {_uniqueStorage()._device = newValue}
+  }
 
-  var metadata: String = String()
+  var metadata: String {
+    get {return _storage._metadata}
+    set {_uniqueStorage()._metadata = newValue}
+  }
 
-  var count: Int64 = 0
+  var count: Int64 {
+    get {return _storage._count}
+    set {_uniqueStorage()._count = newValue}
+  }
 
-  var quantityUnit: String = String()
+  var quantityUnit: String {
+    get {return _storage._quantityUnit}
+    set {_uniqueStorage()._quantityUnit = newValue}
+  }
 
-  var quantity: Double = 0
+  var quantity: Double {
+    get {return _storage._quantity}
+    set {_uniqueStorage()._quantity = newValue}
+  }
 
-  var value: Int64 = 0
+  var value: Int64 {
+    get {return _storage._value}
+    set {_uniqueStorage()._value = newValue}
+  }
 
-  var totalEnergyBurned: Double = 0
+  var totalEnergyBurned: Double {
+    get {return _storage._totalEnergyBurned}
+    set {_uniqueStorage()._totalEnergyBurned = newValue}
+  }
 
-  var totalEnergyBurnedUnit: String = String()
+  var totalEnergyBurnedUnit: String {
+    get {return _storage._totalEnergyBurnedUnit}
+    set {_uniqueStorage()._totalEnergyBurnedUnit = newValue}
+  }
 
-  var totalDistance: Double = 0
+  var totalDistance: Double {
+    get {return _storage._totalDistance}
+    set {_uniqueStorage()._totalDistance = newValue}
+  }
 
-  var totalDistanceUnit: String = String()
+  var totalDistanceUnit: String {
+    get {return _storage._totalDistanceUnit}
+    set {_uniqueStorage()._totalDistanceUnit = newValue}
+  }
 
-  var duration: Double = 0
+  var duration: Double {
+    get {return _storage._duration}
+    set {_uniqueStorage()._duration = newValue}
+  }
 
-  var customValue: String = String()
+  var customValue: String {
+    get {return _storage._customValue}
+    set {_uniqueStorage()._customValue = newValue}
+  }
+
+  var displayName: String {
+    get {return _storage._displayName}
+    set {_uniqueStorage()._displayName = newValue}
+  }
+
+  var fhirResource: String {
+    get {return _storage._fhirResource}
+    set {_uniqueStorage()._fhirResource = newValue}
+  }
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
+
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 struct HealthDataList {
@@ -636,6 +724,13 @@ extension HealthTypes: SwiftProtobuf._ProtoNameProviding {
     94: .same(proto: "CHARACTERISTIC_DATE_OF_BIRTH"),
     95: .same(proto: "CHARACTERISTIC_FITZPATRICK_SKIN_TYPE"),
     96: .same(proto: "CHARACTERISTIC_WHEELCHAIR_USE"),
+    97: .same(proto: "CLINICAL_ALLERGY_RECORD"),
+    98: .same(proto: "CLINICAL_CONDITION_RECORD"),
+    99: .same(proto: "CLINICAL_IMMUNIZATION_RECORD"),
+    100: .same(proto: "CLINICAL_LAB_RESULT_RECORD"),
+    101: .same(proto: "CLINICAL_MEDICATION_RECORD"),
+    102: .same(proto: "CLINICAL_PROCEDURE_RECORD"),
+    103: .same(proto: "CLINICAL_VITAL_SIGN_RECORD"),
   ]
 }
 
@@ -763,101 +858,179 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     14: .same(proto: "totalDistanceUnit"),
     15: .same(proto: "duration"),
     16: .same(proto: "customValue"),
+    17: .same(proto: "displayName"),
+    18: .same(proto: "fhirResource"),
   ]
 
+  fileprivate class _StorageClass {
+    var _type: HealthTypes = .workoutMain
+    var _objectType: String = String()
+    var _startDate: String = String()
+    var _endDate: String = String()
+    var _device: String = String()
+    var _metadata: String = String()
+    var _count: Int64 = 0
+    var _quantityUnit: String = String()
+    var _quantity: Double = 0
+    var _value: Int64 = 0
+    var _totalEnergyBurned: Double = 0
+    var _totalEnergyBurnedUnit: String = String()
+    var _totalDistance: Double = 0
+    var _totalDistanceUnit: String = String()
+    var _duration: Double = 0
+    var _customValue: String = String()
+    var _displayName: String = String()
+    var _fhirResource: String = String()
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _type = source._type
+      _objectType = source._objectType
+      _startDate = source._startDate
+      _endDate = source._endDate
+      _device = source._device
+      _metadata = source._metadata
+      _count = source._count
+      _quantityUnit = source._quantityUnit
+      _quantity = source._quantity
+      _value = source._value
+      _totalEnergyBurned = source._totalEnergyBurned
+      _totalEnergyBurnedUnit = source._totalEnergyBurnedUnit
+      _totalDistance = source._totalDistance
+      _totalDistanceUnit = source._totalDistanceUnit
+      _duration = source._duration
+      _customValue = source._customValue
+      _displayName = source._displayName
+      _fhirResource = source._fhirResource
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularEnumField(value: &self.type)
-      case 2: try decoder.decodeSingularStringField(value: &self.objectType)
-      case 3: try decoder.decodeSingularStringField(value: &self.startDate)
-      case 4: try decoder.decodeSingularStringField(value: &self.endDate)
-      case 5: try decoder.decodeSingularStringField(value: &self.device)
-      case 6: try decoder.decodeSingularStringField(value: &self.metadata)
-      case 7: try decoder.decodeSingularInt64Field(value: &self.count)
-      case 8: try decoder.decodeSingularStringField(value: &self.quantityUnit)
-      case 9: try decoder.decodeSingularDoubleField(value: &self.quantity)
-      case 10: try decoder.decodeSingularInt64Field(value: &self.value)
-      case 11: try decoder.decodeSingularDoubleField(value: &self.totalEnergyBurned)
-      case 12: try decoder.decodeSingularStringField(value: &self.totalEnergyBurnedUnit)
-      case 13: try decoder.decodeSingularDoubleField(value: &self.totalDistance)
-      case 14: try decoder.decodeSingularStringField(value: &self.totalDistanceUnit)
-      case 15: try decoder.decodeSingularDoubleField(value: &self.duration)
-      case 16: try decoder.decodeSingularStringField(value: &self.customValue)
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        switch fieldNumber {
+        case 1: try decoder.decodeSingularEnumField(value: &_storage._type)
+        case 2: try decoder.decodeSingularStringField(value: &_storage._objectType)
+        case 3: try decoder.decodeSingularStringField(value: &_storage._startDate)
+        case 4: try decoder.decodeSingularStringField(value: &_storage._endDate)
+        case 5: try decoder.decodeSingularStringField(value: &_storage._device)
+        case 6: try decoder.decodeSingularStringField(value: &_storage._metadata)
+        case 7: try decoder.decodeSingularInt64Field(value: &_storage._count)
+        case 8: try decoder.decodeSingularStringField(value: &_storage._quantityUnit)
+        case 9: try decoder.decodeSingularDoubleField(value: &_storage._quantity)
+        case 10: try decoder.decodeSingularInt64Field(value: &_storage._value)
+        case 11: try decoder.decodeSingularDoubleField(value: &_storage._totalEnergyBurned)
+        case 12: try decoder.decodeSingularStringField(value: &_storage._totalEnergyBurnedUnit)
+        case 13: try decoder.decodeSingularDoubleField(value: &_storage._totalDistance)
+        case 14: try decoder.decodeSingularStringField(value: &_storage._totalDistanceUnit)
+        case 15: try decoder.decodeSingularDoubleField(value: &_storage._duration)
+        case 16: try decoder.decodeSingularStringField(value: &_storage._customValue)
+        case 17: try decoder.decodeSingularStringField(value: &_storage._displayName)
+        case 18: try decoder.decodeSingularStringField(value: &_storage._fhirResource)
+        default: break
+        }
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.type != .workoutMain {
-      try visitor.visitSingularEnumField(value: self.type, fieldNumber: 1)
-    }
-    if !self.objectType.isEmpty {
-      try visitor.visitSingularStringField(value: self.objectType, fieldNumber: 2)
-    }
-    if !self.startDate.isEmpty {
-      try visitor.visitSingularStringField(value: self.startDate, fieldNumber: 3)
-    }
-    if !self.endDate.isEmpty {
-      try visitor.visitSingularStringField(value: self.endDate, fieldNumber: 4)
-    }
-    if !self.device.isEmpty {
-      try visitor.visitSingularStringField(value: self.device, fieldNumber: 5)
-    }
-    if !self.metadata.isEmpty {
-      try visitor.visitSingularStringField(value: self.metadata, fieldNumber: 6)
-    }
-    if self.count != 0 {
-      try visitor.visitSingularInt64Field(value: self.count, fieldNumber: 7)
-    }
-    if !self.quantityUnit.isEmpty {
-      try visitor.visitSingularStringField(value: self.quantityUnit, fieldNumber: 8)
-    }
-    if self.quantity != 0 {
-      try visitor.visitSingularDoubleField(value: self.quantity, fieldNumber: 9)
-    }
-    if self.value != 0 {
-      try visitor.visitSingularInt64Field(value: self.value, fieldNumber: 10)
-    }
-    if self.totalEnergyBurned != 0 {
-      try visitor.visitSingularDoubleField(value: self.totalEnergyBurned, fieldNumber: 11)
-    }
-    if !self.totalEnergyBurnedUnit.isEmpty {
-      try visitor.visitSingularStringField(value: self.totalEnergyBurnedUnit, fieldNumber: 12)
-    }
-    if self.totalDistance != 0 {
-      try visitor.visitSingularDoubleField(value: self.totalDistance, fieldNumber: 13)
-    }
-    if !self.totalDistanceUnit.isEmpty {
-      try visitor.visitSingularStringField(value: self.totalDistanceUnit, fieldNumber: 14)
-    }
-    if self.duration != 0 {
-      try visitor.visitSingularDoubleField(value: self.duration, fieldNumber: 15)
-    }
-    if !self.customValue.isEmpty {
-      try visitor.visitSingularStringField(value: self.customValue, fieldNumber: 16)
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      if _storage._type != .workoutMain {
+        try visitor.visitSingularEnumField(value: _storage._type, fieldNumber: 1)
+      }
+      if !_storage._objectType.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._objectType, fieldNumber: 2)
+      }
+      if !_storage._startDate.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._startDate, fieldNumber: 3)
+      }
+      if !_storage._endDate.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._endDate, fieldNumber: 4)
+      }
+      if !_storage._device.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._device, fieldNumber: 5)
+      }
+      if !_storage._metadata.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._metadata, fieldNumber: 6)
+      }
+      if _storage._count != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._count, fieldNumber: 7)
+      }
+      if !_storage._quantityUnit.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._quantityUnit, fieldNumber: 8)
+      }
+      if _storage._quantity != 0 {
+        try visitor.visitSingularDoubleField(value: _storage._quantity, fieldNumber: 9)
+      }
+      if _storage._value != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._value, fieldNumber: 10)
+      }
+      if _storage._totalEnergyBurned != 0 {
+        try visitor.visitSingularDoubleField(value: _storage._totalEnergyBurned, fieldNumber: 11)
+      }
+      if !_storage._totalEnergyBurnedUnit.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._totalEnergyBurnedUnit, fieldNumber: 12)
+      }
+      if _storage._totalDistance != 0 {
+        try visitor.visitSingularDoubleField(value: _storage._totalDistance, fieldNumber: 13)
+      }
+      if !_storage._totalDistanceUnit.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._totalDistanceUnit, fieldNumber: 14)
+      }
+      if _storage._duration != 0 {
+        try visitor.visitSingularDoubleField(value: _storage._duration, fieldNumber: 15)
+      }
+      if !_storage._customValue.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._customValue, fieldNumber: 16)
+      }
+      if !_storage._displayName.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._displayName, fieldNumber: 17)
+      }
+      if !_storage._fhirResource.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._fhirResource, fieldNumber: 18)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: HealthData, rhs: HealthData) -> Bool {
-    if lhs.type != rhs.type {return false}
-    if lhs.objectType != rhs.objectType {return false}
-    if lhs.startDate != rhs.startDate {return false}
-    if lhs.endDate != rhs.endDate {return false}
-    if lhs.device != rhs.device {return false}
-    if lhs.metadata != rhs.metadata {return false}
-    if lhs.count != rhs.count {return false}
-    if lhs.quantityUnit != rhs.quantityUnit {return false}
-    if lhs.quantity != rhs.quantity {return false}
-    if lhs.value != rhs.value {return false}
-    if lhs.totalEnergyBurned != rhs.totalEnergyBurned {return false}
-    if lhs.totalEnergyBurnedUnit != rhs.totalEnergyBurnedUnit {return false}
-    if lhs.totalDistance != rhs.totalDistance {return false}
-    if lhs.totalDistanceUnit != rhs.totalDistanceUnit {return false}
-    if lhs.duration != rhs.duration {return false}
-    if lhs.customValue != rhs.customValue {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._type != rhs_storage._type {return false}
+        if _storage._objectType != rhs_storage._objectType {return false}
+        if _storage._startDate != rhs_storage._startDate {return false}
+        if _storage._endDate != rhs_storage._endDate {return false}
+        if _storage._device != rhs_storage._device {return false}
+        if _storage._metadata != rhs_storage._metadata {return false}
+        if _storage._count != rhs_storage._count {return false}
+        if _storage._quantityUnit != rhs_storage._quantityUnit {return false}
+        if _storage._quantity != rhs_storage._quantity {return false}
+        if _storage._value != rhs_storage._value {return false}
+        if _storage._totalEnergyBurned != rhs_storage._totalEnergyBurned {return false}
+        if _storage._totalEnergyBurnedUnit != rhs_storage._totalEnergyBurnedUnit {return false}
+        if _storage._totalDistance != rhs_storage._totalDistance {return false}
+        if _storage._totalDistanceUnit != rhs_storage._totalDistanceUnit {return false}
+        if _storage._duration != rhs_storage._duration {return false}
+        if _storage._customValue != rhs_storage._customValue {return false}
+        if _storage._displayName != rhs_storage._displayName {return false}
+        if _storage._fhirResource != rhs_storage._fhirResource {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

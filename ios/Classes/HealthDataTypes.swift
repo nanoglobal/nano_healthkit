@@ -8,6 +8,7 @@ extension HealthDataUtils {
         case quantity
         case workout
         case characteristic
+        case clinical
     }
     
     private static var WORKOUT_TYPES_V8_0: [HKSampleType] = [
@@ -159,6 +160,17 @@ extension HealthDataUtils {
         (.wheelchairUse, { try? $0.wheelchairUse().wheelchairUse.rawValue }), // Enum, Int
     ]
     
+    @available(iOS 12.0, *)
+    private static var CLINICAL_TYPES_V12_0: [HKClinicalTypeIdentifier] = [
+        .allergyRecord,
+        .conditionRecord,
+        .immunizationRecord,
+        .labResultRecord,
+        .medicationRecord,
+        .procedureRecord,
+        .vitalSignRecord,
+    ]
+    
     private static var TYPE_INDEXES: [HealthTypes: (Int, SampleTypes)] = [
         .workoutMain: (0, .workout),
         .categorySleepAnalysis: (0, .category),
@@ -257,6 +269,13 @@ extension HealthDataUtils {
         .characteristicDateOfBirth: (2, .characteristic),
         .characteristicFitzpatrickSkinType: (3, .characteristic),
         .characteristicWheelchairUse: (4, .characteristic),
+        .clinicalAllergyRecord: (0, .clinical),
+        .clinicalConditionRecord: (1, .clinical),
+        .clinicalImmunizationRecord: (2, .clinical),
+        .clinicalLabResultRecord: (3, .clinical),
+        .clinicalMedicationRecord: (4, .clinical),
+        .clinicalProcedureRecord: (5, .clinical),
+        .clinicalVitalSignRecord: (6, .clinical),
     ]
     
     func fillTypes() {
@@ -290,6 +309,10 @@ extension HealthDataUtils {
             HealthDataUtils.QUANTITY_TYPES.append(contentsOf: HealthDataUtils.QUANTITY_TYPES_V11_2)
         }
         
+        if #available(iOS 12.0, *) {
+            HealthDataUtils.CLINICAL_TYPES.append(contentsOf: HealthDataUtils.CLINICAL_TYPES_V12_0)
+        }
+        
         if #available(iOS 12.2, *) {
             HealthDataUtils.CATEGORY_TYPES.append(contentsOf: HealthDataUtils.CATEGORY_TYPES_V12_2)
         }
@@ -310,6 +333,8 @@ extension HealthDataUtils {
             totalAmount = HealthDataUtils.CATEGORY_TYPES.count
         case .characteristic:
             totalAmount = HealthDataUtils.CHARACTERISTIC_TYPES.count
+        case .clinical:
+            totalAmount = HealthDataUtils.CLINICAL_TYPES.count
         }
         return totalAmount <= index.0 ? nil : index
     }
@@ -334,6 +359,8 @@ extension HealthDataUtils {
             return getCategoryType(index.0)
         case .characteristic:
             return getCharacteristicType(index.0)
+        case .clinical:
+            return getClinicalType(index.0)
         }
     }
     
@@ -353,6 +380,15 @@ extension HealthDataUtils {
         
         let identifier = HealthDataUtils.CHARACTERISTIC_TYPES[index].0
         return HKObjectType.characteristicType(forIdentifier: identifier)
+    }
+    
+    private static func getClinicalType(_ index: Int) -> HKSampleType? {
+        
+        if #available(iOS 12.0, *) {
+            let identifier = HealthDataUtils.CLINICAL_TYPES[index] as! HKClinicalTypeIdentifier
+            return HKObjectType.clinicalType(forIdentifier: identifier)
+        }
+        return nil
     }
     
     static func makeHKObjectSet(from list: HealthTypeList) -> Set<HKObjectType> {

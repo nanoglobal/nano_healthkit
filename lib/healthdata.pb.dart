@@ -122,6 +122,8 @@ class HealthData extends $pb.GeneratedMessage {
     ..aOS(14, 'totalDistanceUnit')
     ..a<$core.double>(15, 'duration', $pb.PbFieldType.OD)
     ..aOS(16, 'customValue')
+    ..aOS(17, 'displayName')
+    ..aOS(18, 'fhirResource')
     ..hasRequiredFields = false
   ;
 
@@ -218,6 +220,16 @@ class HealthData extends $pb.GeneratedMessage {
   set customValue($core.String v) { $_setString(15, v); }
   $core.bool hasCustomValue() => $_has(15);
   void clearCustomValue() => clearField(16);
+
+  $core.String get displayName => $_getS(16, '');
+  set displayName($core.String v) { $_setString(16, v); }
+  $core.bool hasDisplayName() => $_has(16);
+  void clearDisplayName() => clearField(17);
+
+  $core.String get fhirResource => $_getS(17, '');
+  set fhirResource($core.String v) { $_setString(17, v); }
+  $core.bool hasFhirResource() => $_has(17);
+  void clearFhirResource() => clearField(18);
 }
 
 class HealthDataList extends $pb.GeneratedMessage {
