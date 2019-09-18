@@ -148,18 +148,64 @@ const HealthData$json = const {
     const {'1': 'endDate', '3': 4, '4': 1, '5': 9, '10': 'endDate'},
     const {'1': 'device', '3': 5, '4': 1, '5': 9, '10': 'device'},
     const {'1': 'metadata', '3': 6, '4': 1, '5': 9, '10': 'metadata'},
-    const {'1': 'count', '3': 7, '4': 1, '5': 3, '10': 'count'},
-    const {'1': 'quantityUnit', '3': 8, '4': 1, '5': 9, '10': 'quantityUnit'},
-    const {'1': 'quantity', '3': 9, '4': 1, '5': 1, '10': 'quantity'},
-    const {'1': 'value', '3': 10, '4': 1, '5': 3, '10': 'value'},
-    const {'1': 'totalEnergyBurned', '3': 11, '4': 1, '5': 1, '10': 'totalEnergyBurned'},
-    const {'1': 'totalEnergyBurnedUnit', '3': 12, '4': 1, '5': 9, '10': 'totalEnergyBurnedUnit'},
-    const {'1': 'totalDistance', '3': 13, '4': 1, '5': 1, '10': 'totalDistance'},
-    const {'1': 'totalDistanceUnit', '3': 14, '4': 1, '5': 9, '10': 'totalDistanceUnit'},
-    const {'1': 'duration', '3': 15, '4': 1, '5': 1, '10': 'duration'},
-    const {'1': 'customValue', '3': 16, '4': 1, '5': 9, '10': 'customValue'},
-    const {'1': 'displayName', '3': 17, '4': 1, '5': 9, '10': 'displayName'},
-    const {'1': 'fhirResource', '3': 18, '4': 1, '5': 9, '10': 'fhirResource'},
+    const {'1': 'uuid', '3': 7, '4': 1, '5': 9, '10': 'uuid'},
+    const {'1': 'sourceRevision', '3': 8, '4': 1, '5': 9, '10': 'sourceRevision'},
+    const {'1': 'emptyData', '3': 10, '4': 1, '5': 11, '6': '.HealthData.EmptySpecificData', '9': 0, '10': 'emptyData'},
+    const {'1': 'quantityData', '3': 11, '4': 1, '5': 11, '6': '.HealthData.QuantitySpecificData', '9': 0, '10': 'quantityData'},
+    const {'1': 'categoryData', '3': 12, '4': 1, '5': 11, '6': '.HealthData.CategorySpecificData', '9': 0, '10': 'categoryData'},
+    const {'1': 'workoutData', '3': 13, '4': 1, '5': 11, '6': '.HealthData.WorkoutSpecificData', '9': 0, '10': 'workoutData'},
+    const {'1': 'characteristicData', '3': 14, '4': 1, '5': 11, '6': '.HealthData.CharacteristicSpecificData', '9': 0, '10': 'characteristicData'},
+    const {'1': 'clinicalRecordData', '3': 15, '4': 1, '5': 11, '6': '.HealthData.ClinicalRecordSpecificData', '9': 0, '10': 'clinicalRecordData'},
+  ],
+  '3': const [HealthData_EmptySpecificData$json, HealthData_QuantitySpecificData$json, HealthData_CategorySpecificData$json, HealthData_WorkoutSpecificData$json, HealthData_CharacteristicSpecificData$json, HealthData_ClinicalRecordSpecificData$json],
+  '8': const [
+    const {'1': 'specificData'},
+  ],
+};
+
+const HealthData_EmptySpecificData$json = const {
+  '1': 'EmptySpecificData',
+};
+
+const HealthData_QuantitySpecificData$json = const {
+  '1': 'QuantitySpecificData',
+  '2': const [
+    const {'1': 'count', '3': 101, '4': 1, '5': 3, '10': 'count'},
+    const {'1': 'quantityUnit', '3': 102, '4': 1, '5': 9, '10': 'quantityUnit'},
+    const {'1': 'quantity', '3': 103, '4': 1, '5': 1, '10': 'quantity'},
+  ],
+};
+
+const HealthData_CategorySpecificData$json = const {
+  '1': 'CategorySpecificData',
+  '2': const [
+    const {'1': 'value', '3': 101, '4': 1, '5': 3, '10': 'value'},
+  ],
+};
+
+const HealthData_WorkoutSpecificData$json = const {
+  '1': 'WorkoutSpecificData',
+  '2': const [
+    const {'1': 'totalEnergyBurned', '3': 101, '4': 1, '5': 1, '10': 'totalEnergyBurned'},
+    const {'1': 'totalEnergyBurnedUnit', '3': 102, '4': 1, '5': 9, '10': 'totalEnergyBurnedUnit'},
+    const {'1': 'totalDistance', '3': 103, '4': 1, '5': 1, '10': 'totalDistance'},
+    const {'1': 'totalDistanceUnit', '3': 104, '4': 1, '5': 9, '10': 'totalDistanceUnit'},
+    const {'1': 'duration', '3': 105, '4': 1, '5': 1, '10': 'duration'},
+  ],
+};
+
+const HealthData_CharacteristicSpecificData$json = const {
+  '1': 'CharacteristicSpecificData',
+  '2': const [
+    const {'1': 'customValue', '3': 101, '4': 1, '5': 9, '10': 'customValue'},
+  ],
+};
+
+const HealthData_ClinicalRecordSpecificData$json = const {
+  '1': 'ClinicalRecordSpecificData',
+  '2': const [
+    const {'1': 'displayName', '3': 101, '4': 1, '5': 9, '10': 'displayName'},
+    const {'1': 'fhirResource', '3': 102, '4': 1, '5': 9, '10': 'fhirResource'},
   ],
 };
 

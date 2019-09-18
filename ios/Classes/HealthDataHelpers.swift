@@ -36,7 +36,7 @@ extension HealthDataFetcher {
         var data = HealthData()
         data.type = healthType
         data.objectType = characteristicType.description
-        data.customValue = "\(characteristicValue ?? "")"
+        data.characteristicData.customValue = "\(characteristicValue ?? "")"
         dataList.data.append(data)
         return dataList
     }
@@ -50,6 +50,8 @@ extension HealthDataFetcher {
         data.endDate = value.endDate.iso8601
         data.device = value.device?.name ?? ""
         data.metadata = jsonToString(value.metadata)
+        data.uuid = value.uuid.uuidString
+        data.sourceRevision = value.sourceRevision.description
         return data
     }
     
@@ -58,11 +60,11 @@ extension HealthDataFetcher {
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
         let index = HealthDataUtils.getTypeIndex(healthType)!
         if #available(iOS 12.0, *) {
-            data.count = Int64(value.count)
+            data.quantityData.count = Int64(value.count)
         }
         if let unit = HealthDataUtils.QUANTITY_TYPES[index.0].1 {
-            data.quantityUnit = unit.unitString
-            data.quantity = value.quantity.doubleValue(for: unit)
+            data.quantityData.quantityUnit = unit.unitString
+            data.quantityData.quantity = value.quantity.doubleValue(for: unit)
         }
         return data
     }
@@ -70,18 +72,18 @@ extension HealthDataFetcher {
     func saveAsData(sampleType: HKSampleType, value: HKCategorySample, healthType: HealthTypes) -> HealthData {
         
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
-        data.value = Int64(value.value)
+        data.categoryData.value = Int64(value.value)
         return data
     }
     
     func saveAsData(sampleType: HKSampleType, value: HKWorkout, healthType: HealthTypes) -> HealthData {
         
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
-        data.totalEnergyBurned = value.totalEnergyBurned?.doubleValue(for: .joule()) ?? 0
-        data.totalEnergyBurnedUnit = HKUnit.joule().unitString
-        data.totalDistance = value.totalDistance?.doubleValue(for: .meter()) ?? 0
-        data.totalDistanceUnit = HKUnit.meter().unitString
-        data.duration = value.duration
+        data.workoutData.totalEnergyBurned = value.totalEnergyBurned?.doubleValue(for: .joule()) ?? 0
+        data.workoutData.totalEnergyBurnedUnit = HKUnit.joule().unitString
+        data.workoutData.totalDistance = value.totalDistance?.doubleValue(for: .meter()) ?? 0
+        data.workoutData.totalDistanceUnit = HKUnit.meter().unitString
+        data.workoutData.duration = value.duration
         return data
     }
     
@@ -89,9 +91,9 @@ extension HealthDataFetcher {
     func saveAsData(sampleType: HKSampleType, value: HKClinicalRecord, healthType: HealthTypes) -> HealthData {
         
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
-        data.displayName = value.displayName
+        data.clinicalRecordData.displayName = value.displayName
         if let fhirData = value.fhirResource?.data, let fhirJson = String(data: fhirData, encoding: .ascii) {
-            data.fhirResource = fhirJson
+            data.clinicalRecordData.fhirResource = fhirJson
         }
         return data
     }
