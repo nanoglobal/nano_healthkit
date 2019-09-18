@@ -1,4 +1,8 @@
-# Nano's Healthkit Plugin for Flutter
+# Nano's HealthKit Plugin for Flutter
+
+Flutter plugin to read data from Apple's HealthKit, request for permissions and subscribe to updates in background. It also supports Health Records, batch fetching of historical data and more.
+
+It supports _all_ readings available up to iOS 12.2 (except for HKCorrelation, HKDocument and HKWorkoutRoute). Check the HealthTypes section for a full list.
 
 ## Installation
 
