@@ -57,7 +57,7 @@ Most of them have subtypes inside.
 The methods are the following:
 
 ### Request permissions
-```
+```dart
 Future<bool> authorize(HealthTypeList request) async
 ```
 The user will be presented with a native modal that request permissions to read all values in the request, the answer will be successful even when the user chooses not to approve any of the permissions (that's because iOS doesn't give feedback of which permissions the user has approved).
@@ -71,7 +71,7 @@ HealthTypeList: Contains a list of HealthTypes to request for reading permission
 Bool: False only in case of an error and true in any other case.
 
 #### Example
-```
+```dart
 // Request permissions to read all known types
 var request = HealthTypeList();
 request.types.addAll(HealthTypes.values); // Here you can also request for a subset of types or a single one
@@ -79,7 +79,7 @@ bool isAuthorized = await NanoHealthkitPlugin.authorize(request);
 ```
 
 ### - Filter Existing Types
-```
+```dart
 Future<HealthTypeList> filterExistingTypes(HealthTypeList request) async
 ```
 Will check if the requested types are available in the user's phone model. The fact that a type exists doesn't mean that there are enough permissions to read that value (this is due to the fact that you can't check if permissions to read were given or not).
@@ -91,7 +91,7 @@ HealthTypeList: Contains a list of HealthTypes to check.
 HealthDataList: Contains a similar list to the requested one that only contains valid items to fetch.
 
 #### Example
-```
+```dart
 // Reduce the list from all types to only those available
 var request = HealthTypeList();
 request.types.addAll(HealthTypes.values); // Adds all types
@@ -99,7 +99,7 @@ var filtered = await NanoHealthkitPlugin.filterExistingTypes(request);
 ```
 
 ### - Fetch data
-```
+```dart
 Future<HealthDataList> fetchData(HealthDataRequest request) async
 ```
 The requested type gets fetched from Apple's HealthKit and returned.
@@ -113,7 +113,7 @@ HealthDataRequest: Indicate the type of data wanted to be read (see HealthTypes)
 HealthDataList: Contains a list of HealthData.
 
 #### Example
-```
+```dart
 // Read the latest height records between the given dates
 var request = HealthDataRequest();
 request.type = HealthTypes.QUANTITY_HEIGHT;
@@ -131,7 +131,7 @@ try {
 
 
 ### - Subscribe
-```
+```dart
 StreamSubscription subscribeToUpdates(HealthTypeList request, void onData(HealthDataList event))
 ```
 Requests a subscription to all types indicated in the request. The caller must save the StreamSubscription returned in case of a later request to unsubscribe. On each new data event, the onData gets called with the new data.
@@ -149,21 +149,15 @@ void onData(HealthDataList event): Needs to be a method that receives a HealthDa
 StreamSubscription: The stream that will receive each new event.
 
 #### Example
-```
-  // Save the subscription for later unsubscribe 
-  StreamSubscription _subscription;
-
-  // Subscribes to updates of all types
-  _subscribeToUpdates() {
-    var request = HealthTypeList();
-    request.types.addAll(HealthTypes.values);
-    _subscription =
-        NanoHealthkitPlugin.subscribeToUpdates(request, _updatesReceived);
-  }
+```dart
+// Subscribe to events of all kinds
+var request = HealthTypeList();
+request.types.addAll(HealthTypes.values);
+_subscription = NanoHealthkitPlugin.subscribeToUpdates(request, _updatesReceived); // Save the subscription for later unsubscribe
 ```
 
 ### - Unsubscribe
-```
+```dart
 Future<bool> unsubscribeToUpdates(StreamSubscription stream) async
 ```
 Request an unsubscription to all types.
@@ -175,7 +169,7 @@ StreamSubscription: The stream needs to be the one received by the subscription 
 Bool: True if success, false + an exception otherwise.
 
 #### Example
-```
+```dart
 // Send the previously saved subscription to unsubscribeToUpdates 
 NanoHealthkitPlugin.unsubscribeToUpdates(_subscription);
 _subscription = null;
@@ -210,19 +204,19 @@ Coming soon...
 The data model that is passed from Flutter to iOS and back is written using proto buffers. In case that model needs to be changed, Protobuf will be needed both for Dart and Swift. There's a helpful script located in the proto folder to help with converting files.
 
 #### Install Protobuf:
-```
+```bash
 brew install protobuf
 pub global activate protoc_plugin
 ```
 
 If couldn't find 'pub' then add to your path:
-```
+```bash
 {YOUR FLUTTER DIR}/flutter/bin/cache/dart-sdk/bin
 ```
 
 #### Convert all Proto files:
 First cd to the proto folder
-```
+```bash
 ./auto_proto.sh --dart=../lib --swift=../ios/Classes
 ```
 
