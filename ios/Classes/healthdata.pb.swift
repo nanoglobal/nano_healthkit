@@ -125,6 +125,9 @@ enum HealthTypes: SwiftProtobuf.Enum {
   case clinicalMedicationRecord // = 101
   case clinicalProcedureRecord // = 102
   case clinicalVitalSignRecord // = 103
+  case documentCda // = 104
+  case correlationBloodPressure // = 105
+  case correlationFood // = 106
   case UNRECOGNIZED(Int)
 
   init() {
@@ -237,6 +240,9 @@ enum HealthTypes: SwiftProtobuf.Enum {
     case 101: self = .clinicalMedicationRecord
     case 102: self = .clinicalProcedureRecord
     case 103: self = .clinicalVitalSignRecord
+    case 104: self = .documentCda
+    case 105: self = .correlationBloodPressure
+    case 106: self = .correlationFood
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -347,6 +353,9 @@ enum HealthTypes: SwiftProtobuf.Enum {
     case .clinicalMedicationRecord: return 101
     case .clinicalProcedureRecord: return 102
     case .clinicalVitalSignRecord: return 103
+    case .documentCda: return 104
+    case .correlationBloodPressure: return 105
+    case .correlationFood: return 106
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -462,6 +471,9 @@ extension HealthTypes: CaseIterable {
     .clinicalMedicationRecord,
     .clinicalProcedureRecord,
     .clinicalVitalSignRecord,
+    .documentCda,
+    .correlationBloodPressure,
+    .correlationFood,
   ]
 }
 
@@ -549,10 +561,14 @@ struct HealthData {
     set {_uniqueStorage()._uuid = newValue}
   }
 
-  var sourceRevision: String {
-    get {return _storage._sourceRevision}
-    set {_uniqueStorage()._sourceRevision = newValue}
+  var source: HealthData.SourceRevision {
+    get {return _storage._source ?? HealthData.SourceRevision()}
+    set {_uniqueStorage()._source = newValue}
   }
+  /// Returns true if `source` has been explicitly set.
+  var hasSource: Bool {return _storage._source != nil}
+  /// Clears the value of `source`. Subsequent reads from it will return its default value.
+  mutating func clearSource() {_uniqueStorage()._source = nil}
 
   var specificData: OneOf_SpecificData? {
     get {return _storage._specificData}
@@ -607,6 +623,22 @@ struct HealthData {
     set {_uniqueStorage()._specificData = .clinicalRecordData(newValue)}
   }
 
+  var documentData: HealthData.DocumentSpecificData {
+    get {
+      if case .documentData(let v)? = _storage._specificData {return v}
+      return HealthData.DocumentSpecificData()
+    }
+    set {_uniqueStorage()._specificData = .documentData(newValue)}
+  }
+
+  var correlationData: HealthData.CorrelationSpecificData {
+    get {
+      if case .correlationData(let v)? = _storage._specificData {return v}
+      return HealthData.CorrelationSpecificData()
+    }
+    set {_uniqueStorage()._specificData = .correlationData(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_SpecificData: Equatable {
@@ -616,6 +648,8 @@ struct HealthData {
     case workoutData(HealthData.WorkoutSpecificData)
     case characteristicData(HealthData.CharacteristicSpecificData)
     case clinicalRecordData(HealthData.ClinicalRecordSpecificData)
+    case documentData(HealthData.DocumentSpecificData)
+    case correlationData(HealthData.CorrelationSpecificData)
 
   #if !swift(>=4.1)
     static func ==(lhs: HealthData.OneOf_SpecificData, rhs: HealthData.OneOf_SpecificData) -> Bool {
@@ -626,6 +660,8 @@ struct HealthData {
       case (.workoutData(let l), .workoutData(let r)): return l == r
       case (.characteristicData(let l), .characteristicData(let r)): return l == r
       case (.clinicalRecordData(let l), .clinicalRecordData(let r)): return l == r
+      case (.documentData(let l), .documentData(let r)): return l == r
+      case (.correlationData(let l), .correlationData(let r)): return l == r
       default: return false
       }
     }
@@ -695,7 +731,7 @@ struct HealthData {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    var customValue: String = String()
+    var value: String = String()
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -710,6 +746,58 @@ struct HealthData {
     var displayName: String = String()
 
     var fhirResource: String = String()
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct DocumentSpecificData {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var authorName: String = String()
+
+    var custodianName: String = String()
+
+    var documentData: String = String()
+
+    var patientName: String = String()
+
+    var title: String = String()
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct CorrelationSpecificData {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var objects: [HealthData] = []
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct SourceRevision {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var version: String = String()
+
+    var operatingSystemVersion: String = String()
+
+    var productType: String = String()
+
+    var name: String = String()
+
+    var bundleIdentifier: String = String()
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -841,6 +929,9 @@ extension HealthTypes: SwiftProtobuf._ProtoNameProviding {
     101: .same(proto: "CLINICAL_MEDICATION_RECORD"),
     102: .same(proto: "CLINICAL_PROCEDURE_RECORD"),
     103: .same(proto: "CLINICAL_VITAL_SIGN_RECORD"),
+    104: .same(proto: "DOCUMENT_CDA"),
+    105: .same(proto: "CORRELATION_BLOOD_PRESSURE"),
+    106: .same(proto: "CORRELATION_FOOD"),
   ]
 }
 
@@ -959,13 +1050,15 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     5: .same(proto: "device"),
     6: .same(proto: "metadata"),
     7: .same(proto: "uuid"),
-    8: .same(proto: "sourceRevision"),
+    8: .same(proto: "source"),
     10: .same(proto: "emptyData"),
     11: .same(proto: "quantityData"),
     12: .same(proto: "categoryData"),
     13: .same(proto: "workoutData"),
     14: .same(proto: "characteristicData"),
     15: .same(proto: "clinicalRecordData"),
+    16: .same(proto: "documentData"),
+    17: .same(proto: "correlationData"),
   ]
 
   fileprivate class _StorageClass {
@@ -976,7 +1069,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     var _device: String = String()
     var _metadata: String = String()
     var _uuid: String = String()
-    var _sourceRevision: String = String()
+    var _source: HealthData.SourceRevision? = nil
     var _specificData: HealthData.OneOf_SpecificData?
 
     static let defaultInstance = _StorageClass()
@@ -991,7 +1084,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
       _device = source._device
       _metadata = source._metadata
       _uuid = source._uuid
-      _sourceRevision = source._sourceRevision
+      _source = source._source
       _specificData = source._specificData
     }
   }
@@ -1015,7 +1108,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
         case 5: try decoder.decodeSingularStringField(value: &_storage._device)
         case 6: try decoder.decodeSingularStringField(value: &_storage._metadata)
         case 7: try decoder.decodeSingularStringField(value: &_storage._uuid)
-        case 8: try decoder.decodeSingularStringField(value: &_storage._sourceRevision)
+        case 8: try decoder.decodeSingularMessageField(value: &_storage._source)
         case 10:
           var v: HealthData.EmptySpecificData?
           if let current = _storage._specificData {
@@ -1064,6 +1157,22 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
           }
           try decoder.decodeSingularMessageField(value: &v)
           if let v = v {_storage._specificData = .clinicalRecordData(v)}
+        case 16:
+          var v: HealthData.DocumentSpecificData?
+          if let current = _storage._specificData {
+            try decoder.handleConflictingOneOf()
+            if case .documentData(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._specificData = .documentData(v)}
+        case 17:
+          var v: HealthData.CorrelationSpecificData?
+          if let current = _storage._specificData {
+            try decoder.handleConflictingOneOf()
+            if case .correlationData(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._specificData = .correlationData(v)}
         default: break
         }
       }
@@ -1093,8 +1202,8 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
       if !_storage._uuid.isEmpty {
         try visitor.visitSingularStringField(value: _storage._uuid, fieldNumber: 7)
       }
-      if !_storage._sourceRevision.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._sourceRevision, fieldNumber: 8)
+      if let v = _storage._source {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
       }
       switch _storage._specificData {
       case .emptyData(let v)?:
@@ -1109,6 +1218,10 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
         try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
       case .clinicalRecordData(let v)?:
         try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
+      case .documentData(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 16)
+      case .correlationData(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 17)
       case nil: break
       }
     }
@@ -1127,7 +1240,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
         if _storage._device != rhs_storage._device {return false}
         if _storage._metadata != rhs_storage._metadata {return false}
         if _storage._uuid != rhs_storage._uuid {return false}
-        if _storage._sourceRevision != rhs_storage._sourceRevision {return false}
+        if _storage._source != rhs_storage._source {return false}
         if _storage._specificData != rhs_storage._specificData {return false}
         return true
       }
@@ -1283,27 +1396,27 @@ extension HealthData.WorkoutSpecificData: SwiftProtobuf.Message, SwiftProtobuf._
 extension HealthData.CharacteristicSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = HealthData.protoMessageName + ".CharacteristicSpecificData"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    101: .same(proto: "customValue"),
+    101: .same(proto: "value"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 101: try decoder.decodeSingularStringField(value: &self.customValue)
+      case 101: try decoder.decodeSingularStringField(value: &self.value)
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.customValue.isEmpty {
-      try visitor.visitSingularStringField(value: self.customValue, fieldNumber: 101)
+    if !self.value.isEmpty {
+      try visitor.visitSingularStringField(value: self.value, fieldNumber: 101)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: HealthData.CharacteristicSpecificData, rhs: HealthData.CharacteristicSpecificData) -> Bool {
-    if lhs.customValue != rhs.customValue {return false}
+    if lhs.value != rhs.value {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1339,6 +1452,141 @@ extension HealthData.ClinicalRecordSpecificData: SwiftProtobuf.Message, SwiftPro
   static func ==(lhs: HealthData.ClinicalRecordSpecificData, rhs: HealthData.ClinicalRecordSpecificData) -> Bool {
     if lhs.displayName != rhs.displayName {return false}
     if lhs.fhirResource != rhs.fhirResource {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension HealthData.DocumentSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = HealthData.protoMessageName + ".DocumentSpecificData"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    101: .same(proto: "authorName"),
+    102: .same(proto: "custodianName"),
+    103: .same(proto: "documentData"),
+    104: .same(proto: "patientName"),
+    105: .same(proto: "title"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 101: try decoder.decodeSingularStringField(value: &self.authorName)
+      case 102: try decoder.decodeSingularStringField(value: &self.custodianName)
+      case 103: try decoder.decodeSingularStringField(value: &self.documentData)
+      case 104: try decoder.decodeSingularStringField(value: &self.patientName)
+      case 105: try decoder.decodeSingularStringField(value: &self.title)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.authorName.isEmpty {
+      try visitor.visitSingularStringField(value: self.authorName, fieldNumber: 101)
+    }
+    if !self.custodianName.isEmpty {
+      try visitor.visitSingularStringField(value: self.custodianName, fieldNumber: 102)
+    }
+    if !self.documentData.isEmpty {
+      try visitor.visitSingularStringField(value: self.documentData, fieldNumber: 103)
+    }
+    if !self.patientName.isEmpty {
+      try visitor.visitSingularStringField(value: self.patientName, fieldNumber: 104)
+    }
+    if !self.title.isEmpty {
+      try visitor.visitSingularStringField(value: self.title, fieldNumber: 105)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: HealthData.DocumentSpecificData, rhs: HealthData.DocumentSpecificData) -> Bool {
+    if lhs.authorName != rhs.authorName {return false}
+    if lhs.custodianName != rhs.custodianName {return false}
+    if lhs.documentData != rhs.documentData {return false}
+    if lhs.patientName != rhs.patientName {return false}
+    if lhs.title != rhs.title {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension HealthData.CorrelationSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = HealthData.protoMessageName + ".CorrelationSpecificData"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    101: .same(proto: "objects"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 101: try decoder.decodeRepeatedMessageField(value: &self.objects)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.objects.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.objects, fieldNumber: 101)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: HealthData.CorrelationSpecificData, rhs: HealthData.CorrelationSpecificData) -> Bool {
+    if lhs.objects != rhs.objects {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension HealthData.SourceRevision: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = HealthData.protoMessageName + ".SourceRevision"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    101: .same(proto: "version"),
+    102: .same(proto: "operatingSystemVersion"),
+    103: .same(proto: "productType"),
+    104: .same(proto: "name"),
+    105: .same(proto: "bundleIdentifier"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 101: try decoder.decodeSingularStringField(value: &self.version)
+      case 102: try decoder.decodeSingularStringField(value: &self.operatingSystemVersion)
+      case 103: try decoder.decodeSingularStringField(value: &self.productType)
+      case 104: try decoder.decodeSingularStringField(value: &self.name)
+      case 105: try decoder.decodeSingularStringField(value: &self.bundleIdentifier)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.version.isEmpty {
+      try visitor.visitSingularStringField(value: self.version, fieldNumber: 101)
+    }
+    if !self.operatingSystemVersion.isEmpty {
+      try visitor.visitSingularStringField(value: self.operatingSystemVersion, fieldNumber: 102)
+    }
+    if !self.productType.isEmpty {
+      try visitor.visitSingularStringField(value: self.productType, fieldNumber: 103)
+    }
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 104)
+    }
+    if !self.bundleIdentifier.isEmpty {
+      try visitor.visitSingularStringField(value: self.bundleIdentifier, fieldNumber: 105)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: HealthData.SourceRevision, rhs: HealthData.SourceRevision) -> Bool {
+    if lhs.version != rhs.version {return false}
+    if lhs.operatingSystemVersion != rhs.operatingSystemVersion {return false}
+    if lhs.productType != rhs.productType {return false}
+    if lhs.name != rhs.name {return false}
+    if lhs.bundleIdentifier != rhs.bundleIdentifier {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

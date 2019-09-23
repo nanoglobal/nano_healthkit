@@ -28,6 +28,10 @@
 	<string>Some HealthShare permission text</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Some HealthUpdate permission text</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

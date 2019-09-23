@@ -240,7 +240,7 @@ class HealthData_WorkoutSpecificData extends $pb.GeneratedMessage {
 
 class HealthData_CharacteristicSpecificData extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('HealthData.CharacteristicSpecificData')
-    ..aOS(101, 'customValue')
+    ..aOS(101, 'value')
     ..hasRequiredFields = false
   ;
 
@@ -258,10 +258,10 @@ class HealthData_CharacteristicSpecificData extends $pb.GeneratedMessage {
   static HealthData_CharacteristicSpecificData getDefault() => _defaultInstance ??= create()..freeze();
   static HealthData_CharacteristicSpecificData _defaultInstance;
 
-  $core.String get customValue => $_getS(0, '');
-  set customValue($core.String v) { $_setString(0, v); }
-  $core.bool hasCustomValue() => $_has(0);
-  void clearCustomValue() => clearField(101);
+  $core.String get value => $_getS(0, '');
+  set value($core.String v) { $_setString(0, v); }
+  $core.bool hasValue() => $_has(0);
+  void clearValue() => clearField(101);
 }
 
 class HealthData_ClinicalRecordSpecificData extends $pb.GeneratedMessage {
@@ -296,6 +296,129 @@ class HealthData_ClinicalRecordSpecificData extends $pb.GeneratedMessage {
   void clearFhirResource() => clearField(102);
 }
 
+class HealthData_DocumentSpecificData extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('HealthData.DocumentSpecificData')
+    ..aOS(101, 'authorName')
+    ..aOS(102, 'custodianName')
+    ..aOS(103, 'documentData')
+    ..aOS(104, 'patientName')
+    ..aOS(105, 'title')
+    ..hasRequiredFields = false
+  ;
+
+  HealthData_DocumentSpecificData._() : super();
+  factory HealthData_DocumentSpecificData() => create();
+  factory HealthData_DocumentSpecificData.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory HealthData_DocumentSpecificData.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  HealthData_DocumentSpecificData clone() => HealthData_DocumentSpecificData()..mergeFromMessage(this);
+  HealthData_DocumentSpecificData copyWith(void Function(HealthData_DocumentSpecificData) updates) => super.copyWith((message) => updates(message as HealthData_DocumentSpecificData));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static HealthData_DocumentSpecificData create() => HealthData_DocumentSpecificData._();
+  HealthData_DocumentSpecificData createEmptyInstance() => create();
+  static $pb.PbList<HealthData_DocumentSpecificData> createRepeated() => $pb.PbList<HealthData_DocumentSpecificData>();
+  static HealthData_DocumentSpecificData getDefault() => _defaultInstance ??= create()..freeze();
+  static HealthData_DocumentSpecificData _defaultInstance;
+
+  $core.String get authorName => $_getS(0, '');
+  set authorName($core.String v) { $_setString(0, v); }
+  $core.bool hasAuthorName() => $_has(0);
+  void clearAuthorName() => clearField(101);
+
+  $core.String get custodianName => $_getS(1, '');
+  set custodianName($core.String v) { $_setString(1, v); }
+  $core.bool hasCustodianName() => $_has(1);
+  void clearCustodianName() => clearField(102);
+
+  $core.String get documentData => $_getS(2, '');
+  set documentData($core.String v) { $_setString(2, v); }
+  $core.bool hasDocumentData() => $_has(2);
+  void clearDocumentData() => clearField(103);
+
+  $core.String get patientName => $_getS(3, '');
+  set patientName($core.String v) { $_setString(3, v); }
+  $core.bool hasPatientName() => $_has(3);
+  void clearPatientName() => clearField(104);
+
+  $core.String get title => $_getS(4, '');
+  set title($core.String v) { $_setString(4, v); }
+  $core.bool hasTitle() => $_has(4);
+  void clearTitle() => clearField(105);
+}
+
+class HealthData_CorrelationSpecificData extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('HealthData.CorrelationSpecificData')
+    ..pc<HealthData>(101, 'objects', $pb.PbFieldType.PM,HealthData.create)
+    ..hasRequiredFields = false
+  ;
+
+  HealthData_CorrelationSpecificData._() : super();
+  factory HealthData_CorrelationSpecificData() => create();
+  factory HealthData_CorrelationSpecificData.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory HealthData_CorrelationSpecificData.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  HealthData_CorrelationSpecificData clone() => HealthData_CorrelationSpecificData()..mergeFromMessage(this);
+  HealthData_CorrelationSpecificData copyWith(void Function(HealthData_CorrelationSpecificData) updates) => super.copyWith((message) => updates(message as HealthData_CorrelationSpecificData));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static HealthData_CorrelationSpecificData create() => HealthData_CorrelationSpecificData._();
+  HealthData_CorrelationSpecificData createEmptyInstance() => create();
+  static $pb.PbList<HealthData_CorrelationSpecificData> createRepeated() => $pb.PbList<HealthData_CorrelationSpecificData>();
+  static HealthData_CorrelationSpecificData getDefault() => _defaultInstance ??= create()..freeze();
+  static HealthData_CorrelationSpecificData _defaultInstance;
+
+  $core.List<HealthData> get objects => $_getList(0);
+}
+
+class HealthData_SourceRevision extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('HealthData.SourceRevision')
+    ..aOS(101, 'version')
+    ..aOS(102, 'operatingSystemVersion')
+    ..aOS(103, 'productType')
+    ..aOS(104, 'name')
+    ..aOS(105, 'bundleIdentifier')
+    ..hasRequiredFields = false
+  ;
+
+  HealthData_SourceRevision._() : super();
+  factory HealthData_SourceRevision() => create();
+  factory HealthData_SourceRevision.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory HealthData_SourceRevision.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  HealthData_SourceRevision clone() => HealthData_SourceRevision()..mergeFromMessage(this);
+  HealthData_SourceRevision copyWith(void Function(HealthData_SourceRevision) updates) => super.copyWith((message) => updates(message as HealthData_SourceRevision));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static HealthData_SourceRevision create() => HealthData_SourceRevision._();
+  HealthData_SourceRevision createEmptyInstance() => create();
+  static $pb.PbList<HealthData_SourceRevision> createRepeated() => $pb.PbList<HealthData_SourceRevision>();
+  static HealthData_SourceRevision getDefault() => _defaultInstance ??= create()..freeze();
+  static HealthData_SourceRevision _defaultInstance;
+
+  $core.String get version => $_getS(0, '');
+  set version($core.String v) { $_setString(0, v); }
+  $core.bool hasVersion() => $_has(0);
+  void clearVersion() => clearField(101);
+
+  $core.String get operatingSystemVersion => $_getS(1, '');
+  set operatingSystemVersion($core.String v) { $_setString(1, v); }
+  $core.bool hasOperatingSystemVersion() => $_has(1);
+  void clearOperatingSystemVersion() => clearField(102);
+
+  $core.String get productType => $_getS(2, '');
+  set productType($core.String v) { $_setString(2, v); }
+  $core.bool hasProductType() => $_has(2);
+  void clearProductType() => clearField(103);
+
+  $core.String get name => $_getS(3, '');
+  set name($core.String v) { $_setString(3, v); }
+  $core.bool hasName() => $_has(3);
+  void clearName() => clearField(104);
+
+  $core.String get bundleIdentifier => $_getS(4, '');
+  set bundleIdentifier($core.String v) { $_setString(4, v); }
+  $core.bool hasBundleIdentifier() => $_has(4);
+  void clearBundleIdentifier() => clearField(105);
+}
+
 enum HealthData_SpecificData {
   emptyData, 
   quantityData, 
@@ -303,6 +426,8 @@ enum HealthData_SpecificData {
   workoutData, 
   characteristicData, 
   clinicalRecordData, 
+  documentData, 
+  correlationData, 
   notSet
 }
 
@@ -314,10 +439,12 @@ class HealthData extends $pb.GeneratedMessage {
     13 : HealthData_SpecificData.workoutData,
     14 : HealthData_SpecificData.characteristicData,
     15 : HealthData_SpecificData.clinicalRecordData,
+    16 : HealthData_SpecificData.documentData,
+    17 : HealthData_SpecificData.correlationData,
     0 : HealthData_SpecificData.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('HealthData')
-    ..oo(0, [10, 11, 12, 13, 14, 15])
+    ..oo(0, [10, 11, 12, 13, 14, 15, 16, 17])
     ..e<HealthTypes>(1, 'type', $pb.PbFieldType.OE, HealthTypes.WORKOUT_MAIN, HealthTypes.valueOf, HealthTypes.values)
     ..aOS(2, 'objectType')
     ..aOS(3, 'startDate')
@@ -325,13 +452,15 @@ class HealthData extends $pb.GeneratedMessage {
     ..aOS(5, 'device')
     ..aOS(6, 'metadata')
     ..aOS(7, 'uuid')
-    ..aOS(8, 'sourceRevision')
+    ..a<HealthData_SourceRevision>(8, 'source', $pb.PbFieldType.OM, HealthData_SourceRevision.getDefault, HealthData_SourceRevision.create)
     ..a<HealthData_EmptySpecificData>(10, 'emptyData', $pb.PbFieldType.OM, HealthData_EmptySpecificData.getDefault, HealthData_EmptySpecificData.create)
     ..a<HealthData_QuantitySpecificData>(11, 'quantityData', $pb.PbFieldType.OM, HealthData_QuantitySpecificData.getDefault, HealthData_QuantitySpecificData.create)
     ..a<HealthData_CategorySpecificData>(12, 'categoryData', $pb.PbFieldType.OM, HealthData_CategorySpecificData.getDefault, HealthData_CategorySpecificData.create)
     ..a<HealthData_WorkoutSpecificData>(13, 'workoutData', $pb.PbFieldType.OM, HealthData_WorkoutSpecificData.getDefault, HealthData_WorkoutSpecificData.create)
     ..a<HealthData_CharacteristicSpecificData>(14, 'characteristicData', $pb.PbFieldType.OM, HealthData_CharacteristicSpecificData.getDefault, HealthData_CharacteristicSpecificData.create)
     ..a<HealthData_ClinicalRecordSpecificData>(15, 'clinicalRecordData', $pb.PbFieldType.OM, HealthData_ClinicalRecordSpecificData.getDefault, HealthData_ClinicalRecordSpecificData.create)
+    ..a<HealthData_DocumentSpecificData>(16, 'documentData', $pb.PbFieldType.OM, HealthData_DocumentSpecificData.getDefault, HealthData_DocumentSpecificData.create)
+    ..a<HealthData_CorrelationSpecificData>(17, 'correlationData', $pb.PbFieldType.OM, HealthData_CorrelationSpecificData.getDefault, HealthData_CorrelationSpecificData.create)
     ..hasRequiredFields = false
   ;
 
@@ -387,10 +516,10 @@ class HealthData extends $pb.GeneratedMessage {
   $core.bool hasUuid() => $_has(6);
   void clearUuid() => clearField(7);
 
-  $core.String get sourceRevision => $_getS(7, '');
-  set sourceRevision($core.String v) { $_setString(7, v); }
-  $core.bool hasSourceRevision() => $_has(7);
-  void clearSourceRevision() => clearField(8);
+  HealthData_SourceRevision get source => $_getN(7);
+  set source(HealthData_SourceRevision v) { setField(8, v); }
+  $core.bool hasSource() => $_has(7);
+  void clearSource() => clearField(8);
 
   HealthData_EmptySpecificData get emptyData => $_getN(8);
   set emptyData(HealthData_EmptySpecificData v) { setField(10, v); }
@@ -421,6 +550,16 @@ class HealthData extends $pb.GeneratedMessage {
   set clinicalRecordData(HealthData_ClinicalRecordSpecificData v) { setField(15, v); }
   $core.bool hasClinicalRecordData() => $_has(13);
   void clearClinicalRecordData() => clearField(15);
+
+  HealthData_DocumentSpecificData get documentData => $_getN(14);
+  set documentData(HealthData_DocumentSpecificData v) { setField(16, v); }
+  $core.bool hasDocumentData() => $_has(14);
+  void clearDocumentData() => clearField(16);
+
+  HealthData_CorrelationSpecificData get correlationData => $_getN(15);
+  set correlationData(HealthData_CorrelationSpecificData v) { setField(17, v); }
+  $core.bool hasCorrelationData() => $_has(15);
+  void clearCorrelationData() => clearField(17);
 }
 
 class HealthDataList extends $pb.GeneratedMessage {

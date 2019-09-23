@@ -112,6 +112,9 @@ const HealthTypes$json = const {
     const {'1': 'CLINICAL_MEDICATION_RECORD', '2': 101},
     const {'1': 'CLINICAL_PROCEDURE_RECORD', '2': 102},
     const {'1': 'CLINICAL_VITAL_SIGN_RECORD', '2': 103},
+    const {'1': 'DOCUMENT_CDA', '2': 104},
+    const {'1': 'CORRELATION_BLOOD_PRESSURE', '2': 105},
+    const {'1': 'CORRELATION_FOOD', '2': 106},
   ],
 };
 
@@ -149,15 +152,17 @@ const HealthData$json = const {
     const {'1': 'device', '3': 5, '4': 1, '5': 9, '10': 'device'},
     const {'1': 'metadata', '3': 6, '4': 1, '5': 9, '10': 'metadata'},
     const {'1': 'uuid', '3': 7, '4': 1, '5': 9, '10': 'uuid'},
-    const {'1': 'sourceRevision', '3': 8, '4': 1, '5': 9, '10': 'sourceRevision'},
+    const {'1': 'source', '3': 8, '4': 1, '5': 11, '6': '.HealthData.SourceRevision', '10': 'source'},
     const {'1': 'emptyData', '3': 10, '4': 1, '5': 11, '6': '.HealthData.EmptySpecificData', '9': 0, '10': 'emptyData'},
     const {'1': 'quantityData', '3': 11, '4': 1, '5': 11, '6': '.HealthData.QuantitySpecificData', '9': 0, '10': 'quantityData'},
     const {'1': 'categoryData', '3': 12, '4': 1, '5': 11, '6': '.HealthData.CategorySpecificData', '9': 0, '10': 'categoryData'},
     const {'1': 'workoutData', '3': 13, '4': 1, '5': 11, '6': '.HealthData.WorkoutSpecificData', '9': 0, '10': 'workoutData'},
     const {'1': 'characteristicData', '3': 14, '4': 1, '5': 11, '6': '.HealthData.CharacteristicSpecificData', '9': 0, '10': 'characteristicData'},
     const {'1': 'clinicalRecordData', '3': 15, '4': 1, '5': 11, '6': '.HealthData.ClinicalRecordSpecificData', '9': 0, '10': 'clinicalRecordData'},
+    const {'1': 'documentData', '3': 16, '4': 1, '5': 11, '6': '.HealthData.DocumentSpecificData', '9': 0, '10': 'documentData'},
+    const {'1': 'correlationData', '3': 17, '4': 1, '5': 11, '6': '.HealthData.CorrelationSpecificData', '9': 0, '10': 'correlationData'},
   ],
-  '3': const [HealthData_EmptySpecificData$json, HealthData_QuantitySpecificData$json, HealthData_CategorySpecificData$json, HealthData_WorkoutSpecificData$json, HealthData_CharacteristicSpecificData$json, HealthData_ClinicalRecordSpecificData$json],
+  '3': const [HealthData_EmptySpecificData$json, HealthData_QuantitySpecificData$json, HealthData_CategorySpecificData$json, HealthData_WorkoutSpecificData$json, HealthData_CharacteristicSpecificData$json, HealthData_ClinicalRecordSpecificData$json, HealthData_DocumentSpecificData$json, HealthData_CorrelationSpecificData$json, HealthData_SourceRevision$json],
   '8': const [
     const {'1': 'specificData'},
   ],
@@ -197,7 +202,7 @@ const HealthData_WorkoutSpecificData$json = const {
 const HealthData_CharacteristicSpecificData$json = const {
   '1': 'CharacteristicSpecificData',
   '2': const [
-    const {'1': 'customValue', '3': 101, '4': 1, '5': 9, '10': 'customValue'},
+    const {'1': 'value', '3': 101, '4': 1, '5': 9, '10': 'value'},
   ],
 };
 
@@ -206,6 +211,35 @@ const HealthData_ClinicalRecordSpecificData$json = const {
   '2': const [
     const {'1': 'displayName', '3': 101, '4': 1, '5': 9, '10': 'displayName'},
     const {'1': 'fhirResource', '3': 102, '4': 1, '5': 9, '10': 'fhirResource'},
+  ],
+};
+
+const HealthData_DocumentSpecificData$json = const {
+  '1': 'DocumentSpecificData',
+  '2': const [
+    const {'1': 'authorName', '3': 101, '4': 1, '5': 9, '10': 'authorName'},
+    const {'1': 'custodianName', '3': 102, '4': 1, '5': 9, '10': 'custodianName'},
+    const {'1': 'documentData', '3': 103, '4': 1, '5': 9, '10': 'documentData'},
+    const {'1': 'patientName', '3': 104, '4': 1, '5': 9, '10': 'patientName'},
+    const {'1': 'title', '3': 105, '4': 1, '5': 9, '10': 'title'},
+  ],
+};
+
+const HealthData_CorrelationSpecificData$json = const {
+  '1': 'CorrelationSpecificData',
+  '2': const [
+    const {'1': 'objects', '3': 101, '4': 3, '5': 11, '6': '.HealthData', '10': 'objects'},
+  ],
+};
+
+const HealthData_SourceRevision$json = const {
+  '1': 'SourceRevision',
+  '2': const [
+    const {'1': 'version', '3': 101, '4': 1, '5': 9, '10': 'version'},
+    const {'1': 'operatingSystemVersion', '3': 102, '4': 1, '5': 9, '10': 'operatingSystemVersion'},
+    const {'1': 'productType', '3': 103, '4': 1, '5': 9, '10': 'productType'},
+    const {'1': 'name', '3': 104, '4': 1, '5': 9, '10': 'name'},
+    const {'1': 'bundleIdentifier', '3': 105, '4': 1, '5': 9, '10': 'bundleIdentifier'},
   ],
 };
 

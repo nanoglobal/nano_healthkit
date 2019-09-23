@@ -1,6 +1,8 @@
 //
 import HealthKit
 
+typealias CharacteristicProcessType = (HKHealthStore) -> Any?
+
 class HealthDataUtils: NSObject {
     
     static let global = HealthDataUtils()
@@ -14,8 +16,10 @@ class HealthDataUtils: NSObject {
     static var WORKOUT_TYPES: [HKSampleType] = []
     static var CATEGORY_TYPES: [HKCategoryTypeIdentifier] = []
     static var QUANTITY_TYPES: [(HKQuantityTypeIdentifier, HKUnit?)] = []
-    static var CHARACTERISTIC_TYPES: [(HKCharacteristicTypeIdentifier, (HKHealthStore) -> Any?)] = []
+    static var CHARACTERISTIC_TYPES: [(HKCharacteristicTypeIdentifier, CharacteristicProcessType)] = []
     static var CLINICAL_TYPES: [Any] = []
+    static var DOCUMENT_TYPES: [HKDocumentTypeIdentifier] = []
+    static var CORRELATION_TYPES: [HKCorrelationTypeIdentifier] = []
     
     override init() {
         super.init()
@@ -36,7 +40,8 @@ class HealthDataUtils: NSObject {
             return
         }
         
-        let typeSet = HealthDataUtils.makeHKObjectSet(from: list)
+        let filteredList = HealthDataUtils.filterPermissionRequiredTypes(list)
+        let typeSet = HealthDataUtils.makeHKObjectSet(from: filteredList)
         HealthDataUtils.healthStore?.requestAuthorization(toShare: nil, read: typeSet) { success, error in
             result(success, error)
         }

@@ -31,7 +31,7 @@ class HealthDataFetcher: NSObject {
                 return
             }
             
-            let data = self?.makeData(from: samples, sampleType: sampleType, healthType: healthType)
+            let data = self?.makeDataList(from: samples, sampleType: sampleType, healthType: healthType)
             result(data, nil)
         }
         
@@ -47,8 +47,7 @@ class HealthDataFetcher: NSObject {
         }
         
         let characteristic = HealthDataUtils.CHARACTERISTIC_TYPES[index.0]
-        let evaluatedValue = characteristic.1(healthStore)
-        let data = makeData(from: evaluatedValue, characteristicType: characteristicType, healthType: healthType)
+        let data = makeDataList(from: [(healthStore, characteristic.1)], sampleType: characteristicType, healthType: healthType)
         result(data, nil)
     }
     
@@ -131,7 +130,7 @@ class HealthDataFetcher: NSObject {
                 
                 if addedObjects != nil && addedObjects?.count ?? 0 > 0 {
                     print("There were samples for touple: \(touple.1.description)")
-                    let data = self?.makeData(from: addedObjects, sampleType: touple.1, healthType: touple.0)
+                    let data = self?.makeDataList(from: addedObjects, sampleType: touple.1, healthType: touple.0)
                     HealthDataUtils.global.sendUpdateEvent(data, error: nil)
                 }
                 

@@ -105,6 +105,9 @@ enum HealthTypes {
    CLINICAL_MEDICATION_RECORD = 101;
    CLINICAL_PROCEDURE_RECORD = 102;
    CLINICAL_VITAL_SIGN_RECORD = 103;
+   DOCUMENT_CDA = 104;
+   CORRELATION_BLOOD_PRESSURE = 105;
+   CORRELATION_FOOD = 106;
 }
 
 message HealthTypeList {
@@ -130,7 +133,7 @@ message HealthData {
    string device = 5;
    string metadata = 6;
    string uuid = 7;
-   string sourceRevision = 8;
+   SourceRevision source = 8;
 
    oneof specificData {
       EmptySpecificData emptyData = 10;
@@ -139,6 +142,8 @@ message HealthData {
       WorkoutSpecificData workoutData = 13;
       CharacteristicSpecificData characteristicData = 14;
       ClinicalRecordSpecificData clinicalRecordData = 15;
+      DocumentSpecificData documentData = 16;
+      CorrelationSpecificData correlationData = 17;
    }
 
    message EmptySpecificData {
@@ -163,12 +168,32 @@ message HealthData {
    }
 
    message CharacteristicSpecificData {
-      string customValue = 101;
+      string value = 101;
    }
 
    message ClinicalRecordSpecificData {
       string displayName = 101;
       string fhirResource = 102;
+   }
+
+   message DocumentSpecificData {
+      string authorName = 101;
+      string custodianName = 102;
+      string documentData = 103;
+      string patientName = 104;
+      string title = 105;
+   }
+
+   message CorrelationSpecificData {
+      repeated HealthData objects = 101;
+   }
+
+   message SourceRevision {
+      string version = 101;
+      string operatingSystemVersion = 102;
+      string productType = 103;
+      string name = 104;
+      string bundleIdentifier = 105;
    }
 }
 

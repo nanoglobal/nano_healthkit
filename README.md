@@ -2,7 +2,7 @@
 
 Flutter plugin to read data from Apple's HealthKit, request for permissions and subscribe to updates in background. It also supports Health Records, batch fetching of historical data and more.
 
-It supports _all_ readings available up to iOS 12.2 (except for HKCorrelation, HKDocument and HKWorkoutRoute). Check the HealthTypes section for a full list.
+It supports _all_ readings available up to iOS 12.2 (except for HKWorkoutRoute). Check the HealthTypes section for a full list.
 
 ## Installation
 
@@ -44,8 +44,10 @@ Depending on the nature of the sample type, the HealthType will have a suffix th
 - Workout
 - Characteristic
 - Clinical\*
+- Document
+- Correlation
 
-Each of them have many subtypes inside (except for Workout). 
+Most of them have subtypes inside. 
 
 \*	If not planing on reading any clinical records (aka Health Records), just don't use any HealthType that has the _CLINICAL_ suffix on it (no need to add it on the Capabilities of the app neither).
 
@@ -68,7 +70,15 @@ HealthTypeList: Contains a list of HealthTypes to request for reading permission
 #### Return
 Bool: False only in case of an error and true in any other case.
 
-### Filter Existing Types
+#### Example
+```
+// Request permissions to read all known types
+var request = HealthTypeList();
+request.types.addAll(HealthTypes.values); // Here you can also request for a subset of types or a single one
+bool isAuthorized = await NanoHealthkitPlugin.authorize(request);
+```
+
+### - Filter Existing Types
 ```
 Future<HealthTypeList> filterExistingTypes(HealthTypeList request) async
 ```
@@ -80,8 +90,15 @@ HealthTypeList: Contains a list of HealthTypes to check.
 #### Return
 HealthDataList: Contains a similar list to the requested one that only contains valid items to fetch.
 
+#### Example
+```
+// Reduce the list from all types to only those available
+var request = HealthTypeList();
+request.types.addAll(HealthTypes.values); // Adds all types
+var filtered = await NanoHealthkitPlugin.filterExistingTypes(request);
+```
 
-### Fetch data
+### - Fetch data
 ```
 Future<HealthDataList> fetchData(HealthDataRequest request) async
 ```
@@ -95,8 +112,25 @@ HealthDataRequest: Indicate the type of data wanted to be read (see HealthTypes)
 #### Return
 HealthDataList: Contains a list of HealthData.
 
+#### Example
+```
+// Read the latest height records between the given dates
+var request = HealthDataRequest();
+request.type = HealthTypes.QUANTITY_HEIGHT;
+request.startDate = "2019-06-19T18:58:00.000Z"; // Can leave blank for open starDate
+request.endDate = "2019-09-19T20:58:00.000Z"; // Can leave blank for open endDate
+request.limit = 2; // Can leave on 0 to don't limit
+var resultToShow = "";
+try {
+  var basicHealth = await NanoHealthkitPlugin.fetchData(request);
+  resultToShow = basicHealth.toString();
+} on Exception catch (error) {
+  resultToShow = error.toString();
+}
+```
 
-### Subscribe
+
+### - Subscribe
 ```
 StreamSubscription subscribeToUpdates(HealthTypeList request, void onData(HealthDataList event))
 ```
@@ -111,11 +145,24 @@ HealthTypeList: Contains a list of HealthTypes to request for subscription.
 
 void onData(HealthDataList event): Needs to be a method that receives a HealthDataList as argument and returns void. This is the update function that gets called each time new data is available. The returned data is in the same format as the one calling for "fetch data".
 
-
 #### Return
 StreamSubscription: The stream that will receive each new event.
 
-### Unsubscribe
+#### Example
+```
+  // Save the subscription for later unsubscribe 
+  StreamSubscription _subscription;
+
+  // Subscribes to updates of all types
+  _subscribeToUpdates() {
+    var request = HealthTypeList();
+    request.types.addAll(HealthTypes.values);
+    _subscription =
+        NanoHealthkitPlugin.subscribeToUpdates(request, _updatesReceived);
+  }
+```
+
+### - Unsubscribe
 ```
 Future<bool> unsubscribeToUpdates(StreamSubscription stream) async
 ```
@@ -127,15 +174,23 @@ StreamSubscription: The stream needs to be the one received by the subscription 
 #### Return
 Bool: True if success, false + an exception otherwise.
 
+#### Example
+```
+// Send the previously saved subscription to unsubscribeToUpdates 
+NanoHealthkitPlugin.unsubscribeToUpdates(_subscription);
+_subscription = null;
+```
 
-## A word about Timezones
+## Other Notes
+
+### Timezones
 
 The values in Apple Health are stored in the local time of the phone at the moment they are written but they don't hold timezone information. That means that if you record something at 13:00 in timezone -3 it will be retrieved as 10:00 in GMT and when showed, considering the user is still at that same timezone it will be shown as 13:00. However, the timezone the user currently is doesn't necessary matches the timezone in which he/she made the record and this might lead to misunderstandings.
 
 Depending on the source, Apple Health sometimes saves information about the timezone in which the record was made inside the metadata.
 
 
-## A word about Permissions
+### Permissions
 
 - Not requesting for permissions before trying to pull data will throw an exception.
 - The regular permissions screen is only shown to the user once. Next time is requested, nothing will happen.
@@ -144,6 +199,11 @@ Depending on the source, Apple Health sometimes saves information about the time
 - There is no way to tell which permissions are currently accepted at a given time.
 - Permissions for HealthKit and Health Records are handled separately internally so even when requesting for a mix of them at the same time, they can get approved or rejected separately.
 - It is recommended to request permissions for HealthKit and Health Records independently to avoid confusions.
+
+### Background updates
+
+Coming soon...
+
 
 ## Further development?
 
