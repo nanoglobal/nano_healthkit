@@ -7,103 +7,167 @@ extension HealthDataFetcher {
     
     // MARK: Data parsing
     
-    func makeData(from samples: [HKSample]?, sampleType: HKSampleType, healthType: HealthTypes) -> HealthDataList {
+    func makeDataList(from samples: [Any]?, sampleType: HKObjectType, healthType: HealthTypes) -> HealthDataList {
         
         var dataList = HealthDataList()
-        for sample: HKSample in samples ?? [] {
-            
-            var singleData: HealthData?
-            if let workoutSample = sample as? HKWorkout {
-                singleData = saveAsData(sampleType: sampleType, value: workoutSample, healthType: healthType)
-            } else if let quantitySample = sample as? HKQuantitySample {
-                singleData = saveAsData(sampleType: sampleType, value: quantitySample, healthType: healthType)
-            } else if let categorySample = sample as? HKCategorySample {
-                singleData = saveAsData(sampleType: sampleType, value: categorySample, healthType: healthType)
-            } else if #available(iOS 12.0, *), let clinicalSample = sample as? HKClinicalRecord {
-                singleData = saveAsData(sampleType: sampleType, value: clinicalSample, healthType: healthType)
-            }
-            
-            if singleData != nil {
-                dataList.data.append(singleData!)
+        for sample: Any in samples ?? [] {
+        
+            if let singleData = makeData(from: sample, sampleType: sampleType, healthType: healthType){
+                dataList.data.append(singleData)
             }
         }
         return dataList
     }
     
-    func makeData(from characteristicValue: Any?, characteristicType: HKCharacteristicType, healthType: HealthTypes) -> HealthDataList {
+    func makeData(from sample: Any, sampleType: HKObjectType, healthType: HealthTypes) -> HealthData? {
         
-        var dataList = HealthDataList()
-        var data = HealthData()
-        data.type = healthType
-        data.objectType = characteristicType.description
-        data.customValue = "\(characteristicValue ?? "")"
-        dataList.data.append(data)
-        return dataList
+        var singleData: HealthData?
+        if let workoutSample = sample as? HKWorkout {
+            singleData = saveAsData(sampleType: sampleType, value: workoutSample, healthType: healthType)
+        } else if let quantitySample = sample as? HKQuantitySample {
+            singleData = saveAsData(sampleType: sampleType, value: quantitySample, healthType: healthType)
+        } else if let categorySample = sample as? HKCategorySample {
+            singleData = saveAsData(sampleType: sampleType, value: categorySample, healthType: healthType)
+        } else if #available(iOS 12.0, *), let clinicalSample = sample as? HKClinicalRecord {
+            singleData = saveAsData(sampleType: sampleType, value: clinicalSample, healthType: healthType)
+        } else if #available(iOS 10.0, *), let documentSample = sample as? HKDocumentSample {
+            singleData = saveAsData(sampleType: sampleType, value: documentSample, healthType: healthType)
+        } else if let correlationSample = sample as? HKCorrelation {
+            singleData = saveAsData(sampleType: sampleType, value: correlationSample, healthType: healthType)
+        } else if let characteristicSample = sample as? (HKHealthStore, CharacteristicProcessType) {
+            singleData = saveAsData(sampleType: sampleType, value: characteristicSample, healthType: healthType)
+        }
+        
+        return singleData
     }
     
-    private func saveAsDataBase(sampleType: HKSampleType, value: HKSample, healthType: HealthTypes) -> HealthData {
+    private func saveAsDataBase(sampleType: HKObjectType, value: Any?, healthType: HealthTypes) -> HealthData {
         
         var data = HealthData()
         data.type = healthType
         data.objectType = sampleType.description
+        if let sampleValue = value as? HKSample {
+            saveBaseSampleInfo(data: &data, value: sampleValue)
+        }
+        return data
+    }
+    
+    private func saveBaseSampleInfo(data: inout HealthData, value: HKSample) {
+        
         data.startDate = value.startDate.iso8601
         data.endDate = value.endDate.iso8601
         data.device = value.device?.name ?? ""
         data.metadata = jsonToString(value.metadata)
+        data.uuid = value.uuid.uuidString
+        saveSourceInfo(data: &data, value: value)
+    }
+    
+    private func saveSourceInfo(data: inout HealthData, value: HKSample) {
+        
+        data.source.bundleIdentifier = value.sourceRevision.source.bundleIdentifier
+        data.source.version = value.sourceRevision.version ?? ""
+        data.source.name = value.sourceRevision.source.name
+        if #available(iOS 11.0, *) {
+            data.source.productType = value.sourceRevision.productType ?? ""
+            let oSVer = value.sourceRevision.operatingSystemVersion
+            data.source.operatingSystemVersion = "\(oSVer.majorVersion).\(oSVer.minorVersion).\(oSVer.patchVersion)"
+        }
+    }
+    
+    func saveAsData(sampleType: HKObjectType, value: (HKHealthStore, CharacteristicProcessType), healthType: HealthTypes) -> HealthData {
+        
+        var data = saveAsDataBase(sampleType: sampleType, value: nil, healthType: healthType)
+        let characteristicValue = value.1(value.0)
+        if let valueDate = characteristicValue as? Date {
+            data.characteristicData.value = valueDate.iso8601
+        } else {
+            data.characteristicData.value = "\(characteristicValue ?? "")"
+        }
         return data
     }
     
-    func saveAsData(sampleType: HKSampleType, value: HKQuantitySample, healthType: HealthTypes) -> HealthData {
+    func saveAsData(sampleType: HKObjectType, value: HKQuantitySample, healthType: HealthTypes) -> HealthData {
         
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
         let index = HealthDataUtils.getTypeIndex(healthType)!
         if #available(iOS 12.0, *) {
-            data.count = Int64(value.count)
+            data.quantityData.count = Int64(value.count)
         }
         if let unit = HealthDataUtils.QUANTITY_TYPES[index.0].1 {
-            data.quantityUnit = unit.unitString
-            data.quantity = value.quantity.doubleValue(for: unit)
+            data.quantityData.quantityUnit = unit.unitString
+            data.quantityData.quantity = value.quantity.doubleValue(for: unit)
         }
         return data
     }
     
-    func saveAsData(sampleType: HKSampleType, value: HKCategorySample, healthType: HealthTypes) -> HealthData {
+    func saveAsData(sampleType: HKObjectType, value: HKCategorySample, healthType: HealthTypes) -> HealthData {
         
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
-        data.value = Int64(value.value)
+        data.categoryData.value = Int64(value.value)
         return data
     }
     
-    func saveAsData(sampleType: HKSampleType, value: HKWorkout, healthType: HealthTypes) -> HealthData {
+    func saveAsData(sampleType: HKObjectType, value: HKWorkout, healthType: HealthTypes) -> HealthData {
         
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
-        data.totalEnergyBurned = value.totalEnergyBurned?.doubleValue(for: .joule()) ?? 0
-        data.totalEnergyBurnedUnit = HKUnit.joule().unitString
-        data.totalDistance = value.totalDistance?.doubleValue(for: .meter()) ?? 0
-        data.totalDistanceUnit = HKUnit.meter().unitString
-        data.duration = value.duration
+        data.workoutData.totalEnergyBurned = value.totalEnergyBurned?.doubleValue(for: .joule()) ?? 0
+        data.workoutData.totalEnergyBurnedUnit = HKUnit.joule().unitString
+        data.workoutData.totalDistance = value.totalDistance?.doubleValue(for: .meter()) ?? 0
+        data.workoutData.totalDistanceUnit = HKUnit.meter().unitString
+        data.workoutData.duration = value.duration
         return data
     }
     
     @available(iOS 12.0, *)
-    func saveAsData(sampleType: HKSampleType, value: HKClinicalRecord, healthType: HealthTypes) -> HealthData {
+    func saveAsData(sampleType: HKObjectType, value: HKClinicalRecord, healthType: HealthTypes) -> HealthData {
         
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
-        data.displayName = value.displayName
+        data.clinicalRecordData.displayName = value.displayName
         if let fhirData = value.fhirResource?.data, let fhirJson = String(data: fhirData, encoding: .ascii) {
-            data.fhirResource = fhirJson
+            data.clinicalRecordData.fhirResource = fhirJson
+        }
+        return data
+    }
+    
+    @available(iOS 10.0, *)
+    func saveAsData(sampleType: HKObjectType, value: HKDocumentSample, healthType: HealthTypes) -> HealthData {
+        
+        var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
+        if let documentValue = value as? HKCDADocumentSample {
+            data.documentData.authorName = documentValue.document?.authorName ?? ""
+            data.documentData.custodianName = documentValue.document?.custodianName ?? ""
+            data.documentData.patientName = documentValue.document?.patientName ?? ""
+            data.documentData.title = documentValue.document?.title ?? ""
+            data.documentData.documentData = jsonToString(documentValue.document?.documentData)
+        }
+        return data
+    }
+    
+    func saveAsData(sampleType: HKObjectType, value: HKCorrelation, healthType: HealthTypes) -> HealthData {
+        
+        var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
+        data.correlationData.objects = value.objects.map { (object) -> HealthData in
+            return makeData(from: object, sampleType: sampleType, healthType: healthType)!
         }
         return data
     }
     
     private func jsonToString(_ jsonDictionary: [String: Any]?) -> String {
         
-        if let jsonDictionary = jsonDictionary, let theJSONData = try? JSONSerialization.data(
+        if let jsonDictionary = jsonDictionary, let jsonData = try? JSONSerialization.data(
             withJSONObject: jsonDictionary, options: []) {
-            let theJSONText = String(data: theJSONData, encoding: .ascii)
-            return theJSONText ?? ""
+            return jsonToString(jsonData)
         }
         return ""
+    }
+    
+    private func jsonToString(_ jsonData: Data?) -> String {
+        
+        var jsonText: String? = nil
+        if jsonData != nil {
+            jsonText = String(data: jsonData!, encoding: .ascii)
+        }
+        return jsonText ?? ""
     }
     
     func getAnchor(anchorKey: String) -> HKQueryAnchor? {

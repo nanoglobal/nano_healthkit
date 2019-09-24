@@ -9,6 +9,8 @@ extension HealthDataUtils {
         case workout
         case characteristic
         case clinical
+        case document
+        case correlation
     }
     
     private static var WORKOUT_TYPES_V8_0: [HKSampleType] = [
@@ -55,8 +57,8 @@ extension HealthDataUtils {
         (.heartRate, HKUnit(from: "count/s")), // Scalar(Count)/Time
         (.bodyTemperature, .degreeCelsius()),
         (.basalBodyTemperature, .degreeCelsius()),
-        (.bloodPressureSystolic, .atmosphere()),
-        (.bloodPressureDiastolic, .atmosphere()),
+        (.bloodPressureSystolic, .millimeterOfMercury()),
+        (.bloodPressureDiastolic, .millimeterOfMercury()),
         (.respiratoryRate, HKUnit(from: "count/s")), // Scalar(Count)/Time
         // Results
         (.oxygenSaturation, .percent()),
@@ -144,19 +146,19 @@ extension HealthDataUtils {
     ]
     
     @available(iOS 8.0, *)
-    private static var CHARACTERISTIC_TYPES_V8_0: [(HKCharacteristicTypeIdentifier, (HKHealthStore) -> Any?)] = [
+    private static var CHARACTERISTIC_TYPES_V8_0: [(HKCharacteristicTypeIdentifier, CharacteristicProcessType)] = [
         (.biologicalSex, { try? $0.biologicalSex().biologicalSex.rawValue }), // Enum, Int
         (.bloodType, { try? $0.bloodType().bloodType.rawValue }), // Enum, Int
-        (.dateOfBirth, { try? $0.dateOfBirth().timeIntervalSince1970 }), // Date, Double
+        (.dateOfBirth, { try? $0.dateOfBirth() }), // Date, Date
     ]
     
     @available(iOS 9.0, *)
-    private static var CHARACTERISTIC_TYPES_V9_0: [(HKCharacteristicTypeIdentifier, (HKHealthStore) -> Any?)] = [
+    private static var CHARACTERISTIC_TYPES_V9_0: [(HKCharacteristicTypeIdentifier, CharacteristicProcessType)] = [
         (.fitzpatrickSkinType, { try? $0.fitzpatrickSkinType().skinType.rawValue }), // Enum, Int
     ]
     
     @available(iOS 10.0, *)
-    private static var CHARACTERISTIC_TYPES_V10_0: [(HKCharacteristicTypeIdentifier, (HKHealthStore) -> Any?)] = [
+    private static var CHARACTERISTIC_TYPES_V10_0: [(HKCharacteristicTypeIdentifier, CharacteristicProcessType)] = [
         (.wheelchairUse, { try? $0.wheelchairUse().wheelchairUse.rawValue }), // Enum, Int
     ]
     
@@ -169,6 +171,16 @@ extension HealthDataUtils {
         .medicationRecord,
         .procedureRecord,
         .vitalSignRecord,
+    ]
+    
+    @available(iOS 10.0, *)
+    private static var DOCUMENT_TYPES_V10_0: [HKDocumentTypeIdentifier] = [
+        .CDA,
+    ]
+    
+    private static var CORRELATION_TYPES_V8_0: [HKCorrelationTypeIdentifier] = [
+        .bloodPressure,
+        .food,
     ]
     
     private static var TYPE_INDEXES: [HealthTypes: (Int, SampleTypes)] = [
@@ -276,6 +288,9 @@ extension HealthDataUtils {
         .clinicalMedicationRecord: (4, .clinical),
         .clinicalProcedureRecord: (5, .clinical),
         .clinicalVitalSignRecord: (6, .clinical),
+        .documentCda: (0, .document),
+        .correlationBloodPressure: (0, .correlation),
+        .correlationFood: (1, .correlation),
     ]
     
     func fillTypes() {
@@ -285,6 +300,7 @@ extension HealthDataUtils {
             HealthDataUtils.CATEGORY_TYPES.append(contentsOf: HealthDataUtils.CATEGORY_TYPES_V8_0)
             HealthDataUtils.QUANTITY_TYPES.append(contentsOf: HealthDataUtils.QUANTITY_TYPES_V8_0)
             HealthDataUtils.CHARACTERISTIC_TYPES.append(contentsOf: HealthDataUtils.CHARACTERISTIC_TYPES_V8_0)
+            HealthDataUtils.CORRELATION_TYPES.append(contentsOf: HealthDataUtils.CORRELATION_TYPES_V8_0)
         }
         
         if #available(iOS 9.0, *) {
@@ -299,6 +315,7 @@ extension HealthDataUtils {
             HealthDataUtils.CATEGORY_TYPES.append(contentsOf: HealthDataUtils.CATEGORY_TYPES_V10_0)
             HealthDataUtils.QUANTITY_TYPES.append(contentsOf: HealthDataUtils.QUANTITY_TYPES_V10_0)
             HealthDataUtils.CHARACTERISTIC_TYPES.append(contentsOf: HealthDataUtils.CHARACTERISTIC_TYPES_V10_0)
+            HealthDataUtils.DOCUMENT_TYPES.append(contentsOf: HealthDataUtils.DOCUMENT_TYPES_V10_0)
         }
         
         if #available(iOS 11.0, *) {
@@ -335,6 +352,10 @@ extension HealthDataUtils {
             totalAmount = HealthDataUtils.CHARACTERISTIC_TYPES.count
         case .clinical:
             totalAmount = HealthDataUtils.CLINICAL_TYPES.count
+        case .document:
+            totalAmount = HealthDataUtils.DOCUMENT_TYPES.count
+        case .correlation:
+            totalAmount = HealthDataUtils.CORRELATION_TYPES.count
         }
         return totalAmount <= index.0 ? nil : index
     }
@@ -361,6 +382,10 @@ extension HealthDataUtils {
             return getCharacteristicType(index.0)
         case .clinical:
             return getClinicalType(index.0)
+        case .document:
+            return getDocumentType(index.0)
+        case .correlation:
+            return getCorrelationType(index.0)
         }
     }
     
@@ -391,6 +416,21 @@ extension HealthDataUtils {
         return nil
     }
     
+    private static func getDocumentType(_ index: Int) -> HKSampleType? {
+        
+        if #available(iOS 10.0, *) {
+            let identifier = HealthDataUtils.DOCUMENT_TYPES[index]
+            return HKObjectType.documentType(forIdentifier: identifier)
+        }
+        return nil
+    }
+    
+    private static func getCorrelationType(_ index: Int) -> HKSampleType? {
+        
+        let identifier = HealthDataUtils.CORRELATION_TYPES[index]
+        return HKObjectType.correlationType(forIdentifier: identifier)
+    }
+    
     static func makeHKObjectSet(from list: HealthTypeList) -> Set<HKObjectType> {
         
         return Set(list.types.map { (helthType) -> HKObjectType? in
@@ -410,10 +450,23 @@ extension HealthDataUtils {
     }
     
     static func filterExistingTypes(_ list: HealthTypeList) -> HealthTypeList {
+        return filterTypes(list, function: { HealthDataUtils.typeExists($0) })
+    }
+    
+    static func filterPermissionRequiredTypes(_ list: HealthTypeList) -> HealthTypeList {
+        return filterTypes(list, function: {
+            if let index = HealthDataUtils.getTypeIndex($0) {
+                return (index.1 != .correlation)
+            }
+            return false
+        })
+    }
+    
+    static func filterTypes(_ list: HealthTypeList, function: (HealthTypes) -> Bool) -> HealthTypeList {
         
         var filteredList = HealthTypeList()
         for elem in list.types {
-            if HealthDataUtils.typeExists(elem) {
+            if function(elem) {
                 filteredList.types.append(elem)
             }
         }

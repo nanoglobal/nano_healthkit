@@ -114,6 +114,9 @@ class HealthTypes extends $pb.ProtobufEnum {
   static const HealthTypes CLINICAL_MEDICATION_RECORD = HealthTypes._(101, 'CLINICAL_MEDICATION_RECORD');
   static const HealthTypes CLINICAL_PROCEDURE_RECORD = HealthTypes._(102, 'CLINICAL_PROCEDURE_RECORD');
   static const HealthTypes CLINICAL_VITAL_SIGN_RECORD = HealthTypes._(103, 'CLINICAL_VITAL_SIGN_RECORD');
+  static const HealthTypes DOCUMENT_CDA = HealthTypes._(104, 'DOCUMENT_CDA');
+  static const HealthTypes CORRELATION_BLOOD_PRESSURE = HealthTypes._(105, 'CORRELATION_BLOOD_PRESSURE');
+  static const HealthTypes CORRELATION_FOOD = HealthTypes._(106, 'CORRELATION_FOOD');
 
   static const $core.List<HealthTypes> values = <HealthTypes> [
     WORKOUT_MAIN,
@@ -220,6 +223,9 @@ class HealthTypes extends $pb.ProtobufEnum {
     CLINICAL_MEDICATION_RECORD,
     CLINICAL_PROCEDURE_RECORD,
     CLINICAL_VITAL_SIGN_RECORD,
+    DOCUMENT_CDA,
+    CORRELATION_BLOOD_PRESSURE,
+    CORRELATION_FOOD,
   ];
 
   static final $core.Map<$core.int, HealthTypes> _byValue = $pb.ProtobufEnum.initByValue(values);

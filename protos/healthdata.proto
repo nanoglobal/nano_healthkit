@@ -105,6 +105,9 @@ enum HealthTypes {
    CLINICAL_MEDICATION_RECORD = 101;
    CLINICAL_PROCEDURE_RECORD = 102;
    CLINICAL_VITAL_SIGN_RECORD = 103;
+   DOCUMENT_CDA = 104;
+   CORRELATION_BLOOD_PRESSURE = 105;
+   CORRELATION_FOOD = 106;
 }
 
 message HealthTypeList {
@@ -129,18 +132,69 @@ message HealthData {
    string endDate = 4;
    string device = 5;
    string metadata = 6;
-   int64 count = 7;
-   string quantityUnit = 8;
-   double quantity = 9;
-   int64 value = 10;
-   double totalEnergyBurned = 11;
-   string totalEnergyBurnedUnit = 12;
-   double totalDistance = 13;
-   string totalDistanceUnit = 14;
-   double duration = 15;
-   string customValue = 16;
-   string displayName = 17;
-   string fhirResource = 18;
+   string uuid = 7;
+   SourceRevision source = 8;
+
+   oneof specificData {
+      EmptySpecificData emptyData = 10;
+      QuantitySpecificData quantityData = 11;
+      CategorySpecificData categoryData = 12;
+      WorkoutSpecificData workoutData = 13;
+      CharacteristicSpecificData characteristicData = 14;
+      ClinicalRecordSpecificData clinicalRecordData = 15;
+      DocumentSpecificData documentData = 16;
+      CorrelationSpecificData correlationData = 17;
+   }
+
+   message EmptySpecificData {
+   }
+
+   message QuantitySpecificData {
+      int64 count = 101;
+      string quantityUnit = 102;
+      double quantity = 103;
+   }
+
+   message CategorySpecificData {
+      int64 value = 101;
+   }
+
+   message WorkoutSpecificData {
+      double totalEnergyBurned = 101;
+      string totalEnergyBurnedUnit = 102;
+      double totalDistance = 103;
+      string totalDistanceUnit = 104;
+      double duration = 105;
+   }
+
+   message CharacteristicSpecificData {
+      string value = 101;
+   }
+
+   message ClinicalRecordSpecificData {
+      string displayName = 101;
+      string fhirResource = 102;
+   }
+
+   message DocumentSpecificData {
+      string authorName = 101;
+      string custodianName = 102;
+      string documentData = 103;
+      string patientName = 104;
+      string title = 105;
+   }
+
+   message CorrelationSpecificData {
+      repeated HealthData objects = 101;
+   }
+
+   message SourceRevision {
+      string version = 101;
+      string operatingSystemVersion = 102;
+      string productType = 103;
+      string name = 104;
+      string bundleIdentifier = 105;
+   }
 }
 
 message HealthDataList {

@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
 
   _getUserBasicHealthData() async {
     var request = HealthDataRequest();
-    request.type = HealthTypes.CLINICAL_ALLERGY_RECORD;
+    request.type = HealthTypes.QUANTITY_HEIGHT;
     request.startDate = "2019-06-19T18:58:00.000Z";
     request.endDate = "2019-09-19T20:58:00.000Z";
     request.limit = 2;
@@ -63,7 +63,7 @@ class _MyAppState extends State<MyApp> {
 
   _filterExistingTypes() async {
     var request = HealthTypeList();
-    request.types.addAll(HealthTypes.values); // Permissions to read everything
+    request.types.addAll(HealthTypes.values);
     var filtered = await NanoHealthkitPlugin.filterExistingTypes(request);
     setState(() {
       _exisitngTypesString = filtered.toString();
