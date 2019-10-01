@@ -24,16 +24,20 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
             self.requestPermissions(call, result: result)
         }
         
-        if call.method == "fetchData" {
-            self.fetchData(call, result: result)
-        }
-        
         if call.method == "filterExistingTypes" {
             self.filterExistingTypes(call, result: result)
         }
         
+        if call.method == "fetchData" {
+            self.fetchData(call, result: result)
+        }
+        
         if call.method == "unsubscribeToUpdates" {
             self.unsubscribeToUpdates(call, result: result)
+        }
+        
+        if call.method == "fetchStatisticsData" {
+            self.fetchStatisticsData(call, result: result)
         }
     }
     
@@ -50,14 +54,6 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
         })
     }
     
-    func fetchData(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
-        let request: HealthDataRequest? = deserializeArguments(call.arguments)
-        healthUtils.fetchData(for: request, result: { batch, error in
-            self.sendResult(target: result, response: batch, error: error)
-        })
-    }
-    
     func filterExistingTypes(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
         let request: HealthTypeList? = deserializeArguments(call.arguments)
@@ -66,10 +62,26 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
         })
     }
     
+    func fetchData(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        let request: HealthDataRequest? = deserializeArguments(call.arguments)
+        healthUtils.fetchData(for: request, result: { batch, error in
+            self.sendResult(target: result, response: batch, error: error)
+        })
+    }
+    
     func unsubscribeToUpdates(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
         healthUtils.unsubscribeToUpdates(result: { unsubscribeResponse, error in
             self.sendResult(target: result, response: unsubscribeResponse, error: error)
+        })
+    }
+    
+    func fetchStatisticsData(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        let request: StatisticsRequest? = deserializeArguments(call.arguments)
+        healthUtils.fetchStatisticsData(for: request, result: { batch, error in
+            self.sendResult(target: result, response: batch, error: error)
         })
     }
     

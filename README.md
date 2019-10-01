@@ -56,7 +56,7 @@ Most of them have subtypes inside.
 
 The methods are the following:
 
-### Request permissions
+### - Request permissions
 ```dart
 Future<bool> authorize(HealthTypeList request) async
 ```
@@ -107,7 +107,7 @@ The requested type gets fetched from Apple's HealthKit and returned.
 If querying for an invalid type (because the iOS version is lower than the requested type) an exception will be thrown.
 
 #### Params
-HealthDataRequest: Indicate the type of data wanted to be read (see HealthTypes), startDate, endDate and limit. The dates can be empty strings to fetch all historical data, otherwise use ISO8601 format ("yyyy-MM-dd'T'HH:mm:ss.SSSX"). Limit must be higher than 0 otherwise HKObjectQueryNoLimit will be used.
+HealthDataRequest: Indicate the type of data wanted to be read (see HealthTypes), startDate, endDate, limit and sorting options. The dates can be empty strings to fetch all historical data, otherwise use ISO8601 format ("yyyy-MM-dd'T'HH:mm:ss.SSSX"). Limit must be higher than 0 otherwise HKObjectQueryNoLimit will be used. Sort can be one of four being 
 
 #### Return
 HealthDataList: Contains a list of HealthData.
@@ -173,6 +173,45 @@ Bool: True if success, false + an exception otherwise.
 // Send the previously saved subscription to unsubscribeToUpdates 
 NanoHealthkitPlugin.unsubscribeToUpdates(_subscription);
 _subscription = null;
+```
+
+### - Statistics
+```dart
+Future<StatisticsData> fetchStatisticsData(StatisticsRequest request) async
+```
+Makes a statistics query. 
+
+The only valid types are Quantity types, any other case will throw an error. Also beware of mixing discrete options with cumulative options or even requesting discrete options to a cumulative type and vice versa (e.g don't call heart rate with cumulative sum option or call energy consumed with any of the discrete options) all those scenarios will end up with an unhandled exception.
+
+The separate by source option can be mixed with any of the others. 
+
+More information can be found in the [official Apple's documentation](https://developer.apple.com/documentation/healthkit/hkstatisticsquery).
+
+>You cannot combine a discrete option with a cumulative option. You can, however, combine multiple discrete options together to perform multiple calculations. You can also combine the separateBySource option with any of the other options.
+
+#### Params
+StatisticsRequest: Should contain a type, startDate, endDate and the options for the requests. Options will determine which of the variables of the return object have values. Read the rules and exceptions regarding the options to avoid crashes.
+
+#### Return
+StatisticsData: Contains a list of sources, values for each kind of requested data (not separated by source) and an array of data separated by source. Not all parameters inside the response will contain values, only those that match with the requested statistics in the options of the request will. In the same way, if reparateBySource was in the options, dataBySource will contain the matching values for each source.
+
+#### Example
+```dart
+// Send the previously saved subscription to unsubscribeToUpdates 
+var request = StatisticsRequest();
+request.type = HealthTypes.QUANTITY_HEART_RATE;
+request.options.add(StatisticsOptions.DISCRETE_MAX);
+request.options.add(StatisticsOptions.DISCRETE_MIN);
+request.options.add(StatisticsOptions.DISCRETE_AVERAGE);
+request.options.add(StatisticsOptions.SEPARATE_BY_SOURCE);
+
+var resultToShow = "";
+try {
+  var result = await NanoHealthkitPlugin.fetchStatisticsData(request);
+  resultToShow = result.toString();
+} on Exception catch (error) {
+  resultToShow = error.toString();
+}
 ```
 
 ## Other Notes

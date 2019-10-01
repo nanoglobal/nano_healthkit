@@ -11,8 +11,8 @@ extension HealthDataFetcher {
         
         var dataList = HealthDataList()
         for sample: Any in samples ?? [] {
-        
-            if let singleData = makeData(from: sample, sampleType: sampleType, healthType: healthType){
+            
+            if let singleData = makeData(from: sample, sampleType: sampleType, healthType: healthType) {
                 dataList.data.append(singleData)
             }
         }
@@ -59,19 +59,24 @@ extension HealthDataFetcher {
         data.device = value.device?.name ?? ""
         data.metadata = jsonToString(value.metadata)
         data.uuid = value.uuid.uuidString
-        saveSourceInfo(data: &data, value: value)
+        saveSourceRevisionInfo(data: &data.source, value: value.sourceRevision)
     }
     
-    private func saveSourceInfo(data: inout HealthData, value: HKSample) {
+    private func saveSourceRevisionInfo(data: inout SourceRevision, value: HKSourceRevision) {
         
-        data.source.bundleIdentifier = value.sourceRevision.source.bundleIdentifier
-        data.source.version = value.sourceRevision.version ?? ""
-        data.source.name = value.sourceRevision.source.name
+        saveSourceInfo(data: &data, value: value.source)
+        data.version = value.version ?? ""
         if #available(iOS 11.0, *) {
-            data.source.productType = value.sourceRevision.productType ?? ""
-            let oSVer = value.sourceRevision.operatingSystemVersion
-            data.source.operatingSystemVersion = "\(oSVer.majorVersion).\(oSVer.minorVersion).\(oSVer.patchVersion)"
+            data.productType = value.productType ?? ""
+            let oSVer = value.operatingSystemVersion
+            data.operatingSystemVersion = "\(oSVer.majorVersion).\(oSVer.minorVersion).\(oSVer.patchVersion)"
         }
+    }
+    
+    private func saveSourceInfo(data: inout SourceRevision, value: HKSource) {
+        
+        data.name = value.name
+        data.bundleIdentifier = value.bundleIdentifier
     }
     
     func saveAsData(sampleType: HKObjectType, value: (HKHealthStore, CharacteristicProcessType), healthType: HealthTypes) -> HealthData {
@@ -89,15 +94,21 @@ extension HealthDataFetcher {
     func saveAsData(sampleType: HKObjectType, value: HKQuantitySample, healthType: HealthTypes) -> HealthData {
         
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
-        let index = HealthDataUtils.getTypeIndex(healthType)!
         if #available(iOS 12.0, *) {
             data.quantityData.count = Int64(value.count)
         }
-        if let unit = HealthDataUtils.QUANTITY_TYPES[index.0].1 {
-            data.quantityData.quantityUnit = unit.unitString
-            data.quantityData.quantity = value.quantity.doubleValue(for: unit)
-        }
+        saveQuantityData(&data.quantityData, value: value.quantity, healthType: healthType)
         return data
+    }
+    
+    func saveQuantityData(_ quantityData: inout QuantitySpecificData, value: HKQuantity, healthType: HealthTypes) {
+        
+        let index = HealthDataUtils.getTypeIndex(healthType)!
+        
+        if let unit = HealthDataUtils.QUANTITY_TYPES[index.0].1 {
+            quantityData.quantityUnit = unit.unitString
+            quantityData.quantity = value.doubleValue(for: unit)
+        }
     }
     
     func saveAsData(sampleType: HKObjectType, value: HKCategorySample, healthType: HealthTypes) -> HealthData {
@@ -147,9 +158,78 @@ extension HealthDataFetcher {
         
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
         data.correlationData.objects = value.objects.map { (object) -> HealthData in
-            return makeData(from: object, sampleType: sampleType, healthType: healthType)!
+            makeData(from: object, sampleType: sampleType, healthType: healthType)!
         }
         return data
+    }
+    
+    func saveAsStatisticsData(response: HKStatistics?, healthType: HealthTypes, params: StatisticsParams) -> StatisticsData {
+        
+        var data = StatisticsData()
+        if let sum = response?.sumQuantity() {
+            saveQuantityData(&data.sumQuantity, value: sum, healthType: healthType)
+        }
+        if let average = response?.averageQuantity() {
+            saveQuantityData(&data.averageQuantity, value: average, healthType: healthType)
+        }
+        if #available(iOS 13.0, *), let duration = response?.duration() {
+            saveQuantityData(&data.duration, value: duration, healthType: healthType)
+        }
+        if let max = response?.maximumQuantity() {
+            saveQuantityData(&data.maximumQuantity, value: max, healthType: healthType)
+        }
+        if let min = response?.minimumQuantity() {
+            saveQuantityData(&data.minimumQuantity, value: min, healthType: healthType)
+        }
+        if #available(iOS 12.0, *), let mostRecent = response?.mostRecentQuantity() {
+            saveQuantityData(&data.mostRecentQuantity, value: mostRecent, healthType: healthType)
+        }
+        if #available(iOS 12.0, *), let mostRecentDate = response?.mostRecentQuantityDateInterval() {
+            data.mostRecentQuantityDateInterval.startDate = mostRecentDate.start.iso8601
+            data.mostRecentQuantityDateInterval.endDate = mostRecentDate.end.iso8601
+        }
+        data.dataInterval.startDate = response?.startDate.iso8601 ?? ""
+        data.dataInterval.endDate = response?.endDate.iso8601 ?? ""
+        for source in response?.sources ?? [] {
+            var ownSource = SourceRevision()
+            saveSourceInfo(data: &ownSource, value: source)
+            data.sources.append(ownSource)
+            
+            if params.statisticsOptions.contains(.separateBySource) {
+                saveAsStatisticsDataBySource(response: response, healthType: healthType, data: &data, source: source, ownSource: ownSource)
+            }
+        }
+        return data
+    }
+    
+    private func saveAsStatisticsDataBySource(response: HKStatistics?, healthType: HealthTypes, data: inout StatisticsData, source: HKSource, ownSource: SourceRevision) {
+        
+        var dataBySource = StatisticsData.StatisticsDataBySource()
+        dataBySource.source = ownSource
+        if let sum = response?.sumQuantity(for: source) {
+            saveQuantityData(&dataBySource.data.sumQuantity, value: sum, healthType: healthType)
+        }
+        if let average = response?.averageQuantity(for: source) {
+            saveQuantityData(&dataBySource.data.averageQuantity, value: average, healthType: healthType)
+        }
+        if #available(iOS 13.0, *), let duration = response?.duration(for: source) {
+            saveQuantityData(&dataBySource.data.duration, value: duration, healthType: healthType)
+        }
+        if let max = response?.maximumQuantity(for: source) {
+            saveQuantityData(&dataBySource.data.maximumQuantity, value: max, healthType: healthType)
+        }
+        if let min = response?.minimumQuantity(for: source) {
+            saveQuantityData(&dataBySource.data.minimumQuantity, value: min, healthType: healthType)
+        }
+        if #available(iOS 12.0, *), let mostRecent = response?.mostRecentQuantity(for: source) {
+            saveQuantityData(&dataBySource.data.mostRecentQuantity, value: mostRecent, healthType: healthType)
+        }
+        if #available(iOS 12.0, *), let mostRecentDate = response?.mostRecentQuantityDateInterval(for: source) {
+            dataBySource.data.mostRecentQuantityDateInterval.startDate = mostRecentDate.start.iso8601
+            dataBySource.data.mostRecentQuantityDateInterval.endDate = mostRecentDate.end.iso8601
+        }
+        
+        data.dataBySource.append(dataBySource)
     }
     
     private func jsonToString(_ jsonDictionary: [String: Any]?) -> String {
@@ -163,7 +243,7 @@ extension HealthDataFetcher {
     
     private func jsonToString(_ jsonData: Data?) -> String {
         
-        var jsonText: String? = nil
+        var jsonText: String?
         if jsonData != nil {
             jsonText = String(data: jsonData!, encoding: .ascii)
         }

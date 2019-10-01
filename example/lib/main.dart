@@ -17,6 +17,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool _isAuthorized = false;
   String _basicHealthString = "";
+  String _statisticsString = "";
   String _activityData;
   String _exisitngTypesString = "";
   String _updateStatusString = "";
@@ -58,6 +59,25 @@ class _MyAppState extends State<MyApp> {
     }
     setState(() {
       _basicHealthString = resultToShow;
+    });
+  }
+
+  _getUserStatisticsData() async {
+    var request = StatisticsRequest();
+    request.type = HealthTypes.QUANTITY_HEART_RATE;
+    request.options.add(StatisticsOptions.DISCRETE_MAX);
+    request.options.add(StatisticsOptions.DISCRETE_MIN);
+    request.options.add(StatisticsOptions.DISCRETE_AVERAGE);
+    request.options.add(StatisticsOptions.SEPARATE_BY_SOURCE);
+    var resultToShow = "";
+    try {
+      var result = await NanoHealthkitPlugin.fetchStatisticsData(request);
+      resultToShow = result.toString();
+    } on Exception catch (error) {
+      resultToShow = error.toString();
+    }
+    setState(() {
+      _statisticsString = resultToShow;
     });
   }
 
@@ -168,6 +188,13 @@ class _MyAppState extends State<MyApp> {
                     onPressed: _getUserBasicHealthData),
               ),
               Text('Basic health: $_basicHealthString\n'),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: RaisedButton(
+                    child: Text("Get statistics data"),
+                    onPressed: _getUserStatisticsData),
+              ),
+              Text('Statistics data: $_statisticsString\n'),
             ],
           ),
         ),

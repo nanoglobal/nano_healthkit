@@ -479,6 +479,114 @@ extension HealthTypes: CaseIterable {
 
 #endif  // swift(>=4.2)
 
+enum RequestSorting: SwiftProtobuf.Enum {
+  typealias RawValue = Int
+  case descendingStartDate // = 0
+  case ascendingStartDate // = 1
+  case ascendingEndDate // = 2
+  case descendingEndDate // = 3
+  case UNRECOGNIZED(Int)
+
+  init() {
+    self = .descendingStartDate
+  }
+
+  init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .descendingStartDate
+    case 1: self = .ascendingStartDate
+    case 2: self = .ascendingEndDate
+    case 3: self = .descendingEndDate
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  var rawValue: Int {
+    switch self {
+    case .descendingStartDate: return 0
+    case .ascendingStartDate: return 1
+    case .ascendingEndDate: return 2
+    case .descendingEndDate: return 3
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension RequestSorting: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [RequestSorting] = [
+    .descendingStartDate,
+    .ascendingStartDate,
+    .ascendingEndDate,
+    .descendingEndDate,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
+enum StatisticsOptions: SwiftProtobuf.Enum {
+  typealias RawValue = Int
+  case discreteAverage // = 0
+  case discreteMin // = 1
+  case discreteMax // = 2
+  case cumulativeSum // = 3
+  case mostRecent // = 4
+  case duration // = 5
+  case separateBySource // = 6
+  case UNRECOGNIZED(Int)
+
+  init() {
+    self = .discreteAverage
+  }
+
+  init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .discreteAverage
+    case 1: self = .discreteMin
+    case 2: self = .discreteMax
+    case 3: self = .cumulativeSum
+    case 4: self = .mostRecent
+    case 5: self = .duration
+    case 6: self = .separateBySource
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  var rawValue: Int {
+    switch self {
+    case .discreteAverage: return 0
+    case .discreteMin: return 1
+    case .discreteMax: return 2
+    case .cumulativeSum: return 3
+    case .mostRecent: return 4
+    case .duration: return 5
+    case .separateBySource: return 6
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension StatisticsOptions: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [StatisticsOptions] = [
+    .discreteAverage,
+    .discreteMin,
+    .discreteMax,
+    .cumulativeSum,
+    .mostRecent,
+    .duration,
+    .separateBySource,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
 struct HealthTypeList {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -503,6 +611,8 @@ struct HealthDataRequest {
   var endDate: String = String()
 
   var limit: Int32 = 0
+
+  var sorting: RequestSorting = .descendingStartDate
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -561,8 +671,8 @@ struct HealthData {
     set {_uniqueStorage()._uuid = newValue}
   }
 
-  var source: HealthData.SourceRevision {
-    get {return _storage._source ?? HealthData.SourceRevision()}
+  var source: SourceRevision {
+    get {return _storage._source ?? SourceRevision()}
     set {_uniqueStorage()._source = newValue}
   }
   /// Returns true if `source` has been explicitly set.
@@ -575,66 +685,66 @@ struct HealthData {
     set {_uniqueStorage()._specificData = newValue}
   }
 
-  var emptyData: HealthData.EmptySpecificData {
+  var emptyData: EmptySpecificData {
     get {
       if case .emptyData(let v)? = _storage._specificData {return v}
-      return HealthData.EmptySpecificData()
+      return EmptySpecificData()
     }
     set {_uniqueStorage()._specificData = .emptyData(newValue)}
   }
 
-  var quantityData: HealthData.QuantitySpecificData {
+  var quantityData: QuantitySpecificData {
     get {
       if case .quantityData(let v)? = _storage._specificData {return v}
-      return HealthData.QuantitySpecificData()
+      return QuantitySpecificData()
     }
     set {_uniqueStorage()._specificData = .quantityData(newValue)}
   }
 
-  var categoryData: HealthData.CategorySpecificData {
+  var categoryData: CategorySpecificData {
     get {
       if case .categoryData(let v)? = _storage._specificData {return v}
-      return HealthData.CategorySpecificData()
+      return CategorySpecificData()
     }
     set {_uniqueStorage()._specificData = .categoryData(newValue)}
   }
 
-  var workoutData: HealthData.WorkoutSpecificData {
+  var workoutData: WorkoutSpecificData {
     get {
       if case .workoutData(let v)? = _storage._specificData {return v}
-      return HealthData.WorkoutSpecificData()
+      return WorkoutSpecificData()
     }
     set {_uniqueStorage()._specificData = .workoutData(newValue)}
   }
 
-  var characteristicData: HealthData.CharacteristicSpecificData {
+  var characteristicData: CharacteristicSpecificData {
     get {
       if case .characteristicData(let v)? = _storage._specificData {return v}
-      return HealthData.CharacteristicSpecificData()
+      return CharacteristicSpecificData()
     }
     set {_uniqueStorage()._specificData = .characteristicData(newValue)}
   }
 
-  var clinicalRecordData: HealthData.ClinicalRecordSpecificData {
+  var clinicalRecordData: ClinicalRecordSpecificData {
     get {
       if case .clinicalRecordData(let v)? = _storage._specificData {return v}
-      return HealthData.ClinicalRecordSpecificData()
+      return ClinicalRecordSpecificData()
     }
     set {_uniqueStorage()._specificData = .clinicalRecordData(newValue)}
   }
 
-  var documentData: HealthData.DocumentSpecificData {
+  var documentData: DocumentSpecificData {
     get {
       if case .documentData(let v)? = _storage._specificData {return v}
-      return HealthData.DocumentSpecificData()
+      return DocumentSpecificData()
     }
     set {_uniqueStorage()._specificData = .documentData(newValue)}
   }
 
-  var correlationData: HealthData.CorrelationSpecificData {
+  var correlationData: CorrelationSpecificData {
     get {
       if case .correlationData(let v)? = _storage._specificData {return v}
-      return HealthData.CorrelationSpecificData()
+      return CorrelationSpecificData()
     }
     set {_uniqueStorage()._specificData = .correlationData(newValue)}
   }
@@ -642,14 +752,14 @@ struct HealthData {
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_SpecificData: Equatable {
-    case emptyData(HealthData.EmptySpecificData)
-    case quantityData(HealthData.QuantitySpecificData)
-    case categoryData(HealthData.CategorySpecificData)
-    case workoutData(HealthData.WorkoutSpecificData)
-    case characteristicData(HealthData.CharacteristicSpecificData)
-    case clinicalRecordData(HealthData.ClinicalRecordSpecificData)
-    case documentData(HealthData.DocumentSpecificData)
-    case correlationData(HealthData.CorrelationSpecificData)
+    case emptyData(EmptySpecificData)
+    case quantityData(QuantitySpecificData)
+    case categoryData(CategorySpecificData)
+    case workoutData(WorkoutSpecificData)
+    case characteristicData(CharacteristicSpecificData)
+    case clinicalRecordData(ClinicalRecordSpecificData)
+    case documentData(DocumentSpecificData)
+    case correlationData(CorrelationSpecificData)
 
   #if !swift(>=4.1)
     static func ==(lhs: HealthData.OneOf_SpecificData, rhs: HealthData.OneOf_SpecificData) -> Bool {
@@ -668,142 +778,6 @@ struct HealthData {
   #endif
   }
 
-  struct EmptySpecificData {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-  }
-
-  struct QuantitySpecificData {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    var count: Int64 = 0
-
-    var quantityUnit: String = String()
-
-    var quantity: Double = 0
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-  }
-
-  struct CategorySpecificData {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    var value: Int64 = 0
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-  }
-
-  struct WorkoutSpecificData {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    var totalEnergyBurned: Double = 0
-
-    var totalEnergyBurnedUnit: String = String()
-
-    var totalDistance: Double = 0
-
-    var totalDistanceUnit: String = String()
-
-    var duration: Double = 0
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-  }
-
-  struct CharacteristicSpecificData {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    var value: String = String()
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-  }
-
-  struct ClinicalRecordSpecificData {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    var displayName: String = String()
-
-    var fhirResource: String = String()
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-  }
-
-  struct DocumentSpecificData {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    var authorName: String = String()
-
-    var custodianName: String = String()
-
-    var documentData: String = String()
-
-    var patientName: String = String()
-
-    var title: String = String()
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-  }
-
-  struct CorrelationSpecificData {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    var objects: [HealthData] = []
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-  }
-
-  struct SourceRevision {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    var version: String = String()
-
-    var operatingSystemVersion: String = String()
-
-    var productType: String = String()
-
-    var name: String = String()
-
-    var bundleIdentifier: String = String()
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-  }
-
   init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
@@ -819,6 +793,298 @@ struct HealthDataList {
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
+}
+
+struct EmptySpecificData {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct QuantitySpecificData {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var count: Int64 = 0
+
+  var quantityUnit: String = String()
+
+  var quantity: Double = 0
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct CategorySpecificData {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var value: Int64 = 0
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct WorkoutSpecificData {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var totalEnergyBurned: Double = 0
+
+  var totalEnergyBurnedUnit: String = String()
+
+  var totalDistance: Double = 0
+
+  var totalDistanceUnit: String = String()
+
+  var duration: Double = 0
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct CharacteristicSpecificData {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var value: String = String()
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct ClinicalRecordSpecificData {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var displayName: String = String()
+
+  var fhirResource: String = String()
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct DocumentSpecificData {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var authorName: String = String()
+
+  var custodianName: String = String()
+
+  var documentData: String = String()
+
+  var patientName: String = String()
+
+  var title: String = String()
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct CorrelationSpecificData {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var objects: [HealthData] = []
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct SourceRevision {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var version: String = String()
+
+  var operatingSystemVersion: String = String()
+
+  var productType: String = String()
+
+  var name: String = String()
+
+  var bundleIdentifier: String = String()
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct StatisticsRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var type: HealthTypes = .workoutMain
+
+  var startDate: String = String()
+
+  var endDate: String = String()
+
+  var options: [StatisticsOptions] = []
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct StatisticsData {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var sources: [SourceRevision] {
+    get {return _storage._sources}
+    set {_uniqueStorage()._sources = newValue}
+  }
+
+  var averageQuantity: QuantitySpecificData {
+    get {return _storage._averageQuantity ?? QuantitySpecificData()}
+    set {_uniqueStorage()._averageQuantity = newValue}
+  }
+  /// Returns true if `averageQuantity` has been explicitly set.
+  var hasAverageQuantity: Bool {return _storage._averageQuantity != nil}
+  /// Clears the value of `averageQuantity`. Subsequent reads from it will return its default value.
+  mutating func clearAverageQuantity() {_uniqueStorage()._averageQuantity = nil}
+
+  var maximumQuantity: QuantitySpecificData {
+    get {return _storage._maximumQuantity ?? QuantitySpecificData()}
+    set {_uniqueStorage()._maximumQuantity = newValue}
+  }
+  /// Returns true if `maximumQuantity` has been explicitly set.
+  var hasMaximumQuantity: Bool {return _storage._maximumQuantity != nil}
+  /// Clears the value of `maximumQuantity`. Subsequent reads from it will return its default value.
+  mutating func clearMaximumQuantity() {_uniqueStorage()._maximumQuantity = nil}
+
+  var minimumQuantity: QuantitySpecificData {
+    get {return _storage._minimumQuantity ?? QuantitySpecificData()}
+    set {_uniqueStorage()._minimumQuantity = newValue}
+  }
+  /// Returns true if `minimumQuantity` has been explicitly set.
+  var hasMinimumQuantity: Bool {return _storage._minimumQuantity != nil}
+  /// Clears the value of `minimumQuantity`. Subsequent reads from it will return its default value.
+  mutating func clearMinimumQuantity() {_uniqueStorage()._minimumQuantity = nil}
+
+  var sumQuantity: QuantitySpecificData {
+    get {return _storage._sumQuantity ?? QuantitySpecificData()}
+    set {_uniqueStorage()._sumQuantity = newValue}
+  }
+  /// Returns true if `sumQuantity` has been explicitly set.
+  var hasSumQuantity: Bool {return _storage._sumQuantity != nil}
+  /// Clears the value of `sumQuantity`. Subsequent reads from it will return its default value.
+  mutating func clearSumQuantity() {_uniqueStorage()._sumQuantity = nil}
+
+  var duration: QuantitySpecificData {
+    get {return _storage._duration ?? QuantitySpecificData()}
+    set {_uniqueStorage()._duration = newValue}
+  }
+  /// Returns true if `duration` has been explicitly set.
+  var hasDuration: Bool {return _storage._duration != nil}
+  /// Clears the value of `duration`. Subsequent reads from it will return its default value.
+  mutating func clearDuration() {_uniqueStorage()._duration = nil}
+
+  var mostRecentQuantity: QuantitySpecificData {
+    get {return _storage._mostRecentQuantity ?? QuantitySpecificData()}
+    set {_uniqueStorage()._mostRecentQuantity = newValue}
+  }
+  /// Returns true if `mostRecentQuantity` has been explicitly set.
+  var hasMostRecentQuantity: Bool {return _storage._mostRecentQuantity != nil}
+  /// Clears the value of `mostRecentQuantity`. Subsequent reads from it will return its default value.
+  mutating func clearMostRecentQuantity() {_uniqueStorage()._mostRecentQuantity = nil}
+
+  var mostRecentQuantityDateInterval: StatisticsData.TimeInterval {
+    get {return _storage._mostRecentQuantityDateInterval ?? StatisticsData.TimeInterval()}
+    set {_uniqueStorage()._mostRecentQuantityDateInterval = newValue}
+  }
+  /// Returns true if `mostRecentQuantityDateInterval` has been explicitly set.
+  var hasMostRecentQuantityDateInterval: Bool {return _storage._mostRecentQuantityDateInterval != nil}
+  /// Clears the value of `mostRecentQuantityDateInterval`. Subsequent reads from it will return its default value.
+  mutating func clearMostRecentQuantityDateInterval() {_uniqueStorage()._mostRecentQuantityDateInterval = nil}
+
+  var dataInterval: StatisticsData.TimeInterval {
+    get {return _storage._dataInterval ?? StatisticsData.TimeInterval()}
+    set {_uniqueStorage()._dataInterval = newValue}
+  }
+  /// Returns true if `dataInterval` has been explicitly set.
+  var hasDataInterval: Bool {return _storage._dataInterval != nil}
+  /// Clears the value of `dataInterval`. Subsequent reads from it will return its default value.
+  mutating func clearDataInterval() {_uniqueStorage()._dataInterval = nil}
+
+  var dataBySource: [StatisticsData.StatisticsDataBySource] {
+    get {return _storage._dataBySource}
+    set {_uniqueStorage()._dataBySource = newValue}
+  }
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  struct StatisticsDataBySource {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var source: SourceRevision {
+      get {return _storage._source ?? SourceRevision()}
+      set {_uniqueStorage()._source = newValue}
+    }
+    /// Returns true if `source` has been explicitly set.
+    var hasSource: Bool {return _storage._source != nil}
+    /// Clears the value of `source`. Subsequent reads from it will return its default value.
+    mutating func clearSource() {_uniqueStorage()._source = nil}
+
+    var data: StatisticsData {
+      get {return _storage._data ?? StatisticsData()}
+      set {_uniqueStorage()._data = newValue}
+    }
+    /// Returns true if `data` has been explicitly set.
+    var hasData: Bool {return _storage._data != nil}
+    /// Clears the value of `data`. Subsequent reads from it will return its default value.
+    mutating func clearData() {_uniqueStorage()._data = nil}
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+
+    fileprivate var _storage = _StorageClass.defaultInstance
+  }
+
+  struct TimeInterval {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var startDate: String = String()
+
+    var endDate: String = String()
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  init() {}
+
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -935,6 +1201,27 @@ extension HealthTypes: SwiftProtobuf._ProtoNameProviding {
   ]
 }
 
+extension RequestSorting: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "DESCENDING_START_DATE"),
+    1: .same(proto: "ASCENDING_START_DATE"),
+    2: .same(proto: "ASCENDING_END_DATE"),
+    3: .same(proto: "DESCENDING_END_DATE"),
+  ]
+}
+
+extension StatisticsOptions: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "DISCRETE_AVERAGE"),
+    1: .same(proto: "DISCRETE_MIN"),
+    2: .same(proto: "DISCRETE_MAX"),
+    3: .same(proto: "CUMULATIVE_SUM"),
+    4: .same(proto: "MOST_RECENT"),
+    5: .same(proto: "DURATION"),
+    6: .same(proto: "SEPARATE_BY_SOURCE"),
+  ]
+}
+
 extension HealthTypeList: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "HealthTypeList"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -971,6 +1258,7 @@ extension HealthDataRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     2: .same(proto: "startDate"),
     3: .same(proto: "endDate"),
     4: .same(proto: "limit"),
+    5: .same(proto: "sorting"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -980,6 +1268,7 @@ extension HealthDataRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
       case 2: try decoder.decodeSingularStringField(value: &self.startDate)
       case 3: try decoder.decodeSingularStringField(value: &self.endDate)
       case 4: try decoder.decodeSingularInt32Field(value: &self.limit)
+      case 5: try decoder.decodeSingularEnumField(value: &self.sorting)
       default: break
       }
     }
@@ -998,6 +1287,9 @@ extension HealthDataRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     if self.limit != 0 {
       try visitor.visitSingularInt32Field(value: self.limit, fieldNumber: 4)
     }
+    if self.sorting != .descendingStartDate {
+      try visitor.visitSingularEnumField(value: self.sorting, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1006,6 +1298,7 @@ extension HealthDataRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     if lhs.startDate != rhs.startDate {return false}
     if lhs.endDate != rhs.endDate {return false}
     if lhs.limit != rhs.limit {return false}
+    if lhs.sorting != rhs.sorting {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1069,7 +1362,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     var _device: String = String()
     var _metadata: String = String()
     var _uuid: String = String()
-    var _source: HealthData.SourceRevision? = nil
+    var _source: SourceRevision? = nil
     var _specificData: HealthData.OneOf_SpecificData?
 
     static let defaultInstance = _StorageClass()
@@ -1110,7 +1403,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
         case 7: try decoder.decodeSingularStringField(value: &_storage._uuid)
         case 8: try decoder.decodeSingularMessageField(value: &_storage._source)
         case 10:
-          var v: HealthData.EmptySpecificData?
+          var v: EmptySpecificData?
           if let current = _storage._specificData {
             try decoder.handleConflictingOneOf()
             if case .emptyData(let m) = current {v = m}
@@ -1118,7 +1411,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
           try decoder.decodeSingularMessageField(value: &v)
           if let v = v {_storage._specificData = .emptyData(v)}
         case 11:
-          var v: HealthData.QuantitySpecificData?
+          var v: QuantitySpecificData?
           if let current = _storage._specificData {
             try decoder.handleConflictingOneOf()
             if case .quantityData(let m) = current {v = m}
@@ -1126,7 +1419,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
           try decoder.decodeSingularMessageField(value: &v)
           if let v = v {_storage._specificData = .quantityData(v)}
         case 12:
-          var v: HealthData.CategorySpecificData?
+          var v: CategorySpecificData?
           if let current = _storage._specificData {
             try decoder.handleConflictingOneOf()
             if case .categoryData(let m) = current {v = m}
@@ -1134,7 +1427,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
           try decoder.decodeSingularMessageField(value: &v)
           if let v = v {_storage._specificData = .categoryData(v)}
         case 13:
-          var v: HealthData.WorkoutSpecificData?
+          var v: WorkoutSpecificData?
           if let current = _storage._specificData {
             try decoder.handleConflictingOneOf()
             if case .workoutData(let m) = current {v = m}
@@ -1142,7 +1435,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
           try decoder.decodeSingularMessageField(value: &v)
           if let v = v {_storage._specificData = .workoutData(v)}
         case 14:
-          var v: HealthData.CharacteristicSpecificData?
+          var v: CharacteristicSpecificData?
           if let current = _storage._specificData {
             try decoder.handleConflictingOneOf()
             if case .characteristicData(let m) = current {v = m}
@@ -1150,7 +1443,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
           try decoder.decodeSingularMessageField(value: &v)
           if let v = v {_storage._specificData = .characteristicData(v)}
         case 15:
-          var v: HealthData.ClinicalRecordSpecificData?
+          var v: ClinicalRecordSpecificData?
           if let current = _storage._specificData {
             try decoder.handleConflictingOneOf()
             if case .clinicalRecordData(let m) = current {v = m}
@@ -1158,7 +1451,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
           try decoder.decodeSingularMessageField(value: &v)
           if let v = v {_storage._specificData = .clinicalRecordData(v)}
         case 16:
-          var v: HealthData.DocumentSpecificData?
+          var v: DocumentSpecificData?
           if let current = _storage._specificData {
             try decoder.handleConflictingOneOf()
             if case .documentData(let m) = current {v = m}
@@ -1166,7 +1459,7 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
           try decoder.decodeSingularMessageField(value: &v)
           if let v = v {_storage._specificData = .documentData(v)}
         case 17:
-          var v: HealthData.CorrelationSpecificData?
+          var v: CorrelationSpecificData?
           if let current = _storage._specificData {
             try decoder.handleConflictingOneOf()
             if case .correlationData(let m) = current {v = m}
@@ -1251,8 +1544,37 @@ extension HealthData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
   }
 }
 
-extension HealthData.EmptySpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = HealthData.protoMessageName + ".EmptySpecificData"
+extension HealthDataList: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "HealthDataList"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "data"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeRepeatedMessageField(value: &self.data)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.data.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.data, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: HealthDataList, rhs: HealthDataList) -> Bool {
+    if lhs.data != rhs.data {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension EmptySpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "EmptySpecificData"
   static let _protobuf_nameMap = SwiftProtobuf._NameMap()
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1264,14 +1586,14 @@ extension HealthData.EmptySpecificData: SwiftProtobuf.Message, SwiftProtobuf._Me
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: HealthData.EmptySpecificData, rhs: HealthData.EmptySpecificData) -> Bool {
+  static func ==(lhs: EmptySpecificData, rhs: EmptySpecificData) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension HealthData.QuantitySpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = HealthData.protoMessageName + ".QuantitySpecificData"
+extension QuantitySpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "QuantitySpecificData"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     101: .same(proto: "count"),
     102: .same(proto: "quantityUnit"),
@@ -1302,7 +1624,7 @@ extension HealthData.QuantitySpecificData: SwiftProtobuf.Message, SwiftProtobuf.
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: HealthData.QuantitySpecificData, rhs: HealthData.QuantitySpecificData) -> Bool {
+  static func ==(lhs: QuantitySpecificData, rhs: QuantitySpecificData) -> Bool {
     if lhs.count != rhs.count {return false}
     if lhs.quantityUnit != rhs.quantityUnit {return false}
     if lhs.quantity != rhs.quantity {return false}
@@ -1311,8 +1633,8 @@ extension HealthData.QuantitySpecificData: SwiftProtobuf.Message, SwiftProtobuf.
   }
 }
 
-extension HealthData.CategorySpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = HealthData.protoMessageName + ".CategorySpecificData"
+extension CategorySpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "CategorySpecificData"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     101: .same(proto: "value"),
   ]
@@ -1333,15 +1655,15 @@ extension HealthData.CategorySpecificData: SwiftProtobuf.Message, SwiftProtobuf.
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: HealthData.CategorySpecificData, rhs: HealthData.CategorySpecificData) -> Bool {
+  static func ==(lhs: CategorySpecificData, rhs: CategorySpecificData) -> Bool {
     if lhs.value != rhs.value {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension HealthData.WorkoutSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = HealthData.protoMessageName + ".WorkoutSpecificData"
+extension WorkoutSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "WorkoutSpecificData"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     101: .same(proto: "totalEnergyBurned"),
     102: .same(proto: "totalEnergyBurnedUnit"),
@@ -1382,7 +1704,7 @@ extension HealthData.WorkoutSpecificData: SwiftProtobuf.Message, SwiftProtobuf._
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: HealthData.WorkoutSpecificData, rhs: HealthData.WorkoutSpecificData) -> Bool {
+  static func ==(lhs: WorkoutSpecificData, rhs: WorkoutSpecificData) -> Bool {
     if lhs.totalEnergyBurned != rhs.totalEnergyBurned {return false}
     if lhs.totalEnergyBurnedUnit != rhs.totalEnergyBurnedUnit {return false}
     if lhs.totalDistance != rhs.totalDistance {return false}
@@ -1393,8 +1715,8 @@ extension HealthData.WorkoutSpecificData: SwiftProtobuf.Message, SwiftProtobuf._
   }
 }
 
-extension HealthData.CharacteristicSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = HealthData.protoMessageName + ".CharacteristicSpecificData"
+extension CharacteristicSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "CharacteristicSpecificData"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     101: .same(proto: "value"),
   ]
@@ -1415,15 +1737,15 @@ extension HealthData.CharacteristicSpecificData: SwiftProtobuf.Message, SwiftPro
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: HealthData.CharacteristicSpecificData, rhs: HealthData.CharacteristicSpecificData) -> Bool {
+  static func ==(lhs: CharacteristicSpecificData, rhs: CharacteristicSpecificData) -> Bool {
     if lhs.value != rhs.value {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension HealthData.ClinicalRecordSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = HealthData.protoMessageName + ".ClinicalRecordSpecificData"
+extension ClinicalRecordSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "ClinicalRecordSpecificData"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     101: .same(proto: "displayName"),
     102: .same(proto: "fhirResource"),
@@ -1449,7 +1771,7 @@ extension HealthData.ClinicalRecordSpecificData: SwiftProtobuf.Message, SwiftPro
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: HealthData.ClinicalRecordSpecificData, rhs: HealthData.ClinicalRecordSpecificData) -> Bool {
+  static func ==(lhs: ClinicalRecordSpecificData, rhs: ClinicalRecordSpecificData) -> Bool {
     if lhs.displayName != rhs.displayName {return false}
     if lhs.fhirResource != rhs.fhirResource {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -1457,8 +1779,8 @@ extension HealthData.ClinicalRecordSpecificData: SwiftProtobuf.Message, SwiftPro
   }
 }
 
-extension HealthData.DocumentSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = HealthData.protoMessageName + ".DocumentSpecificData"
+extension DocumentSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "DocumentSpecificData"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     101: .same(proto: "authorName"),
     102: .same(proto: "custodianName"),
@@ -1499,7 +1821,7 @@ extension HealthData.DocumentSpecificData: SwiftProtobuf.Message, SwiftProtobuf.
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: HealthData.DocumentSpecificData, rhs: HealthData.DocumentSpecificData) -> Bool {
+  static func ==(lhs: DocumentSpecificData, rhs: DocumentSpecificData) -> Bool {
     if lhs.authorName != rhs.authorName {return false}
     if lhs.custodianName != rhs.custodianName {return false}
     if lhs.documentData != rhs.documentData {return false}
@@ -1510,8 +1832,8 @@ extension HealthData.DocumentSpecificData: SwiftProtobuf.Message, SwiftProtobuf.
   }
 }
 
-extension HealthData.CorrelationSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = HealthData.protoMessageName + ".CorrelationSpecificData"
+extension CorrelationSpecificData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "CorrelationSpecificData"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     101: .same(proto: "objects"),
   ]
@@ -1532,15 +1854,15 @@ extension HealthData.CorrelationSpecificData: SwiftProtobuf.Message, SwiftProtob
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: HealthData.CorrelationSpecificData, rhs: HealthData.CorrelationSpecificData) -> Bool {
+  static func ==(lhs: CorrelationSpecificData, rhs: CorrelationSpecificData) -> Bool {
     if lhs.objects != rhs.objects {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension HealthData.SourceRevision: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = HealthData.protoMessageName + ".SourceRevision"
+extension SourceRevision: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "SourceRevision"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     101: .same(proto: "version"),
     102: .same(proto: "operatingSystemVersion"),
@@ -1581,7 +1903,7 @@ extension HealthData.SourceRevision: SwiftProtobuf.Message, SwiftProtobuf._Messa
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: HealthData.SourceRevision, rhs: HealthData.SourceRevision) -> Bool {
+  static func ==(lhs: SourceRevision, rhs: SourceRevision) -> Bool {
     if lhs.version != rhs.version {return false}
     if lhs.operatingSystemVersion != rhs.operatingSystemVersion {return false}
     if lhs.productType != rhs.productType {return false}
@@ -1592,30 +1914,285 @@ extension HealthData.SourceRevision: SwiftProtobuf.Message, SwiftProtobuf._Messa
   }
 }
 
-extension HealthDataList: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "HealthDataList"
+extension StatisticsRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "StatisticsRequest"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "data"),
+    1: .same(proto: "type"),
+    2: .same(proto: "startDate"),
+    3: .same(proto: "endDate"),
+    4: .same(proto: "options"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 1: try decoder.decodeRepeatedMessageField(value: &self.data)
+      case 1: try decoder.decodeSingularEnumField(value: &self.type)
+      case 2: try decoder.decodeSingularStringField(value: &self.startDate)
+      case 3: try decoder.decodeSingularStringField(value: &self.endDate)
+      case 4: try decoder.decodeRepeatedEnumField(value: &self.options)
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.data.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.data, fieldNumber: 1)
+    if self.type != .workoutMain {
+      try visitor.visitSingularEnumField(value: self.type, fieldNumber: 1)
+    }
+    if !self.startDate.isEmpty {
+      try visitor.visitSingularStringField(value: self.startDate, fieldNumber: 2)
+    }
+    if !self.endDate.isEmpty {
+      try visitor.visitSingularStringField(value: self.endDate, fieldNumber: 3)
+    }
+    if !self.options.isEmpty {
+      try visitor.visitPackedEnumField(value: self.options, fieldNumber: 4)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: HealthDataList, rhs: HealthDataList) -> Bool {
-    if lhs.data != rhs.data {return false}
+  static func ==(lhs: StatisticsRequest, rhs: StatisticsRequest) -> Bool {
+    if lhs.type != rhs.type {return false}
+    if lhs.startDate != rhs.startDate {return false}
+    if lhs.endDate != rhs.endDate {return false}
+    if lhs.options != rhs.options {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension StatisticsData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "StatisticsData"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "sources"),
+    2: .same(proto: "averageQuantity"),
+    3: .same(proto: "maximumQuantity"),
+    4: .same(proto: "minimumQuantity"),
+    5: .same(proto: "sumQuantity"),
+    6: .same(proto: "duration"),
+    7: .same(proto: "mostRecentQuantity"),
+    8: .same(proto: "mostRecentQuantityDateInterval"),
+    9: .same(proto: "dataInterval"),
+    10: .same(proto: "dataBySource"),
+  ]
+
+  fileprivate class _StorageClass {
+    var _sources: [SourceRevision] = []
+    var _averageQuantity: QuantitySpecificData? = nil
+    var _maximumQuantity: QuantitySpecificData? = nil
+    var _minimumQuantity: QuantitySpecificData? = nil
+    var _sumQuantity: QuantitySpecificData? = nil
+    var _duration: QuantitySpecificData? = nil
+    var _mostRecentQuantity: QuantitySpecificData? = nil
+    var _mostRecentQuantityDateInterval: StatisticsData.TimeInterval? = nil
+    var _dataInterval: StatisticsData.TimeInterval? = nil
+    var _dataBySource: [StatisticsData.StatisticsDataBySource] = []
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _sources = source._sources
+      _averageQuantity = source._averageQuantity
+      _maximumQuantity = source._maximumQuantity
+      _minimumQuantity = source._minimumQuantity
+      _sumQuantity = source._sumQuantity
+      _duration = source._duration
+      _mostRecentQuantity = source._mostRecentQuantity
+      _mostRecentQuantityDateInterval = source._mostRecentQuantityDateInterval
+      _dataInterval = source._dataInterval
+      _dataBySource = source._dataBySource
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        switch fieldNumber {
+        case 1: try decoder.decodeRepeatedMessageField(value: &_storage._sources)
+        case 2: try decoder.decodeSingularMessageField(value: &_storage._averageQuantity)
+        case 3: try decoder.decodeSingularMessageField(value: &_storage._maximumQuantity)
+        case 4: try decoder.decodeSingularMessageField(value: &_storage._minimumQuantity)
+        case 5: try decoder.decodeSingularMessageField(value: &_storage._sumQuantity)
+        case 6: try decoder.decodeSingularMessageField(value: &_storage._duration)
+        case 7: try decoder.decodeSingularMessageField(value: &_storage._mostRecentQuantity)
+        case 8: try decoder.decodeSingularMessageField(value: &_storage._mostRecentQuantityDateInterval)
+        case 9: try decoder.decodeSingularMessageField(value: &_storage._dataInterval)
+        case 10: try decoder.decodeRepeatedMessageField(value: &_storage._dataBySource)
+        default: break
+        }
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      if !_storage._sources.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._sources, fieldNumber: 1)
+      }
+      if let v = _storage._averageQuantity {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+      }
+      if let v = _storage._maximumQuantity {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+      }
+      if let v = _storage._minimumQuantity {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+      }
+      if let v = _storage._sumQuantity {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+      }
+      if let v = _storage._duration {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+      }
+      if let v = _storage._mostRecentQuantity {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+      }
+      if let v = _storage._mostRecentQuantityDateInterval {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
+      }
+      if let v = _storage._dataInterval {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
+      }
+      if !_storage._dataBySource.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._dataBySource, fieldNumber: 10)
+      }
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: StatisticsData, rhs: StatisticsData) -> Bool {
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._sources != rhs_storage._sources {return false}
+        if _storage._averageQuantity != rhs_storage._averageQuantity {return false}
+        if _storage._maximumQuantity != rhs_storage._maximumQuantity {return false}
+        if _storage._minimumQuantity != rhs_storage._minimumQuantity {return false}
+        if _storage._sumQuantity != rhs_storage._sumQuantity {return false}
+        if _storage._duration != rhs_storage._duration {return false}
+        if _storage._mostRecentQuantity != rhs_storage._mostRecentQuantity {return false}
+        if _storage._mostRecentQuantityDateInterval != rhs_storage._mostRecentQuantityDateInterval {return false}
+        if _storage._dataInterval != rhs_storage._dataInterval {return false}
+        if _storage._dataBySource != rhs_storage._dataBySource {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension StatisticsData.StatisticsDataBySource: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = StatisticsData.protoMessageName + ".StatisticsDataBySource"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "source"),
+    2: .same(proto: "data"),
+  ]
+
+  fileprivate class _StorageClass {
+    var _source: SourceRevision? = nil
+    var _data: StatisticsData? = nil
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _source = source._source
+      _data = source._data
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        switch fieldNumber {
+        case 1: try decoder.decodeSingularMessageField(value: &_storage._source)
+        case 2: try decoder.decodeSingularMessageField(value: &_storage._data)
+        default: break
+        }
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      if let v = _storage._source {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+      }
+      if let v = _storage._data {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+      }
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: StatisticsData.StatisticsDataBySource, rhs: StatisticsData.StatisticsDataBySource) -> Bool {
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._source != rhs_storage._source {return false}
+        if _storage._data != rhs_storage._data {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension StatisticsData.TimeInterval: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = StatisticsData.protoMessageName + ".TimeInterval"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    3: .same(proto: "startDate"),
+    4: .same(proto: "endDate"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 3: try decoder.decodeSingularStringField(value: &self.startDate)
+      case 4: try decoder.decodeSingularStringField(value: &self.endDate)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.startDate.isEmpty {
+      try visitor.visitSingularStringField(value: self.startDate, fieldNumber: 3)
+    }
+    if !self.endDate.isEmpty {
+      try visitor.visitSingularStringField(value: self.endDate, fieldNumber: 4)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: StatisticsData.TimeInterval, rhs: StatisticsData.TimeInterval) -> Bool {
+    if lhs.startDate != rhs.startDate {return false}
+    if lhs.endDate != rhs.endDate {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
