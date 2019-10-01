@@ -293,6 +293,20 @@ extension HealthDataUtils {
         .correlationFood: (1, .correlation),
     ]
     
+    private static let STATISTICS_OPTIONS_MAP_V8_0: [StatisticsOptions: HKStatisticsOptions] = [
+        .discreteAverage: .discreteAverage,
+        .discreteMin: .discreteMin,
+        .discreteMax: .discreteMax,
+        .cumulativeSum: .cumulativeSum,
+        .separateBySource: .separateBySource,
+    ]
+    
+    @available(iOS 13.0, *)
+    private static let STATISTICS_OPTIONS_MAP_V13_0: [StatisticsOptions: HKStatisticsOptions] = [
+        .mostRecent: .mostRecent,
+        .duration: .duration,
+    ]
+    
     func fillTypes() {
         
         if #available(iOS 8.0, *) {
@@ -301,6 +315,7 @@ extension HealthDataUtils {
             HealthDataUtils.QUANTITY_TYPES.append(contentsOf: HealthDataUtils.QUANTITY_TYPES_V8_0)
             HealthDataUtils.CHARACTERISTIC_TYPES.append(contentsOf: HealthDataUtils.CHARACTERISTIC_TYPES_V8_0)
             HealthDataUtils.CORRELATION_TYPES.append(contentsOf: HealthDataUtils.CORRELATION_TYPES_V8_0)
+            HealthDataUtils.STATISTICS_OPTIONS_MAP.addEntries(from: HealthDataUtils.STATISTICS_OPTIONS_MAP_V8_0)
         }
         
         if #available(iOS 9.0, *) {
@@ -332,6 +347,10 @@ extension HealthDataUtils {
         
         if #available(iOS 12.2, *) {
             HealthDataUtils.CATEGORY_TYPES.append(contentsOf: HealthDataUtils.CATEGORY_TYPES_V12_2)
+        }
+        
+        if #available(iOS 13.0, *) {
+            HealthDataUtils.STATISTICS_OPTIONS_MAP.addEntries(from: HealthDataUtils.STATISTICS_OPTIONS_MAP_V13_0)
         }
     }
     

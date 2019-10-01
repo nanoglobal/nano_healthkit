@@ -5,7 +5,20 @@ class HealthDataFetcher: NSObject {
     
     // MARK: Data fetching
     
-    func fetchBatchData(for healthType: HealthTypes, startDate: Date, endDate: Date, limit: Int, result: @escaping (HealthDataList?, Error?) -> Swift.Void) {
+    struct BatchParams {
+        let startDate: Date
+        let endDate: Date
+        let limit: Int
+        let sort: NSSortDescriptor
+    }
+    
+    struct StatisticsParams {
+        let startDate: Date
+        let endDate: Date
+        let statisticsOptions: HKStatisticsOptions
+    }
+    
+    func fetchBatchData(for healthType: HealthTypes, params: BatchParams, result: @escaping (HealthDataList?, Error?) -> Swift.Void) {
         
         // Note: Here we would check for permissions for reading but apple doesnt grant information about it, only for writing
         guard let sampleType = HealthDataUtils.getHKObjectType(for: healthType) as? HKSampleType else {
@@ -14,17 +27,14 @@ class HealthDataFetcher: NSObject {
         }
         
         // Use HKQuery to load the most recent samples.
-        let timePredicate = HKQuery.predicateForSamples(withStart: startDate,
-                                                        end: endDate,
+        let timePredicate = HKQuery.predicateForSamples(withStart: params.startDate,
+                                                        end: params.endDate,
                                                         options: .strictEndDate)
         
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate,
-                                              ascending: false)
-        
-        let sampleQuery = HKSampleQuery(sampleType: sampleType,
-                                        predicate: timePredicate,
-                                        limit: limit,
-                                        sortDescriptors: [sortDescriptor]) { [weak self] query, samples, error in
+        let query = HKSampleQuery(sampleType: sampleType,
+                                  predicate: timePredicate,
+                                  limit: params.limit,
+                                  sortDescriptors: [params.sort]) { [weak self] query, samples, error in
             
             if error != nil {
                 result(nil, error)
@@ -35,7 +45,7 @@ class HealthDataFetcher: NSObject {
             result(data, nil)
         }
         
-        HealthDataUtils.healthStore?.execute(sampleQuery)
+        HealthDataUtils.healthStore?.execute(query)
     }
     
     func fetchCharacteristicData(for healthType: HealthTypes, healthStore: HKHealthStore, result: @escaping (HealthDataList?, Error?) -> Swift.Void) {
@@ -144,5 +154,36 @@ class HealthDataFetcher: NSObject {
             let anchoredQuery = HKAnchoredObjectQuery(type: touple.1, predicate: nil, anchor: hkAnchor, limit: HKObjectQueryNoLimit, resultsHandler: onAnchorQueryResults)
             healthStore.execute(anchoredQuery)
         }
+    }
+    
+    // MARK: Statistics
+    
+    func fetchStatisticsData(for healthType: HealthTypes, params: StatisticsParams, result: @escaping (StatisticsData?, Error?) -> Swift.Void) {
+        
+        // Note: Here we would check for permissions for reading but apple doesnt grant information about it, only for writing
+        guard let sampleType = HealthDataUtils.getHKObjectType(for: healthType) as? HKQuantityType else {
+            result(nil, SimpleLocalizedError("Invalid quantity sample type"))
+            return
+        }
+        
+        // Use HKQuery to load the most recent samples.
+        let timePredicate = HKQuery.predicateForSamples(withStart: params.startDate,
+                                                        end: params.endDate,
+                                                        options: .strictEndDate)
+        
+        let query = HKStatisticsQuery(quantityType: sampleType,
+                                      quantitySamplePredicate: timePredicate,
+                                      options: params.statisticsOptions) { [weak self] query, response, error in
+            
+            if error != nil {
+                result(nil, error)
+                return
+            }
+            
+            let data = self?.saveAsStatisticsData(response: response, healthType: healthType, params: params)
+            result(data, nil)
+        }
+        
+        HealthDataUtils.healthStore?.execute(query)
     }
 }

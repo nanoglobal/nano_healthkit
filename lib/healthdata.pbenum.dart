@@ -234,3 +234,47 @@ class HealthTypes extends $pb.ProtobufEnum {
   const HealthTypes._($core.int v, $core.String n) : super(v, n);
 }
 
+class RequestSorting extends $pb.ProtobufEnum {
+  static const RequestSorting DESCENDING_START_DATE = RequestSorting._(0, 'DESCENDING_START_DATE');
+  static const RequestSorting ASCENDING_START_DATE = RequestSorting._(1, 'ASCENDING_START_DATE');
+  static const RequestSorting ASCENDING_END_DATE = RequestSorting._(2, 'ASCENDING_END_DATE');
+  static const RequestSorting DESCENDING_END_DATE = RequestSorting._(3, 'DESCENDING_END_DATE');
+
+  static const $core.List<RequestSorting> values = <RequestSorting> [
+    DESCENDING_START_DATE,
+    ASCENDING_START_DATE,
+    ASCENDING_END_DATE,
+    DESCENDING_END_DATE,
+  ];
+
+  static final $core.Map<$core.int, RequestSorting> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static RequestSorting valueOf($core.int value) => _byValue[value];
+
+  const RequestSorting._($core.int v, $core.String n) : super(v, n);
+}
+
+class StatisticsOptions extends $pb.ProtobufEnum {
+  static const StatisticsOptions DISCRETE_AVERAGE = StatisticsOptions._(0, 'DISCRETE_AVERAGE');
+  static const StatisticsOptions DISCRETE_MIN = StatisticsOptions._(1, 'DISCRETE_MIN');
+  static const StatisticsOptions DISCRETE_MAX = StatisticsOptions._(2, 'DISCRETE_MAX');
+  static const StatisticsOptions CUMULATIVE_SUM = StatisticsOptions._(3, 'CUMULATIVE_SUM');
+  static const StatisticsOptions MOST_RECENT = StatisticsOptions._(4, 'MOST_RECENT');
+  static const StatisticsOptions DURATION = StatisticsOptions._(5, 'DURATION');
+  static const StatisticsOptions SEPARATE_BY_SOURCE = StatisticsOptions._(6, 'SEPARATE_BY_SOURCE');
+
+  static const $core.List<StatisticsOptions> values = <StatisticsOptions> [
+    DISCRETE_AVERAGE,
+    DISCRETE_MIN,
+    DISCRETE_MAX,
+    CUMULATIVE_SUM,
+    MOST_RECENT,
+    DURATION,
+    SEPARATE_BY_SOURCE,
+  ];
+
+  static final $core.Map<$core.int, StatisticsOptions> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static StatisticsOptions valueOf($core.int value) => _byValue[value];
+
+  const StatisticsOptions._($core.int v, $core.String n) : super(v, n);
+}
+

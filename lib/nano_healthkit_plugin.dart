@@ -14,19 +14,17 @@ class NanoHealthkitPlugin {
         'requestPermissions', request.writeToBuffer());
   }
 
-  static Future<HealthDataList> fetchData(HealthDataRequest request) async {
-    final Uint8List rawData =
-        await _channel.invokeMethod('fetchData', request.writeToBuffer());
-    final HealthDataList result = HealthDataList.fromBuffer(rawData);
-    return result;
-  }
-
   static Future<HealthTypeList> filterExistingTypes(
       HealthTypeList request) async {
     final Uint8List rawData = await _channel.invokeMethod(
         'filterExistingTypes', request.writeToBuffer());
-    final HealthTypeList result = HealthTypeList.fromBuffer(rawData);
-    return result;
+    return HealthTypeList.fromBuffer(rawData);
+  }
+
+  static Future<HealthDataList> fetchData(HealthDataRequest request) async {
+    final Uint8List rawData =
+        await _channel.invokeMethod('fetchData', request.writeToBuffer());
+    return HealthDataList.fromBuffer(rawData);
   }
 
   static StreamSubscription subscribeToUpdates<T>(
@@ -50,5 +48,12 @@ class NanoHealthkitPlugin {
       final HealthDataList result = HealthDataList.fromBuffer(updates);
       _subscriberMethod(result);
     }
+  }
+
+  static Future<StatisticsData> fetchStatisticsData(
+      StatisticsRequest request) async {
+    final Uint8List rawData = await _channel.invokeMethod(
+        'fetchStatisticsData', request.writeToBuffer());
+    return StatisticsData.fromBuffer(rawData);
   }
 }

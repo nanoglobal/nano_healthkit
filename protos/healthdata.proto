@@ -110,6 +110,13 @@ enum HealthTypes {
    CORRELATION_FOOD = 106;
 }
 
+enum RequestSorting {
+   DESCENDING_START_DATE = 0;
+   ASCENDING_START_DATE = 1;
+   ASCENDING_END_DATE = 2;
+   DESCENDING_END_DATE = 3;
+}
+
 message HealthTypeList {
    repeated HealthTypes types = 1;
 }
@@ -119,6 +126,7 @@ message HealthDataRequest {
    string startDate = 2;
    string endDate = 3;
    int32 limit = 4;
+   RequestSorting sorting = 5;
 }
 
 message HealthDataRequestList {
@@ -145,58 +153,98 @@ message HealthData {
       DocumentSpecificData documentData = 16;
       CorrelationSpecificData correlationData = 17;
    }
-
-   message EmptySpecificData {
-   }
-
-   message QuantitySpecificData {
-      int64 count = 101;
-      string quantityUnit = 102;
-      double quantity = 103;
-   }
-
-   message CategorySpecificData {
-      int64 value = 101;
-   }
-
-   message WorkoutSpecificData {
-      double totalEnergyBurned = 101;
-      string totalEnergyBurnedUnit = 102;
-      double totalDistance = 103;
-      string totalDistanceUnit = 104;
-      double duration = 105;
-   }
-
-   message CharacteristicSpecificData {
-      string value = 101;
-   }
-
-   message ClinicalRecordSpecificData {
-      string displayName = 101;
-      string fhirResource = 102;
-   }
-
-   message DocumentSpecificData {
-      string authorName = 101;
-      string custodianName = 102;
-      string documentData = 103;
-      string patientName = 104;
-      string title = 105;
-   }
-
-   message CorrelationSpecificData {
-      repeated HealthData objects = 101;
-   }
-
-   message SourceRevision {
-      string version = 101;
-      string operatingSystemVersion = 102;
-      string productType = 103;
-      string name = 104;
-      string bundleIdentifier = 105;
-   }
 }
 
 message HealthDataList {
    repeated HealthData data = 1;
+}
+
+message EmptySpecificData {
+}
+
+message QuantitySpecificData {
+   int64 count = 101;
+   string quantityUnit = 102;
+   double quantity = 103;
+}
+
+message CategorySpecificData {
+   int64 value = 101;
+}
+
+message WorkoutSpecificData {
+   double totalEnergyBurned = 101;
+   string totalEnergyBurnedUnit = 102;
+   double totalDistance = 103;
+   string totalDistanceUnit = 104;
+   double duration = 105;
+}
+
+message CharacteristicSpecificData {
+   string value = 101;
+}
+
+message ClinicalRecordSpecificData {
+   string displayName = 101;
+   string fhirResource = 102;
+}
+
+message DocumentSpecificData {
+   string authorName = 101;
+   string custodianName = 102;
+   string documentData = 103;
+   string patientName = 104;
+   string title = 105;
+}
+
+message CorrelationSpecificData {
+   repeated HealthData objects = 101;
+}
+
+message SourceRevision {
+   string version = 101;
+   string operatingSystemVersion = 102;
+   string productType = 103;
+   string name = 104;
+   string bundleIdentifier = 105;
+}
+
+enum StatisticsOptions {
+   DISCRETE_AVERAGE = 0;
+   DISCRETE_MIN = 1;
+   DISCRETE_MAX = 2;
+   CUMULATIVE_SUM = 3;
+   MOST_RECENT = 4;
+   DURATION = 5;
+   SEPARATE_BY_SOURCE = 6;
+}
+
+message StatisticsRequest {
+   HealthTypes type = 1;
+   string startDate = 2;
+   string endDate = 3;
+   repeated StatisticsOptions options = 4;
+}
+
+message StatisticsData {
+   repeated SourceRevision sources = 1;
+   QuantitySpecificData averageQuantity = 2;
+   QuantitySpecificData maximumQuantity = 3;
+   QuantitySpecificData minimumQuantity = 4;
+   QuantitySpecificData sumQuantity = 5;
+   QuantitySpecificData duration = 6;
+   QuantitySpecificData mostRecentQuantity = 7;
+   TimeInterval mostRecentQuantityDateInterval = 8;
+   TimeInterval dataInterval = 9;
+   repeated StatisticsDataBySource dataBySource = 10;
+
+   message StatisticsDataBySource {
+      SourceRevision source = 1;
+      StatisticsData data = 2;
+   }
+
+   message TimeInterval {
+      string startDate = 3;
+      string endDate = 4;
+   }
 }

@@ -20,6 +20,7 @@ class HealthDataUtils: NSObject {
     static var CLINICAL_TYPES: [Any] = []
     static var DOCUMENT_TYPES: [HKDocumentTypeIdentifier] = []
     static var CORRELATION_TYPES: [HKCorrelationTypeIdentifier] = []
+    static var STATISTICS_OPTIONS_MAP: NSMutableDictionary = [:]
     
     override init() {
         super.init()
@@ -66,10 +67,53 @@ class HealthDataUtils: NSObject {
         }
         
         // Other types
+        dataFetcher.fetchBatchData(for: request.type, params: parseHealthRequest(request), result: result)
+    }
+    
+    func fetchStatisticsData(for request: StatisticsRequest?, result: @escaping (StatisticsData?, Error?) -> Void) {
+        
+        guard let request = request else {
+            result(nil, SimpleLocalizedError("Invalid request"))
+            return
+        }
+        
+        guard let index = HealthDataUtils.getTypeIndex(request.type) else {
+            result(nil, SimpleLocalizedError("Requested type is not available"))
+            return
+        }
+        
+        // Only can do statistics of quantity types
+        if index.1 != .quantity {
+            result(nil, SimpleLocalizedError("Only valid types are quantity types"))
+            return
+        }
+        
+        // Other types
+        dataFetcher.fetchStatisticsData(for: request.type, params: parseStatisticsRequest(request), result: result)
+    }
+    
+    private func parseHealthRequest(_ request: HealthDataRequest) -> HealthDataFetcher.BatchParams {
+        
         let startDate = request.startDate.isEmpty ? Date.distantPast : Date(iso8601: request.startDate)
         let endDate = request.endDate.isEmpty ? Date() : Date(iso8601: request.endDate)
         let limit = request.limit <= 0 ? HKObjectQueryNoLimit : Int(request.limit)
-        dataFetcher.fetchBatchData(for: request.type, startDate: startDate, endDate: endDate, limit: limit, result: result)
+        let sortKey = request.sorting == .ascendingStartDate || request.sorting == .descendingStartDate ? HKSampleSortIdentifierStartDate : HKSampleSortIdentifierEndDate
+        let sortAscending = request.sorting == .ascendingStartDate || request.sorting == .ascendingEndDate
+        let sort = NSSortDescriptor(key: sortKey, ascending: sortAscending)
+        return HealthDataFetcher.BatchParams(startDate: startDate, endDate: endDate, limit: limit, sort: sort)
+    }
+    
+    private func parseStatisticsRequest(_ request: StatisticsRequest) -> HealthDataFetcher.StatisticsParams {
+        
+        let startDate = request.startDate.isEmpty ? Date.distantPast : Date(iso8601: request.startDate)
+        let endDate = request.endDate.isEmpty ? Date() : Date(iso8601: request.endDate)
+        var options: HKStatisticsOptions = []
+        for ownOption in request.options {
+            if let option = HealthDataUtils.STATISTICS_OPTIONS_MAP[ownOption] as? HKStatisticsOptions.Element {
+                options.insert(option)
+            }
+        }
+        return HealthDataFetcher.StatisticsParams(startDate: startDate, endDate: endDate, statisticsOptions: options)
     }
     
     func filterExistingTypes(for list: HealthTypeList?, result: @escaping (HealthTypeList?, Error?) -> Void) {

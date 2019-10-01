@@ -118,6 +118,29 @@ const HealthTypes$json = const {
   ],
 };
 
+const RequestSorting$json = const {
+  '1': 'RequestSorting',
+  '2': const [
+    const {'1': 'DESCENDING_START_DATE', '2': 0},
+    const {'1': 'ASCENDING_START_DATE', '2': 1},
+    const {'1': 'ASCENDING_END_DATE', '2': 2},
+    const {'1': 'DESCENDING_END_DATE', '2': 3},
+  ],
+};
+
+const StatisticsOptions$json = const {
+  '1': 'StatisticsOptions',
+  '2': const [
+    const {'1': 'DISCRETE_AVERAGE', '2': 0},
+    const {'1': 'DISCRETE_MIN', '2': 1},
+    const {'1': 'DISCRETE_MAX', '2': 2},
+    const {'1': 'CUMULATIVE_SUM', '2': 3},
+    const {'1': 'MOST_RECENT', '2': 4},
+    const {'1': 'DURATION', '2': 5},
+    const {'1': 'SEPARATE_BY_SOURCE', '2': 6},
+  ],
+};
+
 const HealthTypeList$json = const {
   '1': 'HealthTypeList',
   '2': const [
@@ -132,6 +155,7 @@ const HealthDataRequest$json = const {
     const {'1': 'startDate', '3': 2, '4': 1, '5': 9, '10': 'startDate'},
     const {'1': 'endDate', '3': 3, '4': 1, '5': 9, '10': 'endDate'},
     const {'1': 'limit', '3': 4, '4': 1, '5': 5, '10': 'limit'},
+    const {'1': 'sorting', '3': 5, '4': 1, '5': 14, '6': '.RequestSorting', '10': 'sorting'},
   ],
 };
 
@@ -152,27 +176,33 @@ const HealthData$json = const {
     const {'1': 'device', '3': 5, '4': 1, '5': 9, '10': 'device'},
     const {'1': 'metadata', '3': 6, '4': 1, '5': 9, '10': 'metadata'},
     const {'1': 'uuid', '3': 7, '4': 1, '5': 9, '10': 'uuid'},
-    const {'1': 'source', '3': 8, '4': 1, '5': 11, '6': '.HealthData.SourceRevision', '10': 'source'},
-    const {'1': 'emptyData', '3': 10, '4': 1, '5': 11, '6': '.HealthData.EmptySpecificData', '9': 0, '10': 'emptyData'},
-    const {'1': 'quantityData', '3': 11, '4': 1, '5': 11, '6': '.HealthData.QuantitySpecificData', '9': 0, '10': 'quantityData'},
-    const {'1': 'categoryData', '3': 12, '4': 1, '5': 11, '6': '.HealthData.CategorySpecificData', '9': 0, '10': 'categoryData'},
-    const {'1': 'workoutData', '3': 13, '4': 1, '5': 11, '6': '.HealthData.WorkoutSpecificData', '9': 0, '10': 'workoutData'},
-    const {'1': 'characteristicData', '3': 14, '4': 1, '5': 11, '6': '.HealthData.CharacteristicSpecificData', '9': 0, '10': 'characteristicData'},
-    const {'1': 'clinicalRecordData', '3': 15, '4': 1, '5': 11, '6': '.HealthData.ClinicalRecordSpecificData', '9': 0, '10': 'clinicalRecordData'},
-    const {'1': 'documentData', '3': 16, '4': 1, '5': 11, '6': '.HealthData.DocumentSpecificData', '9': 0, '10': 'documentData'},
-    const {'1': 'correlationData', '3': 17, '4': 1, '5': 11, '6': '.HealthData.CorrelationSpecificData', '9': 0, '10': 'correlationData'},
+    const {'1': 'source', '3': 8, '4': 1, '5': 11, '6': '.SourceRevision', '10': 'source'},
+    const {'1': 'emptyData', '3': 10, '4': 1, '5': 11, '6': '.EmptySpecificData', '9': 0, '10': 'emptyData'},
+    const {'1': 'quantityData', '3': 11, '4': 1, '5': 11, '6': '.QuantitySpecificData', '9': 0, '10': 'quantityData'},
+    const {'1': 'categoryData', '3': 12, '4': 1, '5': 11, '6': '.CategorySpecificData', '9': 0, '10': 'categoryData'},
+    const {'1': 'workoutData', '3': 13, '4': 1, '5': 11, '6': '.WorkoutSpecificData', '9': 0, '10': 'workoutData'},
+    const {'1': 'characteristicData', '3': 14, '4': 1, '5': 11, '6': '.CharacteristicSpecificData', '9': 0, '10': 'characteristicData'},
+    const {'1': 'clinicalRecordData', '3': 15, '4': 1, '5': 11, '6': '.ClinicalRecordSpecificData', '9': 0, '10': 'clinicalRecordData'},
+    const {'1': 'documentData', '3': 16, '4': 1, '5': 11, '6': '.DocumentSpecificData', '9': 0, '10': 'documentData'},
+    const {'1': 'correlationData', '3': 17, '4': 1, '5': 11, '6': '.CorrelationSpecificData', '9': 0, '10': 'correlationData'},
   ],
-  '3': const [HealthData_EmptySpecificData$json, HealthData_QuantitySpecificData$json, HealthData_CategorySpecificData$json, HealthData_WorkoutSpecificData$json, HealthData_CharacteristicSpecificData$json, HealthData_ClinicalRecordSpecificData$json, HealthData_DocumentSpecificData$json, HealthData_CorrelationSpecificData$json, HealthData_SourceRevision$json],
   '8': const [
     const {'1': 'specificData'},
   ],
 };
 
-const HealthData_EmptySpecificData$json = const {
+const HealthDataList$json = const {
+  '1': 'HealthDataList',
+  '2': const [
+    const {'1': 'data', '3': 1, '4': 3, '5': 11, '6': '.HealthData', '10': 'data'},
+  ],
+};
+
+const EmptySpecificData$json = const {
   '1': 'EmptySpecificData',
 };
 
-const HealthData_QuantitySpecificData$json = const {
+const QuantitySpecificData$json = const {
   '1': 'QuantitySpecificData',
   '2': const [
     const {'1': 'count', '3': 101, '4': 1, '5': 3, '10': 'count'},
@@ -181,14 +211,14 @@ const HealthData_QuantitySpecificData$json = const {
   ],
 };
 
-const HealthData_CategorySpecificData$json = const {
+const CategorySpecificData$json = const {
   '1': 'CategorySpecificData',
   '2': const [
     const {'1': 'value', '3': 101, '4': 1, '5': 3, '10': 'value'},
   ],
 };
 
-const HealthData_WorkoutSpecificData$json = const {
+const WorkoutSpecificData$json = const {
   '1': 'WorkoutSpecificData',
   '2': const [
     const {'1': 'totalEnergyBurned', '3': 101, '4': 1, '5': 1, '10': 'totalEnergyBurned'},
@@ -199,14 +229,14 @@ const HealthData_WorkoutSpecificData$json = const {
   ],
 };
 
-const HealthData_CharacteristicSpecificData$json = const {
+const CharacteristicSpecificData$json = const {
   '1': 'CharacteristicSpecificData',
   '2': const [
     const {'1': 'value', '3': 101, '4': 1, '5': 9, '10': 'value'},
   ],
 };
 
-const HealthData_ClinicalRecordSpecificData$json = const {
+const ClinicalRecordSpecificData$json = const {
   '1': 'ClinicalRecordSpecificData',
   '2': const [
     const {'1': 'displayName', '3': 101, '4': 1, '5': 9, '10': 'displayName'},
@@ -214,7 +244,7 @@ const HealthData_ClinicalRecordSpecificData$json = const {
   ],
 };
 
-const HealthData_DocumentSpecificData$json = const {
+const DocumentSpecificData$json = const {
   '1': 'DocumentSpecificData',
   '2': const [
     const {'1': 'authorName', '3': 101, '4': 1, '5': 9, '10': 'authorName'},
@@ -225,14 +255,14 @@ const HealthData_DocumentSpecificData$json = const {
   ],
 };
 
-const HealthData_CorrelationSpecificData$json = const {
+const CorrelationSpecificData$json = const {
   '1': 'CorrelationSpecificData',
   '2': const [
     const {'1': 'objects', '3': 101, '4': 3, '5': 11, '6': '.HealthData', '10': 'objects'},
   ],
 };
 
-const HealthData_SourceRevision$json = const {
+const SourceRevision$json = const {
   '1': 'SourceRevision',
   '2': const [
     const {'1': 'version', '3': 101, '4': 1, '5': 9, '10': 'version'},
@@ -243,10 +273,46 @@ const HealthData_SourceRevision$json = const {
   ],
 };
 
-const HealthDataList$json = const {
-  '1': 'HealthDataList',
+const StatisticsRequest$json = const {
+  '1': 'StatisticsRequest',
   '2': const [
-    const {'1': 'data', '3': 1, '4': 3, '5': 11, '6': '.HealthData', '10': 'data'},
+    const {'1': 'type', '3': 1, '4': 1, '5': 14, '6': '.HealthTypes', '10': 'type'},
+    const {'1': 'startDate', '3': 2, '4': 1, '5': 9, '10': 'startDate'},
+    const {'1': 'endDate', '3': 3, '4': 1, '5': 9, '10': 'endDate'},
+    const {'1': 'options', '3': 4, '4': 3, '5': 14, '6': '.StatisticsOptions', '10': 'options'},
+  ],
+};
+
+const StatisticsData$json = const {
+  '1': 'StatisticsData',
+  '2': const [
+    const {'1': 'sources', '3': 1, '4': 3, '5': 11, '6': '.SourceRevision', '10': 'sources'},
+    const {'1': 'averageQuantity', '3': 2, '4': 1, '5': 11, '6': '.QuantitySpecificData', '10': 'averageQuantity'},
+    const {'1': 'maximumQuantity', '3': 3, '4': 1, '5': 11, '6': '.QuantitySpecificData', '10': 'maximumQuantity'},
+    const {'1': 'minimumQuantity', '3': 4, '4': 1, '5': 11, '6': '.QuantitySpecificData', '10': 'minimumQuantity'},
+    const {'1': 'sumQuantity', '3': 5, '4': 1, '5': 11, '6': '.QuantitySpecificData', '10': 'sumQuantity'},
+    const {'1': 'duration', '3': 6, '4': 1, '5': 11, '6': '.QuantitySpecificData', '10': 'duration'},
+    const {'1': 'mostRecentQuantity', '3': 7, '4': 1, '5': 11, '6': '.QuantitySpecificData', '10': 'mostRecentQuantity'},
+    const {'1': 'mostRecentQuantityDateInterval', '3': 8, '4': 1, '5': 11, '6': '.StatisticsData.TimeInterval', '10': 'mostRecentQuantityDateInterval'},
+    const {'1': 'dataInterval', '3': 9, '4': 1, '5': 11, '6': '.StatisticsData.TimeInterval', '10': 'dataInterval'},
+    const {'1': 'dataBySource', '3': 10, '4': 3, '5': 11, '6': '.StatisticsData.StatisticsDataBySource', '10': 'dataBySource'},
+  ],
+  '3': const [StatisticsData_StatisticsDataBySource$json, StatisticsData_TimeInterval$json],
+};
+
+const StatisticsData_StatisticsDataBySource$json = const {
+  '1': 'StatisticsDataBySource',
+  '2': const [
+    const {'1': 'source', '3': 1, '4': 1, '5': 11, '6': '.SourceRevision', '10': 'source'},
+    const {'1': 'data', '3': 2, '4': 1, '5': 11, '6': '.StatisticsData', '10': 'data'},
+  ],
+};
+
+const StatisticsData_TimeInterval$json = const {
+  '1': 'TimeInterval',
+  '2': const [
+    const {'1': 'startDate', '3': 3, '4': 1, '5': 9, '10': 'startDate'},
+    const {'1': 'endDate', '3': 4, '4': 1, '5': 9, '10': 'endDate'},
   ],
 };
 
