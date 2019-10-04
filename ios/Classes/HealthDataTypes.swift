@@ -13,9 +13,13 @@ extension HealthDataUtils {
         case correlation
     }
     
+    // MARK: Workout
+    
     private static var WORKOUT_TYPES_V8_0: [HKSampleType] = [
         HKObjectType.workoutType(),
     ]
+    
+    // MARK: Category
     
     private static var CATEGORY_TYPES_V8_0: [HKCategoryTypeIdentifier] = [
         .sleepAnalysis,
@@ -38,6 +42,14 @@ extension HealthDataUtils {
         .lowHeartRateEvent,
         .irregularHeartRhythmEvent,
     ]
+    
+    @available(iOS 13.0, *)
+    private static var CATEGORY_TYPES_V13_0: [HKCategoryTypeIdentifier] = [
+        .audioExposureEvent,
+        .toothbrushingEvent,
+    ]
+    
+    // MARK: Quantity
     
     private static var QUANTITY_TYPES_V8_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
         (.bodyMassIndex, nil),
@@ -145,6 +157,15 @@ extension HealthDataUtils {
         (.distanceDownhillSnowSports, .meter()),
     ]
     
+    @available(iOS 13.0, *)
+    private static var QUANTITY_TYPES_V13_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
+        (.appleStandTime, .second()),
+        (.environmentalAudioExposure, .millimeterOfMercury()),
+        (.headphoneAudioExposure, .millimeterOfMercury()),
+    ]
+    
+    // MARK: Characteristics
+    
     @available(iOS 8.0, *)
     private static var CHARACTERISTIC_TYPES_V8_0: [(HKCharacteristicTypeIdentifier, CharacteristicProcessType)] = [
         (.biologicalSex, { try? $0.biologicalSex().biologicalSex.rawValue }), // Enum, Int
@@ -162,6 +183,8 @@ extension HealthDataUtils {
         (.wheelchairUse, { try? $0.wheelchairUse().wheelchairUse.rawValue }), // Enum, Int
     ]
     
+    // MARK: Clinical
+    
     @available(iOS 12.0, *)
     private static var CLINICAL_TYPES_V12_0: [HKClinicalTypeIdentifier] = [
         .allergyRecord,
@@ -173,15 +196,21 @@ extension HealthDataUtils {
         .vitalSignRecord,
     ]
     
+    // MARK: Document
+    
     @available(iOS 10.0, *)
     private static var DOCUMENT_TYPES_V10_0: [HKDocumentTypeIdentifier] = [
         .CDA,
     ]
     
+    // MARK: Correlation
+    
     private static var CORRELATION_TYPES_V8_0: [HKCorrelationTypeIdentifier] = [
         .bloodPressure,
         .food,
     ]
+    
+    // MARK: Indexes
     
     private static var TYPE_INDEXES: [HealthTypes: (Int, SampleTypes)] = [
         .workoutMain: (0, .workout),
@@ -196,6 +225,8 @@ extension HealthDataUtils {
         .categoryHighHeartRateEvent: (8, .category),
         .categoryLowHeartRateEvent: (9, .category),
         .categoryIrregularHeartRhythmEvent: (10, .category),
+        .categoryAudioExposureEvent: (11, .category),
+        .categoryToothbrushingEvent: (12, .category),
         .quantityBodyMassIndex: (0, .quantity),
         .quantityBodyFatPercentage: (1, .quantity),
         .quantityHeight: (2, .quantity),
@@ -276,6 +307,9 @@ extension HealthDataUtils {
         .quantityHeartRateVariabilitySdnn: (77, .quantity),
         .quantityInsulinDelivery: (78, .quantity),
         .quantityDistanceDownhillSnowSports: (79, .quantity),
+        .quantityAppleStandTime: (80, .quantity),
+        .quantityEnvironmentalAudioExposure: (81, .quantity),
+        .quantityHeadphoneAudioExposure: (82, .quantity),
         .characteristicBiologicalSex: (0, .characteristic),
         .characteristicBloodType: (1, .characteristic),
         .characteristicDateOfBirth: (2, .characteristic),
@@ -293,6 +327,8 @@ extension HealthDataUtils {
         .correlationFood: (1, .correlation),
     ]
     
+    // MARK: Statistics
+    
     private static let STATISTICS_OPTIONS_MAP_V8_0: [StatisticsOptions: HKStatisticsOptions] = [
         .discreteAverage: .discreteAverage,
         .discreteMin: .discreteMin,
@@ -306,6 +342,8 @@ extension HealthDataUtils {
         .mostRecent: .mostRecent,
         .duration: .duration,
     ]
+    
+    // MARK: Methods
     
     func fillTypes() {
         
@@ -351,6 +389,8 @@ extension HealthDataUtils {
         
         if #available(iOS 13.0, *) {
             HealthDataUtils.STATISTICS_OPTIONS_MAP.addEntries(from: HealthDataUtils.STATISTICS_OPTIONS_MAP_V13_0)
+            HealthDataUtils.QUANTITY_TYPES.append(contentsOf: HealthDataUtils.QUANTITY_TYPES_V13_0)
+            HealthDataUtils.CATEGORY_TYPES.append(contentsOf: HealthDataUtils.CATEGORY_TYPES_V13_0)
         }
     }
     
