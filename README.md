@@ -4,7 +4,7 @@ Flutter plugin to read data from Apple's HealthKit, request for permissions, sub
 
 It supports readings of _ALL_ types of data available up to iOS 12.2 (except for HKWorkoutRoute). Check the HealthTypes section for a full list.
 
-Currently is doesn't support writing back in HealthKit, only reading.
+Currently, writing data into HealthKit is not supported.
 
 ## Quick setup
 
