@@ -7,25 +7,25 @@ extension HealthDataFetcher {
     
     // MARK: Data parsing
     
-    func makeDataList(from samples: [Any]?, sampleType: HKObjectType, healthType: HealthTypes) -> HealthDataList {
+	func makeDataList(from samples: [Any]?, sampleType: HKObjectType, units: [HKUnit], healthType: HealthTypes) -> HealthDataList {
         
         var dataList = HealthDataList()
         for sample: Any in samples ?? [] {
             
-            if let singleData = makeData(from: sample, sampleType: sampleType, healthType: healthType) {
+            if let singleData = makeData(from: sample, sampleType: sampleType, units: units, healthType: healthType) {
                 dataList.data.append(singleData)
             }
         }
         return dataList
     }
     
-    func makeData(from sample: Any, sampleType: HKObjectType, healthType: HealthTypes) -> HealthData? {
+    func makeData(from sample: Any, sampleType: HKObjectType, units: [HKUnit], healthType: HealthTypes) -> HealthData? {
         
         var singleData: HealthData?
         if let workoutSample = sample as? HKWorkout {
-            singleData = saveAsData(sampleType: sampleType, value: workoutSample, healthType: healthType)
+            singleData = saveAsData(sampleType: sampleType, value: workoutSample, units: units, healthType: healthType)
         } else if let quantitySample = sample as? HKQuantitySample {
-            singleData = saveAsData(sampleType: sampleType, value: quantitySample, healthType: healthType)
+			singleData = saveAsData(sampleType: sampleType, value: quantitySample, units: units, healthType: healthType)
         } else if let categorySample = sample as? HKCategorySample {
             singleData = saveAsData(sampleType: sampleType, value: categorySample, healthType: healthType)
         } else if #available(iOS 12.0, *), let clinicalSample = sample as? HKClinicalRecord {
@@ -33,7 +33,7 @@ extension HealthDataFetcher {
         } else if #available(iOS 10.0, *), let documentSample = sample as? HKDocumentSample {
             singleData = saveAsData(sampleType: sampleType, value: documentSample, healthType: healthType)
         } else if let correlationSample = sample as? HKCorrelation {
-            singleData = saveAsData(sampleType: sampleType, value: correlationSample, healthType: healthType)
+            singleData = saveAsData(sampleType: sampleType, value: correlationSample, units: units, healthType: healthType)
         } else if let characteristicSample = sample as? (HKHealthStore, CharacteristicProcessType) {
             singleData = saveAsData(sampleType: sampleType, value: characteristicSample, healthType: healthType)
         }
@@ -91,23 +91,24 @@ extension HealthDataFetcher {
         return data
     }
     
-    func saveAsData(sampleType: HKObjectType, value: HKQuantitySample, healthType: HealthTypes) -> HealthData {
+    func saveAsData(sampleType: HKObjectType, value: HKQuantitySample, units: [HKUnit], healthType: HealthTypes) -> HealthData {
         
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
         if #available(iOS 12.0, *) {
             data.quantityData.count = Int64(value.count)
         }
-        saveQuantityData(&data.quantityData, value: value.quantity, healthType: healthType)
+		saveQuantityData(&data.quantityData, value: value.quantity, units: units, healthType: healthType)
         return data
     }
     
-    func saveQuantityData(_ quantityData: inout QuantitySpecificData, value: HKQuantity, healthType: HealthTypes) {
+    func saveQuantityData(_ quantityData: inout QuantitySpecificData, value: HKQuantity, units: [HKUnit] = [], healthType: HealthTypes) {
         
         let index = HealthDataUtils.getTypeIndex(healthType)!
-        
-        if let unit = HealthDataUtils.QUANTITY_TYPES[index.0].1 {
-            quantityData.quantityUnit = unit.unitString
+		
+		// Try to use the param unit, otherwise use the default unit
+		if let unit = units.count > 0 ? units[0] : HealthDataUtils.QUANTITY_TYPES[index.0].1 {
             quantityData.quantity = value.doubleValue(for: unit)
+            quantityData.quantityUnit = unit.unitString
         }
     }
     
@@ -118,13 +119,19 @@ extension HealthDataFetcher {
         return data
     }
     
-    func saveAsData(sampleType: HKObjectType, value: HKWorkout, healthType: HealthTypes) -> HealthData {
+    func saveAsData(sampleType: HKObjectType, value: HKWorkout, units: [HKUnit], healthType: HealthTypes) -> HealthData {
         
+		let index = HealthDataUtils.getTypeIndex(healthType)!
+		
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
-        data.workoutData.totalEnergyBurned = value.totalEnergyBurned?.doubleValue(for: .joule()) ?? 0
-        data.workoutData.totalEnergyBurnedUnit = HKUnit.joule().unitString
-        data.workoutData.totalDistance = value.totalDistance?.doubleValue(for: .meter()) ?? 0
-        data.workoutData.totalDistanceUnit = HKUnit.meter().unitString
+		if let energyUnit = units.count > 0 ? units[0] : HealthDataUtils.WORKOUT_TYPES[index.0].1 {
+			data.workoutData.totalEnergyBurned = value.totalEnergyBurned?.doubleValue(for: energyUnit) ?? 0
+			data.workoutData.totalEnergyBurnedUnit = energyUnit.unitString
+		}
+		if let distanceUnit = units.count > 1 ? units[1] : HealthDataUtils.WORKOUT_TYPES[index.0].2 {
+			data.workoutData.totalDistance = value.totalDistance?.doubleValue(for: distanceUnit) ?? 0
+			data.workoutData.totalDistanceUnit = distanceUnit.unitString
+		}
         data.workoutData.duration = value.duration
         return data
     }
@@ -154,11 +161,11 @@ extension HealthDataFetcher {
         return data
     }
     
-    func saveAsData(sampleType: HKObjectType, value: HKCorrelation, healthType: HealthTypes) -> HealthData {
+    func saveAsData(sampleType: HKObjectType, value: HKCorrelation, units: [HKUnit], healthType: HealthTypes) -> HealthData {
         
         var data = saveAsDataBase(sampleType: sampleType, value: value, healthType: healthType)
         data.correlationData.objects = value.objects.map { (object) -> HealthData in
-            makeData(from: object, sampleType: sampleType, healthType: healthType)!
+            makeData(from: object, sampleType: sampleType, units: units, healthType: healthType)!
         }
         return data
     }

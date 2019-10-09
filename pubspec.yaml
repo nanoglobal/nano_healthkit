@@ -11,7 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   convert: ^2.1.1
-  protobuf: ^0.13.15
+  protobuf: ^1.0.0
+
 
 dev_dependencies:
   flutter_test:
