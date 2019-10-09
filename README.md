@@ -1,263 +1,79 @@
 # Nano's HealthKit Plugin for Flutter
 
-Flutter plugin to read data from Apple's HealthKit, request for permissions and subscribe to updates in background. It also supports Health Records, batch fetching of historical data and more.
+Flutter plugin to read data from Apple's HealthKit, request for permissions, subscribe to updates in background and run statistics queries. It also supports Health Records, batch fetching of historical data and more.
 
-It supports _all_ readings available up to iOS 12.2 (except for HKWorkoutRoute). Check the HealthTypes section for a full list.
+It supports readings of _ALL_ types of data available up to iOS 12.2 (except for HKWorkoutRoute). Check the HealthTypes section for a full list.
 
-## Installation
+Currently, writing data into HealthKit is not supported.
 
-Add the plugin to your project's `pubspec.yaml`:
+## Quick setup
 
-```yaml
-dependencies:
-  git:
-    url: git@github.com:nanoglobal/nano-healthkit-plugin-flutter.git
-    ref: develop
-```
+1. Add the plugin to your project's `pubspec.yaml`.
 
-## Requirements
+2. Enable HealthKit capabilities (and also HealthRecords if desired) in Xcode.
 
-The plugin needs a deployment target of at least iOS 9.0.
+3. Add the necessary entitlements in `Info.plist`.
 
-The flutter project must be created with Swift enabled for iOS.
+Detailed instructions can be found on [our wiki](https://github.com/nanoglobal/nano-healthkit-plugin-flutter/wiki/Installation).
 
-HealthKit must be enabled through Xcode and entitlements must be added to the project `Info.plist`:
+## Examples
 
-![alt text](https://docs-assets.developer.apple.com/published/749e5c40bb/c46af629-7d07-4402-98fc-c9657cfc5594.png "Enable HealthKit capabilities")
+#### Permissions
 
-Remember to also check the HealthRecords option if you are going to query for it.
-
-For more information about enabling HealthKit, [read the Apple Documentation](https://developer.apple.com/documentation/healthkit/setting_up_healthkit)
-
-In `Info.plist` you'll need:
-NSHealthUpdateUsageDescription, NSHealthShareUsageDescription and optionally (if you are going to use HealthRecords) NSHealthClinicalHealthRecordsShareUsageDescription.
-
-For more information check out the Example project.
-
-## HealthTypes
-
-The full list of [supported HealthTypes can be found here](https://github.com/nanoglobal/nano-healthkit-plugin-flutter/blob/feat/health_records/protos/healthdata.proto)
-
-Depending on the nature of the sample type, the HealthType will have a suffix that indicates so. Currently there are:
-- Category
-- Quantity
-- Workout
-- Characteristic
-- Clinical\*
-- Document
-- Correlation
-
-Most of them have subtypes inside. 
-
-\*	If not planing on reading any clinical records (aka Health Records), just don't use any HealthType that has the _CLINICAL_ suffix on it (no need to add it on the Capabilities of the app neither).
-
-
-## Usage
-
-The methods are the following:
-
-### - Request permissions
+Request permissions to read heart rate and height:
 ```dart
-Future<bool> authorize(HealthTypeList request) async
-```
-The user will be presented with a native modal that request permissions to read all values in the request, the answer will be successful even when the user chooses not to approve any of the permissions (that's because iOS doesn't give feedback of which permissions the user has approved).
-
-All invalid permission types (because the iOS version is lower than the requested type) will be ignored.
-
-#### Params
-HealthTypeList: Contains a list of HealthTypes to request for reading permissions.
-
-#### Return
-Bool: False only in case of an error and true in any other case.
-
-#### Example
-```dart
-// Request permissions to read all known types
 var request = HealthTypeList();
-request.types.addAll(HealthTypes.values); // Here you can also request for a subset of types or a single one
+request.types.add(HealthTypes.QUANTITY_HEART_RATE);
+request.types.add(HealthTypes.QUANTITY_HEIGHT);
 bool isAuthorized = await NanoHealthkitPlugin.authorize(request);
 ```
+ 
+#### Read data
 
-### - Filter Existing Types
+Fetch the latest entry of heart rate:
 ```dart
-Future<HealthTypeList> filterExistingTypes(HealthTypeList request) async
-```
-Will check if the requested types are available in the user's phone model. The fact that a type exists doesn't mean that there are enough permissions to read that value (this is due to the fact that you can't check if permissions to read were given or not).
-
-#### Params
-HealthTypeList: Contains a list of HealthTypes to check.
-
-#### Return
-HealthDataList: Contains a similar list to the requested one that only contains valid items to fetch.
-
-#### Example
-```dart
-// Reduce the list from all types to only those available
-var request = HealthTypeList();
-request.types.addAll(HealthTypes.values); // Adds all types
-var filtered = await NanoHealthkitPlugin.filterExistingTypes(request);
-```
-
-### - Fetch data
-```dart
-Future<HealthDataList> fetchData(HealthDataRequest request) async
-```
-The requested type gets fetched from Apple's HealthKit and returned.
-
-If querying for an invalid type (because the iOS version is lower than the requested type) an exception will be thrown.
-
-#### Params
-HealthDataRequest: Indicate the type of data wanted to be read (see HealthTypes), startDate, endDate, limit and sorting options. The dates can be empty strings to fetch all historical data, otherwise use ISO8601 format ("yyyy-MM-dd'T'HH:mm:ss.SSSX"). Limit must be higher than 0 otherwise HKObjectQueryNoLimit will be used. Sort can be one of four being 
-
-#### Return
-HealthDataList: Contains a list of HealthData.
-
-#### Example
-```dart
-// Read the latest height records between the given dates
 var request = HealthDataRequest();
-request.type = HealthTypes.QUANTITY_HEIGHT;
-request.startDate = "2019-06-19T18:58:00.000Z"; // Can leave blank for open starDate
-request.endDate = "2019-09-19T20:58:00.000Z"; // Can leave blank for open endDate
-request.limit = 2; // Can leave on 0 to don't limit
-var resultToShow = "";
-try {
-  var basicHealth = await NanoHealthkitPlugin.fetchData(request);
-  resultToShow = basicHealth.toString();
-} on Exception catch (error) {
-  resultToShow = error.toString();
-}
-```
-
-
-### - Subscribe
-```dart
-StreamSubscription subscribeToUpdates(HealthTypeList request, void onData(HealthDataList event))
-```
-Requests a subscription to all types indicated in the request. The caller must save the StreamSubscription returned in case of a later request to unsubscribe. On each new data event, the onData gets called with the new data.
-
-All invalid types and all characteristic types will be ignored.
-
-Nothing will be returned and neither the onData will be called in case of a successful subscription. However, the onData will be called with an exception in case there was an error while subscribing.
-
-#### Params
-HealthTypeList: Contains a list of HealthTypes to request for subscription.
-
-void onData(HealthDataList event): Needs to be a method that receives a HealthDataList as argument and returns void. This is the update function that gets called each time new data is available. The returned data is in the same format as the one calling for "fetch data".
-
-#### Return
-StreamSubscription: The stream that will receive each new event.
-
-#### Example
-```dart
-// Subscribe to events of all kinds
-var request = HealthTypeList();
-request.types.addAll(HealthTypes.values);
-_subscription = NanoHealthkitPlugin.subscribeToUpdates(request, _updatesReceived); // Save the subscription for later unsubscribe
-```
-
-### - Unsubscribe
-```dart
-Future<bool> unsubscribeToUpdates(StreamSubscription stream) async
-```
-Request an unsubscription to all types.
-
-#### Params
-StreamSubscription: The stream needs to be the one received by the subscription method.
-
-#### Return
-Bool: True if success, false + an exception otherwise.
-
-#### Example
-```dart
-// Send the previously saved subscription to unsubscribeToUpdates 
-NanoHealthkitPlugin.unsubscribeToUpdates(_subscription);
-_subscription = null;
-```
-
-### - Statistics
-```dart
-Future<StatisticsData> fetchStatisticsData(StatisticsRequest request) async
-```
-Makes a statistics query. 
-
-The only valid types are Quantity types, any other case will throw an error. Also beware of mixing discrete options with cumulative options or even requesting discrete options to a cumulative type and vice versa (e.g don't call heart rate with cumulative sum option or call energy consumed with any of the discrete options) all those scenarios will end up with an unhandled exception.
-
-The separate by source option can be mixed with any of the others. 
-
-More information can be found in the [official Apple's documentation](https://developer.apple.com/documentation/healthkit/hkstatisticsquery).
-
->You cannot combine a discrete option with a cumulative option. You can, however, combine multiple discrete options together to perform multiple calculations. You can also combine the separateBySource option with any of the other options.
-
-#### Params
-StatisticsRequest: Should contain a type, startDate, endDate and the options for the requests. Options will determine which of the variables of the return object have values. Read the rules and exceptions regarding the options to avoid crashes.
-
-#### Return
-StatisticsData: Contains a list of sources, values for each kind of requested data (not separated by source) and an array of data separated by source. Not all parameters inside the response will contain values, only those that match with the requested statistics in the options of the request will. In the same way, if reparateBySource was in the options, dataBySource will contain the matching values for each source.
-
-#### Example
-```dart
-// Send the previously saved subscription to unsubscribeToUpdates 
-var request = StatisticsRequest();
 request.type = HealthTypes.QUANTITY_HEART_RATE;
-request.options.add(StatisticsOptions.DISCRETE_MAX);
-request.options.add(StatisticsOptions.DISCRETE_MIN);
-request.options.add(StatisticsOptions.DISCRETE_AVERAGE);
-request.options.add(StatisticsOptions.SEPARATE_BY_SOURCE);
+request.limit = 1; // If the limit is removed, it will fetch all historical data for heart rate
+var response = await NanoHealthkitPlugin.fetchData(request);
+```
 
-var resultToShow = "";
-try {
-  var result = await NanoHealthkitPlugin.fetchStatisticsData(request);
-  resultToShow = result.toString();
-} on Exception catch (error) {
-  resultToShow = error.toString();
+The response looks like this:
+```bash
+{
+  type: QUANTITY_HEART_RATE
+  objectType: HKQuantityTypeIdentifierHeartRate
+  startDate: 2019-10-03T18:30:00.000Z
+  endDate: 2019-10-03T18:30:00.000Z
+  metadata: {"HKWasUserEntered":1}
+  uuid: FA64A6C0-B330-48D7-A6D5-B588533E9D4D
+  source: {
+    version: 13.0
+    operatingSystemVersion: 13.0.0
+    productType: iPhone12,5
+    name: Health
+    bundleIdentifier: com.apple.Health
+  }
+  quantityData: {
+    count: 1
+    quantityUnit: count/s
+    quantity: 2.1666666666666665
+  }
 }
 ```
 
-## Other Notes
+#### Subscribe
 
-### Timezones
-
-The values in Apple Health are stored in the local time of the phone at the moment they are written but they don't hold timezone information. That means that if you record something at 13:00 in timezone -3 it will be retrieved as 10:00 in GMT and when showed, considering the user is still at that same timezone it will be shown as 13:00. However, the timezone the user currently is doesn't necessary matches the timezone in which he/she made the record and this might lead to misunderstandings.
-
-Depending on the source, Apple Health sometimes saves information about the timezone in which the record was made inside the metadata.
-
-
-### Permissions
-
-- Not requesting for permissions before trying to pull data will throw an exception.
-- The regular permissions screen is only shown to the user once. Next time is requested, nothing will happen.
-- The previous is not true for Medical Record's permissions where the user selected only to share on demand. If that's the case, every time new info is available, when requesting for permissions, the permissions screen will show again until the user rejects it completely or selects to always share their records.
-- If the user rejected permissions, the fetch of data will bring no results and won't throw an exception. Note that this doesn't contradict the first statement.
-- There is no way to tell which permissions are currently accepted at a given time.
-- Permissions for HealthKit and Health Records are handled separately internally so even when requesting for a mix of them at the same time, they can get approved or rejected separately.
-- It is recommended to request permissions for HealthKit and Health Records independently to avoid confusions.
-
-### Background updates
-
-Coming soon...
-
-
-## Further development?
-
-The data model that is passed from Flutter to iOS and back is written using proto buffers. In case that model needs to be changed, Protobuf will be needed both for Dart and Swift. There's a helpful script located in the proto folder to help with converting files.
-
-#### Install Protobuf:
-```bash
-brew install protobuf
-pub global activate protoc_plugin
+Subscribe to new entries of height:
+```dart
+var request = HealthTypeList();
+request.types.add(HealthTypes.QUANTITY_HEIGHT);
+_subscription = NanoHealthkitPlugin.subscribeToUpdates(request, _updatesReceived);
 ```
 
-If couldn't find 'pub' then add to your path:
-```bash
-{YOUR FLUTTER DIR}/flutter/bin/cache/dart-sdk/bin
-```
+The updatesReceived method gets all new entries (even while the app is in background) in the same structure as the fetching of data.
 
-#### Convert all Proto files:
-First cd to the proto folder
-```bash
-./auto_proto.sh --dart=../lib --swift=../ios/Classes
-```
+## Docs
 
-\* You can also indicate a different origin folder, other destinies and also add a java option if needed.
+Check our [Wiki](https://github.com/nanoglobal/nano-healthkit-plugin-flutter/wiki) for more details.
 
