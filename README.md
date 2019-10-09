@@ -2,7 +2,7 @@
 
 Flutter plugin to read data from Apple's HealthKit, request for permissions, subscribe to updates in background and run statistics queries. It also supports Health Records, batch fetching of historical data and more.
 
-It supports readings of _ALL_ types of data available up to iOS 13.0 (except for series types). Check the HealthTypes section for a full list.
+It supports readings of _ALL_ types of data available up to iOS 13.0 (except for series types and activity summary). Check the HealthTypes section for a full list.
 
 Currently, writing data into HealthKit is not supported.
 
