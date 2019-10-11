@@ -33,101 +33,106 @@ enum HealthTypes: SwiftProtobuf.Enum {
   case categoryHighHeartRateEvent // = 9
   case categoryLowHeartRateEvent // = 10
   case categoryIrregularHeartRhythmEvent // = 11
-  case quantityBodyMassIndex // = 12
-  case quantityBodyFatPercentage // = 13
-  case quantityHeight // = 14
-  case quantityBodyMass // = 15
-  case quantityLeanBodyMass // = 16
-  case quantityStepCount // = 17
-  case quantityDistanceWalkingRunning // = 18
-  case quantityDistanceCycling // = 19
-  case quantityBasalEnergyBurned // = 20
-  case quantityActiveEnergyBurned // = 21
-  case quantityFlightsClimbed // = 22
-  case quantityNikeFuel // = 23
-  case quantityHeartRate // = 24
-  case quantityBodyTemperature // = 25
-  case quantityBasalBodyTemperature // = 26
-  case quantityBloodPressureSystolic // = 27
-  case quantityBloodPressureDiastolic // = 28
-  case quantityRespiratoryRate // = 29
-  case quantityOxygenSaturation // = 30
-  case quantityPeripheralPerfusionIndex // = 31
-  case quantityBloodGlucose // = 32
-  case quantityNumberOfTimesFallen // = 33
-  case quantityElectrodermalActivity // = 34
-  case quantityInhalerUsage // = 35
-  case quantityBloodAlcoholContent // = 36
-  case quantityForcedVitalCapacity // = 37
-  case quantityForcedExpiratoryVolume1 // = 38
-  case quantityPeakExpiratoryFlowRate // = 39
-  case quantityDietaryFatTotal // = 40
-  case quantityDietaryFatPolyunsaturated // = 41
-  case quantityDietaryFatMonounsaturated // = 42
-  case quantityDietaryFatSaturated // = 43
-  case quantityDietaryCholesterol // = 44
-  case quantityDietarySodium // = 45
-  case quantityDietaryCarbohydrates // = 46
-  case quantityDietaryFiber // = 47
-  case quantityDietarySugar // = 48
-  case quantityDietaryEnergyConsumed // = 49
-  case quantityDietaryProtein // = 50
-  case quantityDietaryVitaminA // = 51
-  case quantityDietaryVitaminB6 // = 52
-  case quantityDietaryVitaminB12 // = 53
-  case quantityDietaryVitaminC // = 54
-  case quantityDietaryVitaminD // = 55
-  case quantityDietaryVitaminE // = 56
-  case quantityDietaryVitaminK // = 57
-  case quantityDietaryCalcium // = 58
-  case quantityDietaryIron // = 59
-  case quantityDietaryThiamin // = 60
-  case quantityDietaryRiboflavin // = 61
-  case quantityDietaryNiacin // = 62
-  case quantityDietaryFolate // = 63
-  case quantityDietaryBiotin // = 64
-  case quantityDietaryPantothenicAcid // = 65
-  case quantityDietaryPhosphorus // = 66
-  case quantityDietaryIodine // = 67
-  case quantityDietaryMagnesium // = 68
-  case quantityDietaryZinc // = 69
-  case quantityDietarySelenium // = 70
-  case quantityDietaryCopper // = 71
-  case quantityDietaryManganese // = 72
-  case quantityDietaryChromium // = 73
-  case quantityDietaryMolybdenum // = 74
-  case quantityDietaryChloride // = 75
-  case quantityDietaryPotassium // = 76
-  case quantityDietaryCaffeine // = 77
-  case quantityDietaryWater // = 78
-  case quantityUvExposure // = 79
-  case quantityAppleExerciseTime // = 80
-  case quantityDistanceWheelchair // = 81
-  case quantityPushCount // = 82
-  case quantityDistanceSwimming // = 83
-  case quantitySwimmingStrokeCount // = 84
-  case quantityWaistCircumference // = 85
-  case quantityVo2Max // = 86
-  case quantityRestingHeartRate // = 87
-  case quantityWalkingHeartRateAverage // = 88
-  case quantityHeartRateVariabilitySdnn // = 89
-  case quantityInsulinDelivery // = 90
-  case quantityDistanceDownhillSnowSports // = 91
-  case characteristicBiologicalSex // = 92
-  case characteristicBloodType // = 93
-  case characteristicDateOfBirth // = 94
-  case characteristicFitzpatrickSkinType // = 95
-  case characteristicWheelchairUse // = 96
-  case clinicalAllergyRecord // = 97
-  case clinicalConditionRecord // = 98
-  case clinicalImmunizationRecord // = 99
-  case clinicalLabResultRecord // = 100
-  case clinicalMedicationRecord // = 101
-  case clinicalProcedureRecord // = 102
-  case clinicalVitalSignRecord // = 103
-  case documentCda // = 104
-  case correlationBloodPressure // = 105
-  case correlationFood // = 106
+  case categoryAudioExposureEvent // = 12
+  case categoryToothbrushingEvent // = 13
+  case quantityBodyMassIndex // = 14
+  case quantityBodyFatPercentage // = 15
+  case quantityHeight // = 16
+  case quantityBodyMass // = 17
+  case quantityLeanBodyMass // = 18
+  case quantityStepCount // = 19
+  case quantityDistanceWalkingRunning // = 20
+  case quantityDistanceCycling // = 21
+  case quantityBasalEnergyBurned // = 22
+  case quantityActiveEnergyBurned // = 23
+  case quantityFlightsClimbed // = 24
+  case quantityNikeFuel // = 25
+  case quantityHeartRate // = 26
+  case quantityBodyTemperature // = 27
+  case quantityBasalBodyTemperature // = 28
+  case quantityBloodPressureSystolic // = 29
+  case quantityBloodPressureDiastolic // = 30
+  case quantityRespiratoryRate // = 31
+  case quantityOxygenSaturation // = 32
+  case quantityPeripheralPerfusionIndex // = 33
+  case quantityBloodGlucose // = 34
+  case quantityNumberOfTimesFallen // = 35
+  case quantityElectrodermalActivity // = 36
+  case quantityInhalerUsage // = 37
+  case quantityBloodAlcoholContent // = 38
+  case quantityForcedVitalCapacity // = 39
+  case quantityForcedExpiratoryVolume1 // = 40
+  case quantityPeakExpiratoryFlowRate // = 41
+  case quantityDietaryFatTotal // = 42
+  case quantityDietaryFatPolyunsaturated // = 43
+  case quantityDietaryFatMonounsaturated // = 44
+  case quantityDietaryFatSaturated // = 45
+  case quantityDietaryCholesterol // = 46
+  case quantityDietarySodium // = 47
+  case quantityDietaryCarbohydrates // = 48
+  case quantityDietaryFiber // = 49
+  case quantityDietarySugar // = 50
+  case quantityDietaryEnergyConsumed // = 51
+  case quantityDietaryProtein // = 52
+  case quantityDietaryVitaminA // = 53
+  case quantityDietaryVitaminB6 // = 54
+  case quantityDietaryVitaminB12 // = 55
+  case quantityDietaryVitaminC // = 56
+  case quantityDietaryVitaminD // = 57
+  case quantityDietaryVitaminE // = 58
+  case quantityDietaryVitaminK // = 59
+  case quantityDietaryCalcium // = 60
+  case quantityDietaryIron // = 61
+  case quantityDietaryThiamin // = 62
+  case quantityDietaryRiboflavin // = 63
+  case quantityDietaryNiacin // = 64
+  case quantityDietaryFolate // = 65
+  case quantityDietaryBiotin // = 66
+  case quantityDietaryPantothenicAcid // = 67
+  case quantityDietaryPhosphorus // = 68
+  case quantityDietaryIodine // = 69
+  case quantityDietaryMagnesium // = 70
+  case quantityDietaryZinc // = 71
+  case quantityDietarySelenium // = 72
+  case quantityDietaryCopper // = 73
+  case quantityDietaryManganese // = 74
+  case quantityDietaryChromium // = 75
+  case quantityDietaryMolybdenum // = 76
+  case quantityDietaryChloride // = 77
+  case quantityDietaryPotassium // = 78
+  case quantityDietaryCaffeine // = 79
+  case quantityDietaryWater // = 80
+  case quantityUvExposure // = 81
+  case quantityAppleExerciseTime // = 82
+  case quantityDistanceWheelchair // = 83
+  case quantityPushCount // = 84
+  case quantityDistanceSwimming // = 85
+  case quantitySwimmingStrokeCount // = 86
+  case quantityWaistCircumference // = 87
+  case quantityVo2Max // = 88
+  case quantityRestingHeartRate // = 89
+  case quantityWalkingHeartRateAverage // = 90
+  case quantityHeartRateVariabilitySdnn // = 91
+  case quantityInsulinDelivery // = 92
+  case quantityDistanceDownhillSnowSports // = 93
+  case quantityAppleStandTime // = 94
+  case quantityEnvironmentalAudioExposure // = 95
+  case quantityHeadphoneAudioExposure // = 96
+  case characteristicBiologicalSex // = 97
+  case characteristicBloodType // = 98
+  case characteristicDateOfBirth // = 99
+  case characteristicFitzpatrickSkinType // = 100
+  case characteristicWheelchairUse // = 101
+  case clinicalAllergyRecord // = 102
+  case clinicalConditionRecord // = 103
+  case clinicalImmunizationRecord // = 104
+  case clinicalLabResultRecord // = 105
+  case clinicalMedicationRecord // = 106
+  case clinicalProcedureRecord // = 107
+  case clinicalVitalSignRecord // = 108
+  case documentCda // = 109
+  case correlationBloodPressure // = 110
+  case correlationFood // = 111
   case UNRECOGNIZED(Int)
 
   init() {
@@ -148,101 +153,106 @@ enum HealthTypes: SwiftProtobuf.Enum {
     case 9: self = .categoryHighHeartRateEvent
     case 10: self = .categoryLowHeartRateEvent
     case 11: self = .categoryIrregularHeartRhythmEvent
-    case 12: self = .quantityBodyMassIndex
-    case 13: self = .quantityBodyFatPercentage
-    case 14: self = .quantityHeight
-    case 15: self = .quantityBodyMass
-    case 16: self = .quantityLeanBodyMass
-    case 17: self = .quantityStepCount
-    case 18: self = .quantityDistanceWalkingRunning
-    case 19: self = .quantityDistanceCycling
-    case 20: self = .quantityBasalEnergyBurned
-    case 21: self = .quantityActiveEnergyBurned
-    case 22: self = .quantityFlightsClimbed
-    case 23: self = .quantityNikeFuel
-    case 24: self = .quantityHeartRate
-    case 25: self = .quantityBodyTemperature
-    case 26: self = .quantityBasalBodyTemperature
-    case 27: self = .quantityBloodPressureSystolic
-    case 28: self = .quantityBloodPressureDiastolic
-    case 29: self = .quantityRespiratoryRate
-    case 30: self = .quantityOxygenSaturation
-    case 31: self = .quantityPeripheralPerfusionIndex
-    case 32: self = .quantityBloodGlucose
-    case 33: self = .quantityNumberOfTimesFallen
-    case 34: self = .quantityElectrodermalActivity
-    case 35: self = .quantityInhalerUsage
-    case 36: self = .quantityBloodAlcoholContent
-    case 37: self = .quantityForcedVitalCapacity
-    case 38: self = .quantityForcedExpiratoryVolume1
-    case 39: self = .quantityPeakExpiratoryFlowRate
-    case 40: self = .quantityDietaryFatTotal
-    case 41: self = .quantityDietaryFatPolyunsaturated
-    case 42: self = .quantityDietaryFatMonounsaturated
-    case 43: self = .quantityDietaryFatSaturated
-    case 44: self = .quantityDietaryCholesterol
-    case 45: self = .quantityDietarySodium
-    case 46: self = .quantityDietaryCarbohydrates
-    case 47: self = .quantityDietaryFiber
-    case 48: self = .quantityDietarySugar
-    case 49: self = .quantityDietaryEnergyConsumed
-    case 50: self = .quantityDietaryProtein
-    case 51: self = .quantityDietaryVitaminA
-    case 52: self = .quantityDietaryVitaminB6
-    case 53: self = .quantityDietaryVitaminB12
-    case 54: self = .quantityDietaryVitaminC
-    case 55: self = .quantityDietaryVitaminD
-    case 56: self = .quantityDietaryVitaminE
-    case 57: self = .quantityDietaryVitaminK
-    case 58: self = .quantityDietaryCalcium
-    case 59: self = .quantityDietaryIron
-    case 60: self = .quantityDietaryThiamin
-    case 61: self = .quantityDietaryRiboflavin
-    case 62: self = .quantityDietaryNiacin
-    case 63: self = .quantityDietaryFolate
-    case 64: self = .quantityDietaryBiotin
-    case 65: self = .quantityDietaryPantothenicAcid
-    case 66: self = .quantityDietaryPhosphorus
-    case 67: self = .quantityDietaryIodine
-    case 68: self = .quantityDietaryMagnesium
-    case 69: self = .quantityDietaryZinc
-    case 70: self = .quantityDietarySelenium
-    case 71: self = .quantityDietaryCopper
-    case 72: self = .quantityDietaryManganese
-    case 73: self = .quantityDietaryChromium
-    case 74: self = .quantityDietaryMolybdenum
-    case 75: self = .quantityDietaryChloride
-    case 76: self = .quantityDietaryPotassium
-    case 77: self = .quantityDietaryCaffeine
-    case 78: self = .quantityDietaryWater
-    case 79: self = .quantityUvExposure
-    case 80: self = .quantityAppleExerciseTime
-    case 81: self = .quantityDistanceWheelchair
-    case 82: self = .quantityPushCount
-    case 83: self = .quantityDistanceSwimming
-    case 84: self = .quantitySwimmingStrokeCount
-    case 85: self = .quantityWaistCircumference
-    case 86: self = .quantityVo2Max
-    case 87: self = .quantityRestingHeartRate
-    case 88: self = .quantityWalkingHeartRateAverage
-    case 89: self = .quantityHeartRateVariabilitySdnn
-    case 90: self = .quantityInsulinDelivery
-    case 91: self = .quantityDistanceDownhillSnowSports
-    case 92: self = .characteristicBiologicalSex
-    case 93: self = .characteristicBloodType
-    case 94: self = .characteristicDateOfBirth
-    case 95: self = .characteristicFitzpatrickSkinType
-    case 96: self = .characteristicWheelchairUse
-    case 97: self = .clinicalAllergyRecord
-    case 98: self = .clinicalConditionRecord
-    case 99: self = .clinicalImmunizationRecord
-    case 100: self = .clinicalLabResultRecord
-    case 101: self = .clinicalMedicationRecord
-    case 102: self = .clinicalProcedureRecord
-    case 103: self = .clinicalVitalSignRecord
-    case 104: self = .documentCda
-    case 105: self = .correlationBloodPressure
-    case 106: self = .correlationFood
+    case 12: self = .categoryAudioExposureEvent
+    case 13: self = .categoryToothbrushingEvent
+    case 14: self = .quantityBodyMassIndex
+    case 15: self = .quantityBodyFatPercentage
+    case 16: self = .quantityHeight
+    case 17: self = .quantityBodyMass
+    case 18: self = .quantityLeanBodyMass
+    case 19: self = .quantityStepCount
+    case 20: self = .quantityDistanceWalkingRunning
+    case 21: self = .quantityDistanceCycling
+    case 22: self = .quantityBasalEnergyBurned
+    case 23: self = .quantityActiveEnergyBurned
+    case 24: self = .quantityFlightsClimbed
+    case 25: self = .quantityNikeFuel
+    case 26: self = .quantityHeartRate
+    case 27: self = .quantityBodyTemperature
+    case 28: self = .quantityBasalBodyTemperature
+    case 29: self = .quantityBloodPressureSystolic
+    case 30: self = .quantityBloodPressureDiastolic
+    case 31: self = .quantityRespiratoryRate
+    case 32: self = .quantityOxygenSaturation
+    case 33: self = .quantityPeripheralPerfusionIndex
+    case 34: self = .quantityBloodGlucose
+    case 35: self = .quantityNumberOfTimesFallen
+    case 36: self = .quantityElectrodermalActivity
+    case 37: self = .quantityInhalerUsage
+    case 38: self = .quantityBloodAlcoholContent
+    case 39: self = .quantityForcedVitalCapacity
+    case 40: self = .quantityForcedExpiratoryVolume1
+    case 41: self = .quantityPeakExpiratoryFlowRate
+    case 42: self = .quantityDietaryFatTotal
+    case 43: self = .quantityDietaryFatPolyunsaturated
+    case 44: self = .quantityDietaryFatMonounsaturated
+    case 45: self = .quantityDietaryFatSaturated
+    case 46: self = .quantityDietaryCholesterol
+    case 47: self = .quantityDietarySodium
+    case 48: self = .quantityDietaryCarbohydrates
+    case 49: self = .quantityDietaryFiber
+    case 50: self = .quantityDietarySugar
+    case 51: self = .quantityDietaryEnergyConsumed
+    case 52: self = .quantityDietaryProtein
+    case 53: self = .quantityDietaryVitaminA
+    case 54: self = .quantityDietaryVitaminB6
+    case 55: self = .quantityDietaryVitaminB12
+    case 56: self = .quantityDietaryVitaminC
+    case 57: self = .quantityDietaryVitaminD
+    case 58: self = .quantityDietaryVitaminE
+    case 59: self = .quantityDietaryVitaminK
+    case 60: self = .quantityDietaryCalcium
+    case 61: self = .quantityDietaryIron
+    case 62: self = .quantityDietaryThiamin
+    case 63: self = .quantityDietaryRiboflavin
+    case 64: self = .quantityDietaryNiacin
+    case 65: self = .quantityDietaryFolate
+    case 66: self = .quantityDietaryBiotin
+    case 67: self = .quantityDietaryPantothenicAcid
+    case 68: self = .quantityDietaryPhosphorus
+    case 69: self = .quantityDietaryIodine
+    case 70: self = .quantityDietaryMagnesium
+    case 71: self = .quantityDietaryZinc
+    case 72: self = .quantityDietarySelenium
+    case 73: self = .quantityDietaryCopper
+    case 74: self = .quantityDietaryManganese
+    case 75: self = .quantityDietaryChromium
+    case 76: self = .quantityDietaryMolybdenum
+    case 77: self = .quantityDietaryChloride
+    case 78: self = .quantityDietaryPotassium
+    case 79: self = .quantityDietaryCaffeine
+    case 80: self = .quantityDietaryWater
+    case 81: self = .quantityUvExposure
+    case 82: self = .quantityAppleExerciseTime
+    case 83: self = .quantityDistanceWheelchair
+    case 84: self = .quantityPushCount
+    case 85: self = .quantityDistanceSwimming
+    case 86: self = .quantitySwimmingStrokeCount
+    case 87: self = .quantityWaistCircumference
+    case 88: self = .quantityVo2Max
+    case 89: self = .quantityRestingHeartRate
+    case 90: self = .quantityWalkingHeartRateAverage
+    case 91: self = .quantityHeartRateVariabilitySdnn
+    case 92: self = .quantityInsulinDelivery
+    case 93: self = .quantityDistanceDownhillSnowSports
+    case 94: self = .quantityAppleStandTime
+    case 95: self = .quantityEnvironmentalAudioExposure
+    case 96: self = .quantityHeadphoneAudioExposure
+    case 97: self = .characteristicBiologicalSex
+    case 98: self = .characteristicBloodType
+    case 99: self = .characteristicDateOfBirth
+    case 100: self = .characteristicFitzpatrickSkinType
+    case 101: self = .characteristicWheelchairUse
+    case 102: self = .clinicalAllergyRecord
+    case 103: self = .clinicalConditionRecord
+    case 104: self = .clinicalImmunizationRecord
+    case 105: self = .clinicalLabResultRecord
+    case 106: self = .clinicalMedicationRecord
+    case 107: self = .clinicalProcedureRecord
+    case 108: self = .clinicalVitalSignRecord
+    case 109: self = .documentCda
+    case 110: self = .correlationBloodPressure
+    case 111: self = .correlationFood
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -261,101 +271,106 @@ enum HealthTypes: SwiftProtobuf.Enum {
     case .categoryHighHeartRateEvent: return 9
     case .categoryLowHeartRateEvent: return 10
     case .categoryIrregularHeartRhythmEvent: return 11
-    case .quantityBodyMassIndex: return 12
-    case .quantityBodyFatPercentage: return 13
-    case .quantityHeight: return 14
-    case .quantityBodyMass: return 15
-    case .quantityLeanBodyMass: return 16
-    case .quantityStepCount: return 17
-    case .quantityDistanceWalkingRunning: return 18
-    case .quantityDistanceCycling: return 19
-    case .quantityBasalEnergyBurned: return 20
-    case .quantityActiveEnergyBurned: return 21
-    case .quantityFlightsClimbed: return 22
-    case .quantityNikeFuel: return 23
-    case .quantityHeartRate: return 24
-    case .quantityBodyTemperature: return 25
-    case .quantityBasalBodyTemperature: return 26
-    case .quantityBloodPressureSystolic: return 27
-    case .quantityBloodPressureDiastolic: return 28
-    case .quantityRespiratoryRate: return 29
-    case .quantityOxygenSaturation: return 30
-    case .quantityPeripheralPerfusionIndex: return 31
-    case .quantityBloodGlucose: return 32
-    case .quantityNumberOfTimesFallen: return 33
-    case .quantityElectrodermalActivity: return 34
-    case .quantityInhalerUsage: return 35
-    case .quantityBloodAlcoholContent: return 36
-    case .quantityForcedVitalCapacity: return 37
-    case .quantityForcedExpiratoryVolume1: return 38
-    case .quantityPeakExpiratoryFlowRate: return 39
-    case .quantityDietaryFatTotal: return 40
-    case .quantityDietaryFatPolyunsaturated: return 41
-    case .quantityDietaryFatMonounsaturated: return 42
-    case .quantityDietaryFatSaturated: return 43
-    case .quantityDietaryCholesterol: return 44
-    case .quantityDietarySodium: return 45
-    case .quantityDietaryCarbohydrates: return 46
-    case .quantityDietaryFiber: return 47
-    case .quantityDietarySugar: return 48
-    case .quantityDietaryEnergyConsumed: return 49
-    case .quantityDietaryProtein: return 50
-    case .quantityDietaryVitaminA: return 51
-    case .quantityDietaryVitaminB6: return 52
-    case .quantityDietaryVitaminB12: return 53
-    case .quantityDietaryVitaminC: return 54
-    case .quantityDietaryVitaminD: return 55
-    case .quantityDietaryVitaminE: return 56
-    case .quantityDietaryVitaminK: return 57
-    case .quantityDietaryCalcium: return 58
-    case .quantityDietaryIron: return 59
-    case .quantityDietaryThiamin: return 60
-    case .quantityDietaryRiboflavin: return 61
-    case .quantityDietaryNiacin: return 62
-    case .quantityDietaryFolate: return 63
-    case .quantityDietaryBiotin: return 64
-    case .quantityDietaryPantothenicAcid: return 65
-    case .quantityDietaryPhosphorus: return 66
-    case .quantityDietaryIodine: return 67
-    case .quantityDietaryMagnesium: return 68
-    case .quantityDietaryZinc: return 69
-    case .quantityDietarySelenium: return 70
-    case .quantityDietaryCopper: return 71
-    case .quantityDietaryManganese: return 72
-    case .quantityDietaryChromium: return 73
-    case .quantityDietaryMolybdenum: return 74
-    case .quantityDietaryChloride: return 75
-    case .quantityDietaryPotassium: return 76
-    case .quantityDietaryCaffeine: return 77
-    case .quantityDietaryWater: return 78
-    case .quantityUvExposure: return 79
-    case .quantityAppleExerciseTime: return 80
-    case .quantityDistanceWheelchair: return 81
-    case .quantityPushCount: return 82
-    case .quantityDistanceSwimming: return 83
-    case .quantitySwimmingStrokeCount: return 84
-    case .quantityWaistCircumference: return 85
-    case .quantityVo2Max: return 86
-    case .quantityRestingHeartRate: return 87
-    case .quantityWalkingHeartRateAverage: return 88
-    case .quantityHeartRateVariabilitySdnn: return 89
-    case .quantityInsulinDelivery: return 90
-    case .quantityDistanceDownhillSnowSports: return 91
-    case .characteristicBiologicalSex: return 92
-    case .characteristicBloodType: return 93
-    case .characteristicDateOfBirth: return 94
-    case .characteristicFitzpatrickSkinType: return 95
-    case .characteristicWheelchairUse: return 96
-    case .clinicalAllergyRecord: return 97
-    case .clinicalConditionRecord: return 98
-    case .clinicalImmunizationRecord: return 99
-    case .clinicalLabResultRecord: return 100
-    case .clinicalMedicationRecord: return 101
-    case .clinicalProcedureRecord: return 102
-    case .clinicalVitalSignRecord: return 103
-    case .documentCda: return 104
-    case .correlationBloodPressure: return 105
-    case .correlationFood: return 106
+    case .categoryAudioExposureEvent: return 12
+    case .categoryToothbrushingEvent: return 13
+    case .quantityBodyMassIndex: return 14
+    case .quantityBodyFatPercentage: return 15
+    case .quantityHeight: return 16
+    case .quantityBodyMass: return 17
+    case .quantityLeanBodyMass: return 18
+    case .quantityStepCount: return 19
+    case .quantityDistanceWalkingRunning: return 20
+    case .quantityDistanceCycling: return 21
+    case .quantityBasalEnergyBurned: return 22
+    case .quantityActiveEnergyBurned: return 23
+    case .quantityFlightsClimbed: return 24
+    case .quantityNikeFuel: return 25
+    case .quantityHeartRate: return 26
+    case .quantityBodyTemperature: return 27
+    case .quantityBasalBodyTemperature: return 28
+    case .quantityBloodPressureSystolic: return 29
+    case .quantityBloodPressureDiastolic: return 30
+    case .quantityRespiratoryRate: return 31
+    case .quantityOxygenSaturation: return 32
+    case .quantityPeripheralPerfusionIndex: return 33
+    case .quantityBloodGlucose: return 34
+    case .quantityNumberOfTimesFallen: return 35
+    case .quantityElectrodermalActivity: return 36
+    case .quantityInhalerUsage: return 37
+    case .quantityBloodAlcoholContent: return 38
+    case .quantityForcedVitalCapacity: return 39
+    case .quantityForcedExpiratoryVolume1: return 40
+    case .quantityPeakExpiratoryFlowRate: return 41
+    case .quantityDietaryFatTotal: return 42
+    case .quantityDietaryFatPolyunsaturated: return 43
+    case .quantityDietaryFatMonounsaturated: return 44
+    case .quantityDietaryFatSaturated: return 45
+    case .quantityDietaryCholesterol: return 46
+    case .quantityDietarySodium: return 47
+    case .quantityDietaryCarbohydrates: return 48
+    case .quantityDietaryFiber: return 49
+    case .quantityDietarySugar: return 50
+    case .quantityDietaryEnergyConsumed: return 51
+    case .quantityDietaryProtein: return 52
+    case .quantityDietaryVitaminA: return 53
+    case .quantityDietaryVitaminB6: return 54
+    case .quantityDietaryVitaminB12: return 55
+    case .quantityDietaryVitaminC: return 56
+    case .quantityDietaryVitaminD: return 57
+    case .quantityDietaryVitaminE: return 58
+    case .quantityDietaryVitaminK: return 59
+    case .quantityDietaryCalcium: return 60
+    case .quantityDietaryIron: return 61
+    case .quantityDietaryThiamin: return 62
+    case .quantityDietaryRiboflavin: return 63
+    case .quantityDietaryNiacin: return 64
+    case .quantityDietaryFolate: return 65
+    case .quantityDietaryBiotin: return 66
+    case .quantityDietaryPantothenicAcid: return 67
+    case .quantityDietaryPhosphorus: return 68
+    case .quantityDietaryIodine: return 69
+    case .quantityDietaryMagnesium: return 70
+    case .quantityDietaryZinc: return 71
+    case .quantityDietarySelenium: return 72
+    case .quantityDietaryCopper: return 73
+    case .quantityDietaryManganese: return 74
+    case .quantityDietaryChromium: return 75
+    case .quantityDietaryMolybdenum: return 76
+    case .quantityDietaryChloride: return 77
+    case .quantityDietaryPotassium: return 78
+    case .quantityDietaryCaffeine: return 79
+    case .quantityDietaryWater: return 80
+    case .quantityUvExposure: return 81
+    case .quantityAppleExerciseTime: return 82
+    case .quantityDistanceWheelchair: return 83
+    case .quantityPushCount: return 84
+    case .quantityDistanceSwimming: return 85
+    case .quantitySwimmingStrokeCount: return 86
+    case .quantityWaistCircumference: return 87
+    case .quantityVo2Max: return 88
+    case .quantityRestingHeartRate: return 89
+    case .quantityWalkingHeartRateAverage: return 90
+    case .quantityHeartRateVariabilitySdnn: return 91
+    case .quantityInsulinDelivery: return 92
+    case .quantityDistanceDownhillSnowSports: return 93
+    case .quantityAppleStandTime: return 94
+    case .quantityEnvironmentalAudioExposure: return 95
+    case .quantityHeadphoneAudioExposure: return 96
+    case .characteristicBiologicalSex: return 97
+    case .characteristicBloodType: return 98
+    case .characteristicDateOfBirth: return 99
+    case .characteristicFitzpatrickSkinType: return 100
+    case .characteristicWheelchairUse: return 101
+    case .clinicalAllergyRecord: return 102
+    case .clinicalConditionRecord: return 103
+    case .clinicalImmunizationRecord: return 104
+    case .clinicalLabResultRecord: return 105
+    case .clinicalMedicationRecord: return 106
+    case .clinicalProcedureRecord: return 107
+    case .clinicalVitalSignRecord: return 108
+    case .documentCda: return 109
+    case .correlationBloodPressure: return 110
+    case .correlationFood: return 111
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -379,6 +394,8 @@ extension HealthTypes: CaseIterable {
     .categoryHighHeartRateEvent,
     .categoryLowHeartRateEvent,
     .categoryIrregularHeartRhythmEvent,
+    .categoryAudioExposureEvent,
+    .categoryToothbrushingEvent,
     .quantityBodyMassIndex,
     .quantityBodyFatPercentage,
     .quantityHeight,
@@ -459,6 +476,9 @@ extension HealthTypes: CaseIterable {
     .quantityHeartRateVariabilitySdnn,
     .quantityInsulinDelivery,
     .quantityDistanceDownhillSnowSports,
+    .quantityAppleStandTime,
+    .quantityEnvironmentalAudioExposure,
+    .quantityHeadphoneAudioExposure,
     .characteristicBiologicalSex,
     .characteristicBloodType,
     .characteristicDateOfBirth,
@@ -1103,101 +1123,106 @@ extension HealthTypes: SwiftProtobuf._ProtoNameProviding {
     9: .same(proto: "CATEGORY_HIGH_HEART_RATE_EVENT"),
     10: .same(proto: "CATEGORY_LOW_HEART_RATE_EVENT"),
     11: .same(proto: "CATEGORY_IRREGULAR_HEART_RHYTHM_EVENT"),
-    12: .same(proto: "QUANTITY_BODY_MASS_INDEX"),
-    13: .same(proto: "QUANTITY_BODY_FAT_PERCENTAGE"),
-    14: .same(proto: "QUANTITY_HEIGHT"),
-    15: .same(proto: "QUANTITY_BODY_MASS"),
-    16: .same(proto: "QUANTITY_LEAN_BODY_MASS"),
-    17: .same(proto: "QUANTITY_STEP_COUNT"),
-    18: .same(proto: "QUANTITY_DISTANCE_WALKING_RUNNING"),
-    19: .same(proto: "QUANTITY_DISTANCE_CYCLING"),
-    20: .same(proto: "QUANTITY_BASAL_ENERGY_BURNED"),
-    21: .same(proto: "QUANTITY_ACTIVE_ENERGY_BURNED"),
-    22: .same(proto: "QUANTITY_FLIGHTS_CLIMBED"),
-    23: .same(proto: "QUANTITY_NIKE_FUEL"),
-    24: .same(proto: "QUANTITY_HEART_RATE"),
-    25: .same(proto: "QUANTITY_BODY_TEMPERATURE"),
-    26: .same(proto: "QUANTITY_BASAL_BODY_TEMPERATURE"),
-    27: .same(proto: "QUANTITY_BLOOD_PRESSURE_SYSTOLIC"),
-    28: .same(proto: "QUANTITY_BLOOD_PRESSURE_DIASTOLIC"),
-    29: .same(proto: "QUANTITY_RESPIRATORY_RATE"),
-    30: .same(proto: "QUANTITY_OXYGEN_SATURATION"),
-    31: .same(proto: "QUANTITY_PERIPHERAL_PERFUSION_INDEX"),
-    32: .same(proto: "QUANTITY_BLOOD_GLUCOSE"),
-    33: .same(proto: "QUANTITY_NUMBER_OF_TIMES_FALLEN"),
-    34: .same(proto: "QUANTITY_ELECTRODERMAL_ACTIVITY"),
-    35: .same(proto: "QUANTITY_INHALER_USAGE"),
-    36: .same(proto: "QUANTITY_BLOOD_ALCOHOL_CONTENT"),
-    37: .same(proto: "QUANTITY_FORCED_VITAL_CAPACITY"),
-    38: .same(proto: "QUANTITY_FORCED_EXPIRATORY_VOLUME1"),
-    39: .same(proto: "QUANTITY_PEAK_EXPIRATORY_FLOW_RATE"),
-    40: .same(proto: "QUANTITY_DIETARY_FAT_TOTAL"),
-    41: .same(proto: "QUANTITY_DIETARY_FAT_POLYUNSATURATED"),
-    42: .same(proto: "QUANTITY_DIETARY_FAT_MONOUNSATURATED"),
-    43: .same(proto: "QUANTITY_DIETARY_FAT_SATURATED"),
-    44: .same(proto: "QUANTITY_DIETARY_CHOLESTEROL"),
-    45: .same(proto: "QUANTITY_DIETARY_SODIUM"),
-    46: .same(proto: "QUANTITY_DIETARY_CARBOHYDRATES"),
-    47: .same(proto: "QUANTITY_DIETARY_FIBER"),
-    48: .same(proto: "QUANTITY_DIETARY_SUGAR"),
-    49: .same(proto: "QUANTITY_DIETARY_ENERGY_CONSUMED"),
-    50: .same(proto: "QUANTITY_DIETARY_PROTEIN"),
-    51: .same(proto: "QUANTITY_DIETARY_VITAMIN_A"),
-    52: .same(proto: "QUANTITY_DIETARY_VITAMIN_B6"),
-    53: .same(proto: "QUANTITY_DIETARY_VITAMIN_B12"),
-    54: .same(proto: "QUANTITY_DIETARY_VITAMIN_C"),
-    55: .same(proto: "QUANTITY_DIETARY_VITAMIN_D"),
-    56: .same(proto: "QUANTITY_DIETARY_VITAMIN_E"),
-    57: .same(proto: "QUANTITY_DIETARY_VITAMIN_K"),
-    58: .same(proto: "QUANTITY_DIETARY_CALCIUM"),
-    59: .same(proto: "QUANTITY_DIETARY_IRON"),
-    60: .same(proto: "QUANTITY_DIETARY_THIAMIN"),
-    61: .same(proto: "QUANTITY_DIETARY_RIBOFLAVIN"),
-    62: .same(proto: "QUANTITY_DIETARY_NIACIN"),
-    63: .same(proto: "QUANTITY_DIETARY_FOLATE"),
-    64: .same(proto: "QUANTITY_DIETARY_BIOTIN"),
-    65: .same(proto: "QUANTITY_DIETARY_PANTOTHENIC_ACID"),
-    66: .same(proto: "QUANTITY_DIETARY_PHOSPHORUS"),
-    67: .same(proto: "QUANTITY_DIETARY_IODINE"),
-    68: .same(proto: "QUANTITY_DIETARY_MAGNESIUM"),
-    69: .same(proto: "QUANTITY_DIETARY_ZINC"),
-    70: .same(proto: "QUANTITY_DIETARY_SELENIUM"),
-    71: .same(proto: "QUANTITY_DIETARY_COPPER"),
-    72: .same(proto: "QUANTITY_DIETARY_MANGANESE"),
-    73: .same(proto: "QUANTITY_DIETARY_CHROMIUM"),
-    74: .same(proto: "QUANTITY_DIETARY_MOLYBDENUM"),
-    75: .same(proto: "QUANTITY_DIETARY_CHLORIDE"),
-    76: .same(proto: "QUANTITY_DIETARY_POTASSIUM"),
-    77: .same(proto: "QUANTITY_DIETARY_CAFFEINE"),
-    78: .same(proto: "QUANTITY_DIETARY_WATER"),
-    79: .same(proto: "QUANTITY_UV_EXPOSURE"),
-    80: .same(proto: "QUANTITY_APPLE_EXERCISE_TIME"),
-    81: .same(proto: "QUANTITY_DISTANCE_WHEELCHAIR"),
-    82: .same(proto: "QUANTITY_PUSH_COUNT"),
-    83: .same(proto: "QUANTITY_DISTANCE_SWIMMING"),
-    84: .same(proto: "QUANTITY_SWIMMING_STROKE_COUNT"),
-    85: .same(proto: "QUANTITY_WAIST_CIRCUMFERENCE"),
-    86: .same(proto: "QUANTITY_VO2_MAX"),
-    87: .same(proto: "QUANTITY_RESTING_HEART_RATE"),
-    88: .same(proto: "QUANTITY_WALKING_HEART_RATE_AVERAGE"),
-    89: .same(proto: "QUANTITY_HEART_RATE_VARIABILITY_SDNN"),
-    90: .same(proto: "QUANTITY_INSULIN_DELIVERY"),
-    91: .same(proto: "QUANTITY_DISTANCE_DOWNHILL_SNOW_SPORTS"),
-    92: .same(proto: "CHARACTERISTIC_BIOLOGICAL_SEX"),
-    93: .same(proto: "CHARACTERISTIC_BLOOD_TYPE"),
-    94: .same(proto: "CHARACTERISTIC_DATE_OF_BIRTH"),
-    95: .same(proto: "CHARACTERISTIC_FITZPATRICK_SKIN_TYPE"),
-    96: .same(proto: "CHARACTERISTIC_WHEELCHAIR_USE"),
-    97: .same(proto: "CLINICAL_ALLERGY_RECORD"),
-    98: .same(proto: "CLINICAL_CONDITION_RECORD"),
-    99: .same(proto: "CLINICAL_IMMUNIZATION_RECORD"),
-    100: .same(proto: "CLINICAL_LAB_RESULT_RECORD"),
-    101: .same(proto: "CLINICAL_MEDICATION_RECORD"),
-    102: .same(proto: "CLINICAL_PROCEDURE_RECORD"),
-    103: .same(proto: "CLINICAL_VITAL_SIGN_RECORD"),
-    104: .same(proto: "DOCUMENT_CDA"),
-    105: .same(proto: "CORRELATION_BLOOD_PRESSURE"),
-    106: .same(proto: "CORRELATION_FOOD"),
+    12: .same(proto: "CATEGORY_AUDIO_EXPOSURE_EVENT"),
+    13: .same(proto: "CATEGORY_TOOTHBRUSHING_EVENT"),
+    14: .same(proto: "QUANTITY_BODY_MASS_INDEX"),
+    15: .same(proto: "QUANTITY_BODY_FAT_PERCENTAGE"),
+    16: .same(proto: "QUANTITY_HEIGHT"),
+    17: .same(proto: "QUANTITY_BODY_MASS"),
+    18: .same(proto: "QUANTITY_LEAN_BODY_MASS"),
+    19: .same(proto: "QUANTITY_STEP_COUNT"),
+    20: .same(proto: "QUANTITY_DISTANCE_WALKING_RUNNING"),
+    21: .same(proto: "QUANTITY_DISTANCE_CYCLING"),
+    22: .same(proto: "QUANTITY_BASAL_ENERGY_BURNED"),
+    23: .same(proto: "QUANTITY_ACTIVE_ENERGY_BURNED"),
+    24: .same(proto: "QUANTITY_FLIGHTS_CLIMBED"),
+    25: .same(proto: "QUANTITY_NIKE_FUEL"),
+    26: .same(proto: "QUANTITY_HEART_RATE"),
+    27: .same(proto: "QUANTITY_BODY_TEMPERATURE"),
+    28: .same(proto: "QUANTITY_BASAL_BODY_TEMPERATURE"),
+    29: .same(proto: "QUANTITY_BLOOD_PRESSURE_SYSTOLIC"),
+    30: .same(proto: "QUANTITY_BLOOD_PRESSURE_DIASTOLIC"),
+    31: .same(proto: "QUANTITY_RESPIRATORY_RATE"),
+    32: .same(proto: "QUANTITY_OXYGEN_SATURATION"),
+    33: .same(proto: "QUANTITY_PERIPHERAL_PERFUSION_INDEX"),
+    34: .same(proto: "QUANTITY_BLOOD_GLUCOSE"),
+    35: .same(proto: "QUANTITY_NUMBER_OF_TIMES_FALLEN"),
+    36: .same(proto: "QUANTITY_ELECTRODERMAL_ACTIVITY"),
+    37: .same(proto: "QUANTITY_INHALER_USAGE"),
+    38: .same(proto: "QUANTITY_BLOOD_ALCOHOL_CONTENT"),
+    39: .same(proto: "QUANTITY_FORCED_VITAL_CAPACITY"),
+    40: .same(proto: "QUANTITY_FORCED_EXPIRATORY_VOLUME1"),
+    41: .same(proto: "QUANTITY_PEAK_EXPIRATORY_FLOW_RATE"),
+    42: .same(proto: "QUANTITY_DIETARY_FAT_TOTAL"),
+    43: .same(proto: "QUANTITY_DIETARY_FAT_POLYUNSATURATED"),
+    44: .same(proto: "QUANTITY_DIETARY_FAT_MONOUNSATURATED"),
+    45: .same(proto: "QUANTITY_DIETARY_FAT_SATURATED"),
+    46: .same(proto: "QUANTITY_DIETARY_CHOLESTEROL"),
+    47: .same(proto: "QUANTITY_DIETARY_SODIUM"),
+    48: .same(proto: "QUANTITY_DIETARY_CARBOHYDRATES"),
+    49: .same(proto: "QUANTITY_DIETARY_FIBER"),
+    50: .same(proto: "QUANTITY_DIETARY_SUGAR"),
+    51: .same(proto: "QUANTITY_DIETARY_ENERGY_CONSUMED"),
+    52: .same(proto: "QUANTITY_DIETARY_PROTEIN"),
+    53: .same(proto: "QUANTITY_DIETARY_VITAMIN_A"),
+    54: .same(proto: "QUANTITY_DIETARY_VITAMIN_B6"),
+    55: .same(proto: "QUANTITY_DIETARY_VITAMIN_B12"),
+    56: .same(proto: "QUANTITY_DIETARY_VITAMIN_C"),
+    57: .same(proto: "QUANTITY_DIETARY_VITAMIN_D"),
+    58: .same(proto: "QUANTITY_DIETARY_VITAMIN_E"),
+    59: .same(proto: "QUANTITY_DIETARY_VITAMIN_K"),
+    60: .same(proto: "QUANTITY_DIETARY_CALCIUM"),
+    61: .same(proto: "QUANTITY_DIETARY_IRON"),
+    62: .same(proto: "QUANTITY_DIETARY_THIAMIN"),
+    63: .same(proto: "QUANTITY_DIETARY_RIBOFLAVIN"),
+    64: .same(proto: "QUANTITY_DIETARY_NIACIN"),
+    65: .same(proto: "QUANTITY_DIETARY_FOLATE"),
+    66: .same(proto: "QUANTITY_DIETARY_BIOTIN"),
+    67: .same(proto: "QUANTITY_DIETARY_PANTOTHENIC_ACID"),
+    68: .same(proto: "QUANTITY_DIETARY_PHOSPHORUS"),
+    69: .same(proto: "QUANTITY_DIETARY_IODINE"),
+    70: .same(proto: "QUANTITY_DIETARY_MAGNESIUM"),
+    71: .same(proto: "QUANTITY_DIETARY_ZINC"),
+    72: .same(proto: "QUANTITY_DIETARY_SELENIUM"),
+    73: .same(proto: "QUANTITY_DIETARY_COPPER"),
+    74: .same(proto: "QUANTITY_DIETARY_MANGANESE"),
+    75: .same(proto: "QUANTITY_DIETARY_CHROMIUM"),
+    76: .same(proto: "QUANTITY_DIETARY_MOLYBDENUM"),
+    77: .same(proto: "QUANTITY_DIETARY_CHLORIDE"),
+    78: .same(proto: "QUANTITY_DIETARY_POTASSIUM"),
+    79: .same(proto: "QUANTITY_DIETARY_CAFFEINE"),
+    80: .same(proto: "QUANTITY_DIETARY_WATER"),
+    81: .same(proto: "QUANTITY_UV_EXPOSURE"),
+    82: .same(proto: "QUANTITY_APPLE_EXERCISE_TIME"),
+    83: .same(proto: "QUANTITY_DISTANCE_WHEELCHAIR"),
+    84: .same(proto: "QUANTITY_PUSH_COUNT"),
+    85: .same(proto: "QUANTITY_DISTANCE_SWIMMING"),
+    86: .same(proto: "QUANTITY_SWIMMING_STROKE_COUNT"),
+    87: .same(proto: "QUANTITY_WAIST_CIRCUMFERENCE"),
+    88: .same(proto: "QUANTITY_VO2_MAX"),
+    89: .same(proto: "QUANTITY_RESTING_HEART_RATE"),
+    90: .same(proto: "QUANTITY_WALKING_HEART_RATE_AVERAGE"),
+    91: .same(proto: "QUANTITY_HEART_RATE_VARIABILITY_SDNN"),
+    92: .same(proto: "QUANTITY_INSULIN_DELIVERY"),
+    93: .same(proto: "QUANTITY_DISTANCE_DOWNHILL_SNOW_SPORTS"),
+    94: .same(proto: "QUANTITY_APPLE_STAND_TIME"),
+    95: .same(proto: "QUANTITY_ENVIRONMENTAL_AUDIO_EXPOSURE"),
+    96: .same(proto: "QUANTITY_HEADPHONE_AUDIO_EXPOSURE"),
+    97: .same(proto: "CHARACTERISTIC_BIOLOGICAL_SEX"),
+    98: .same(proto: "CHARACTERISTIC_BLOOD_TYPE"),
+    99: .same(proto: "CHARACTERISTIC_DATE_OF_BIRTH"),
+    100: .same(proto: "CHARACTERISTIC_FITZPATRICK_SKIN_TYPE"),
+    101: .same(proto: "CHARACTERISTIC_WHEELCHAIR_USE"),
+    102: .same(proto: "CLINICAL_ALLERGY_RECORD"),
+    103: .same(proto: "CLINICAL_CONDITION_RECORD"),
+    104: .same(proto: "CLINICAL_IMMUNIZATION_RECORD"),
+    105: .same(proto: "CLINICAL_LAB_RESULT_RECORD"),
+    106: .same(proto: "CLINICAL_MEDICATION_RECORD"),
+    107: .same(proto: "CLINICAL_PROCEDURE_RECORD"),
+    108: .same(proto: "CLINICAL_VITAL_SIGN_RECORD"),
+    109: .same(proto: "DOCUMENT_CDA"),
+    110: .same(proto: "CORRELATION_BLOOD_PRESSURE"),
+    111: .same(proto: "CORRELATION_FOOD"),
   ]
 }
 
