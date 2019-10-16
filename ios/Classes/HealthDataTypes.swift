@@ -16,7 +16,7 @@ extension HealthDataUtils {
     // MARK: Workout
     
     private static var WORKOUT_TYPES_V8_0: [(HKSampleType, HKUnit?, HKUnit?)] = [
-		(HKObjectType.workoutType(), .joule(), .meter()),
+        (HKObjectType.workoutType(), .joule(), .meter()),
     ]
     
     // MARK: Category
@@ -55,7 +55,7 @@ extension HealthDataUtils {
         (.bodyMassIndex, nil),
         (.bodyFatPercentage, .percent()),
         (.height, .meter()),
-		(.bodyMass, HKUnit.gramUnit(with: .kilo)),
+        (.bodyMass, HKUnit.gramUnit(with: .kilo)),
         (.leanBodyMass, HKUnit.gramUnit(with: .kilo)),
         // Fitness
         (.stepCount, .count()),
@@ -205,9 +205,9 @@ extension HealthDataUtils {
     
     // MARK: Correlation
     
-    private static var CORRELATION_TYPES_V8_0: [HKCorrelationTypeIdentifier] = [
-        .bloodPressure,
-        .food,
+    private static var CORRELATION_TYPES_V8_0: [(HKCorrelationTypeIdentifier, [HKUnit])] = [
+        (.bloodPressure, [.pascal()]),
+        (.food, [HKUnit.gramUnit(with: .kilo), .pascal(), .meter(), .liter(), .percent()]),
     ]
     
     // MARK: Indexes
@@ -432,7 +432,7 @@ extension HealthDataUtils {
         }
         switch index.1 {
         case .workout:
-			return HealthDataUtils.WORKOUT_TYPES[index.0].0
+            return HealthDataUtils.WORKOUT_TYPES[index.0].0
         case .quantity:
             return getQuantityType(index.0)
         case .category:
@@ -486,7 +486,7 @@ extension HealthDataUtils {
     
     private static func getCorrelationType(_ index: Int) -> HKSampleType? {
         
-        let identifier = HealthDataUtils.CORRELATION_TYPES[index]
+        let identifier = HealthDataUtils.CORRELATION_TYPES[index].0
         return HKObjectType.correlationType(forIdentifier: identifier)
     }
     
