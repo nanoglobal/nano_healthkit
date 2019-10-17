@@ -145,6 +145,9 @@ class HealthDataUtils: NSObject {
     
     func sendUpdateEvent(_ dataList: HealthDataList?, error: Error?) {
         
+        if dataList != nil {
+            HealthDataUtils.addToLog("New data fetched: \(dataList!)")
+        }
         self.updateHandler?(dataList, error)
     }
 }

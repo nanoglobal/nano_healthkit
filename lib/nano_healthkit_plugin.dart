@@ -1,13 +1,57 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:nano_healthkit_plugin/healthdata.pb.dart';
+
+void callbackDispatcher() {
+  const MethodChannel _backgroundChannel =
+      MethodChannel('nano_healthkit_plugin_background');
+  WidgetsFlutterBinding.ensureInitialized();
+
+  _backgroundChannel.setMethodCallHandler((MethodCall call) async {
+    final List<dynamic> args = call.arguments;
+    final Function callback = PluginUtilities.getCallbackFromHandle(
+        CallbackHandle.fromRawHandle(args[0]));
+    assert(callback != null);
+    //final List<String> triggeringGeofences = args[1].cast<String>();
+    //final List<double> locationList = <double>[];
+    //args[2].forEach((dynamic e) => locationList.add(double.parse(e.toString())));
+    //final Location triggeringLocation = locationFromList(locationList);
+    //final GeofenceEvent event = intToGeofenceEvent(args[3]);
+    //callback(triggeringGeofences, triggeringLocation, event);
+    print("Callback called!");
+    print(args);
+  });
+  _backgroundChannel.invokeMethod('initialized');
+}
 
 class NanoHealthkitPlugin {
   static const _channel = const MethodChannel('nano_healthkit_plugin');
   static const _stream = const EventChannel('nano_healthkit_plugin_stream');
   static var _subscriberMethod;
+  static StreamSubscription _subscription;
+  static const MethodChannel _background =
+      MethodChannel('nano_healthkit_plugin_background');
+
+  /// Initialize the plugin and request relevant permissions from the user.
+  static Future<void> initialize<T>(void onData(T event)) async {
+    final CallbackHandle callback =
+        PluginUtilities.getCallbackHandle(callbackDispatcher);
+    await _channel
+        .invokeMethod('initialize', <dynamic>[callback.toRawHandle()]);
+
+    subscribeToUpdates(null, onData);
+    /*var request = HealthTypeList();
+    request.types.addAll(HealthTypes.values); // Subscribe to everything
+    subscribeToUpdates(request, onData);*/
+  }
+
+  static _updatesReceivedInBackground(HealthDataList updates) {
+    print(updates);
+  }
 
   /// Requests permissions
   ///
@@ -43,11 +87,13 @@ class NanoHealthkitPlugin {
   ///
   /// Only subscribes to types indicated in [request]. The method in [onData]
   /// gets called on each new available data in a ``HealthDataList`` object.
-  static StreamSubscription subscribeToUpdates<T>(
+  static void subscribeToUpdates<T>(
       HealthTypeList request, void onData(T event)) {
     _subscriberMethod = onData;
-    return _stream
-        .receiveBroadcastStream(request.writeToBuffer())
+
+    _subscription?.cancel();
+    _subscription = _stream
+        .receiveBroadcastStream(request?.writeToBuffer())
         .listen(_updatesReceived);
   }
 
@@ -56,11 +102,10 @@ class NanoHealthkitPlugin {
   /// Does not receive a list of types, instead it unsubscribes from all possible
   /// types of health data. [stream] needs to be the object that the subscription
   /// method returns.
-  static Future<bool> unsubscribeToUpdates(StreamSubscription stream) async {
-    if (stream != null) {
-      stream.cancel();
-      _subscriberMethod = null;
-    }
+  static Future<bool> unsubscribeToUpdates() async {
+    _subscription?.cancel();
+    _subscription = null;
+    _subscriberMethod = null;
     return await _channel.invokeMethod('unsubscribeToUpdates');
   }
 

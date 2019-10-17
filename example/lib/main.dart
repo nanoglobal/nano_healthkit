@@ -18,14 +18,10 @@ class _MyAppState extends State<MyApp> {
   bool _isAuthorized = false;
   String _basicHealthString = "";
   String _statisticsString = "";
-  String _activityData;
   String _exisitngTypesString = "";
-  String _updateStatusString = "";
   String _updateMessageString = "";
   bool _isSubscribed = false;
   String _pulledBackgroundDataString = "";
-
-  StreamSubscription _subscription = null;
 
   @override
   void initState() {
@@ -33,7 +29,12 @@ class _MyAppState extends State<MyApp> {
     initPlatformState();
   }
 
-  initPlatformState() async {}
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlatformState() async {
+    print('Initializing...');
+    await NanoHealthkitPlugin.initialize(_updatesReceivedInBackground);
+    print('Initialization done');
+  }
 
   _authorize() async {
     var request = HealthTypeList();
@@ -46,11 +47,13 @@ class _MyAppState extends State<MyApp> {
 
   _getUserBasicHealthData() async {
     var request = HealthDataRequest();
-    request.type = HealthTypes.WORKOUT_MAIN;
+    request.type = HealthTypes.CORRELATION_FOOD;
     //request.startDate = "2019-06-19T18:58:00.000Z";
     //request.endDate = "2019-09-19T20:58:00.000Z";
     //request.limit = 2;
     //request.units.add("ft");
+    //request.units.add("kcal");
+    //request.units.add("km");
     var resultToShow = "";
     try {
       var basicHealth = await NanoHealthkitPlugin.fetchData(request);
@@ -94,8 +97,7 @@ class _MyAppState extends State<MyApp> {
   _subscribeToUpdates() {
     var request = HealthTypeList();
     request.types.addAll(HealthTypes.values); // Subscribe to everything
-    _subscription =
-        NanoHealthkitPlugin.subscribeToUpdates(request, _updatesReceived);
+    NanoHealthkitPlugin.subscribeToUpdates(request, _updatesReceived);
     setState(() {
       _isSubscribed = true;
       _updateMessageString = "";
@@ -103,8 +105,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   _unsubscribeToUpdates() {
-    NanoHealthkitPlugin.unsubscribeToUpdates(_subscription);
-    _subscription = null;
+    NanoHealthkitPlugin.unsubscribeToUpdates();
     setState(() {
       _isSubscribed = false;
       _updateMessageString = "";
@@ -116,6 +117,10 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _updateMessageString = updates.toString();
     });
+  }
+
+  _updatesReceivedInBackground(HealthDataList updates) {
+    _saveUpdateData(updates);
   }
 
   _saveUpdateData(HealthDataList updates) async {

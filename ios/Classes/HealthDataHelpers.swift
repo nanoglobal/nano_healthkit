@@ -295,6 +295,26 @@ extension HealthDataUtils {
         }
     }
     
+    // TODO: DELETE ME
+    static func addToLog(_ message: String) {
+        
+        let dateStr = Date().iso8601
+        var logArr: [String] = HealthDataUtils.readValue(type: [String].self, key: "AppLog") ?? [String]()
+        logArr.append("\(dateStr): \(message)")
+        print("Saved Log: \(logArr[logArr.count - 1])")
+        HealthDataUtils.writeValue(logArr, key: "AppLog")
+    }
+    
+    static func readLog() -> [String] {
+        
+        let logArr: [String] = HealthDataUtils.readValue(type: [String].self, key: "AppLog") ?? [String]()
+        print("Reading saved logs: ")
+        for logg in logArr {
+            print("\(logg)")
+        }
+        return logArr
+    }
+    
     func getAnchor(anchorKey: String) -> HKQueryAnchor? {
         
         guard let encoded = HealthDataUtils.readValue(type: Data.self, key: anchorKey) else {
