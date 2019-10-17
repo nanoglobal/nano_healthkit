@@ -10,6 +10,7 @@ class HealthDataFetcher: NSObject {
         let endDate: Date
         let limit: Int
         let sort: NSSortDescriptor
+        let units: [HKUnit]
     }
     
     struct StatisticsParams {
@@ -41,7 +42,7 @@ class HealthDataFetcher: NSObject {
                 return
             }
             
-            let data = self?.makeDataList(from: samples, sampleType: sampleType, healthType: healthType)
+            let data = self?.makeDataList(from: samples, sampleType: sampleType, units: params.units, healthType: healthType)
             result(data, nil)
         }
         
@@ -57,7 +58,7 @@ class HealthDataFetcher: NSObject {
         }
         
         let characteristic = HealthDataUtils.CHARACTERISTIC_TYPES[index.0]
-        let data = makeDataList(from: [(healthStore, characteristic.1)], sampleType: characteristicType, healthType: healthType)
+        let data = makeDataList(from: [(healthStore, characteristic.1)], sampleType: characteristicType, units: [], healthType: healthType)
         result(data, nil)
     }
     
@@ -130,7 +131,7 @@ class HealthDataFetcher: NSObject {
             }
             
             // Fetch the changes
-            var hkAnchor = self?.getAnchor(anchorKey: touple.1.description)
+            var hkAnchor = HealthDataUtils.global.getAnchor(anchorKey: touple.1.description)
             if hkAnchor == nil {
                 hkAnchor = HKQueryAnchor(fromValue: Int(HKAnchoredObjectQueryNoAnchor))
             }
@@ -140,13 +141,13 @@ class HealthDataFetcher: NSObject {
                 
                 if addedObjects != nil && addedObjects?.count ?? 0 > 0 {
                     print("There were samples for touple: \(touple.1.description)")
-                    let data = self?.makeDataList(from: addedObjects, sampleType: touple.1, healthType: touple.0)
+                    let data = self?.makeDataList(from: addedObjects, sampleType: touple.1, units: [], healthType: touple.0)
                     HealthDataUtils.global.sendUpdateEvent(data, error: nil)
                 }
                 
                 // NOTE: There's no way to delete values on current api version so it will be ignored for now
                 if newAnchor != nil && newAnchor != hkAnchor {
-                    self?.saveAnchor(anchor: newAnchor!, anchorKey: touple.1.description)
+                    HealthDataUtils.global.saveAnchor(anchor: newAnchor!, anchorKey: touple.1.description)
                 }
                 
                 completionHandler()

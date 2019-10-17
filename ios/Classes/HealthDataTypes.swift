@@ -15,8 +15,8 @@ extension HealthDataUtils {
     
     // MARK: Workout
     
-    private static var WORKOUT_TYPES_V8_0: [HKSampleType] = [
-        HKObjectType.workoutType(),
+    private static var WORKOUT_TYPES_V8_0: [(HKSampleType, HKUnit?, HKUnit?)] = [
+        (HKObjectType.workoutType(), .joule(), .meter()),
     ]
     
     // MARK: Category
@@ -55,8 +55,8 @@ extension HealthDataUtils {
         (.bodyMassIndex, nil),
         (.bodyFatPercentage, .percent()),
         (.height, .meter()),
-        (.bodyMass, .gram()),
-        (.leanBodyMass, .gram()),
+        (.bodyMass, HKUnit.gramUnit(with: .kilo)),
+        (.leanBodyMass, HKUnit.gramUnit(with: .kilo)),
         // Fitness
         (.stepCount, .count()),
         (.distanceWalkingRunning, .meter()),
@@ -67,10 +67,10 @@ extension HealthDataUtils {
         (.nikeFuel, .count()),
         // Vitals
         (.heartRate, HKUnit(from: "count/s")), // Scalar(Count)/Time
-        (.bodyTemperature, .degreeCelsius()),
-        (.basalBodyTemperature, .degreeCelsius()),
-        (.bloodPressureSystolic, .millimeterOfMercury()),
-        (.bloodPressureDiastolic, .millimeterOfMercury()),
+        (.bodyTemperature, .kelvin()),
+        (.basalBodyTemperature, .kelvin()),
+        (.bloodPressureSystolic, .pascal()),
+        (.bloodPressureDiastolic, .pascal()),
         (.respiratoryRate, HKUnit(from: "count/s")), // Scalar(Count)/Time
         // Results
         (.oxygenSaturation, .percent()),
@@ -84,44 +84,44 @@ extension HealthDataUtils {
         (.forcedExpiratoryVolume1, .liter()),
         (.peakExpiratoryFlowRate, HKUnit(from: "l/s")), // Volume/Time
         // Nutrition
-        (.dietaryFatTotal, .gram()),
-        (.dietaryFatPolyunsaturated, .gram()),
-        (.dietaryFatMonounsaturated, .gram()),
-        (.dietaryFatSaturated, .gram()),
-        (.dietaryCholesterol, .gram()),
-        (.dietarySodium, .gram()),
-        (.dietaryCarbohydrates, .gram()),
-        (.dietaryFiber, .gram()),
-        (.dietarySugar, .gram()),
+        (.dietaryFatTotal, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryFatPolyunsaturated, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryFatMonounsaturated, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryFatSaturated, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryCholesterol, HKUnit.gramUnit(with: .kilo)),
+        (.dietarySodium, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryCarbohydrates, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryFiber, HKUnit.gramUnit(with: .kilo)),
+        (.dietarySugar, HKUnit.gramUnit(with: .kilo)),
         (.dietaryEnergyConsumed, .joule()),
-        (.dietaryProtein, .gram()),
-        (.dietaryVitaminA, .gram()),
-        (.dietaryVitaminB6, .gram()),
-        (.dietaryVitaminB12, .gram()),
-        (.dietaryVitaminC, .gram()),
-        (.dietaryVitaminD, .gram()),
-        (.dietaryVitaminE, .gram()),
-        (.dietaryVitaminK, .gram()),
-        (.dietaryCalcium, .gram()),
-        (.dietaryIron, .gram()),
-        (.dietaryThiamin, .gram()),
-        (.dietaryRiboflavin, .gram()),
-        (.dietaryNiacin, .gram()),
-        (.dietaryFolate, .gram()),
-        (.dietaryBiotin, .gram()),
-        (.dietaryPantothenicAcid, .gram()),
-        (.dietaryPhosphorus, .gram()),
-        (.dietaryIodine, .gram()),
-        (.dietaryMagnesium, .gram()),
-        (.dietaryZinc, .gram()),
-        (.dietarySelenium, .gram()),
-        (.dietaryCopper, .gram()),
-        (.dietaryManganese, .gram()),
-        (.dietaryChromium, .gram()),
-        (.dietaryMolybdenum, .gram()),
-        (.dietaryChloride, .gram()),
-        (.dietaryPotassium, .gram()),
-        (.dietaryCaffeine, .gram()),
+        (.dietaryProtein, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryVitaminA, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryVitaminB6, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryVitaminB12, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryVitaminC, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryVitaminD, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryVitaminE, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryVitaminK, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryCalcium, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryIron, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryThiamin, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryRiboflavin, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryNiacin, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryFolate, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryBiotin, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryPantothenicAcid, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryPhosphorus, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryIodine, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryMagnesium, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryZinc, HKUnit.gramUnit(with: .kilo)),
+        (.dietarySelenium, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryCopper, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryManganese, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryChromium, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryMolybdenum, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryChloride, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryPotassium, HKUnit.gramUnit(with: .kilo)),
+        (.dietaryCaffeine, HKUnit.gramUnit(with: .kilo)),
         (.dietaryWater, .liter()),
         (.uvExposure, .count()),
     ]
@@ -160,8 +160,8 @@ extension HealthDataUtils {
     @available(iOS 13.0, *)
     private static var QUANTITY_TYPES_V13_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
         (.appleStandTime, .second()),
-        (.environmentalAudioExposure, .millimeterOfMercury()),
-        (.headphoneAudioExposure, .millimeterOfMercury()),
+        (.environmentalAudioExposure, .pascal()),
+        (.headphoneAudioExposure, .pascal()),
     ]
     
     // MARK: Characteristics
@@ -205,9 +205,9 @@ extension HealthDataUtils {
     
     // MARK: Correlation
     
-    private static var CORRELATION_TYPES_V8_0: [HKCorrelationTypeIdentifier] = [
-        .bloodPressure,
-        .food,
+    private static var CORRELATION_TYPES_V8_0: [(HKCorrelationTypeIdentifier, [HKUnit])] = [
+        (.bloodPressure, [.pascal()]),
+        (.food, [HKUnit.gramUnit(with: .kilo), .pascal(), .meter(), .liter(), .percent()]),
     ]
     
     // MARK: Indexes
@@ -432,7 +432,7 @@ extension HealthDataUtils {
         }
         switch index.1 {
         case .workout:
-            return HealthDataUtils.WORKOUT_TYPES[index.0]
+            return HealthDataUtils.WORKOUT_TYPES[index.0].0
         case .quantity:
             return getQuantityType(index.0)
         case .category:
@@ -486,7 +486,7 @@ extension HealthDataUtils {
     
     private static func getCorrelationType(_ index: Int) -> HKSampleType? {
         
-        let identifier = HealthDataUtils.CORRELATION_TYPES[index]
+        let identifier = HealthDataUtils.CORRELATION_TYPES[index].0
         return HKObjectType.correlationType(forIdentifier: identifier)
     }
     

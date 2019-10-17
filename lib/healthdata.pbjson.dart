@@ -161,6 +161,7 @@ const HealthDataRequest$json = const {
     const {'1': 'endDate', '3': 3, '4': 1, '5': 9, '10': 'endDate'},
     const {'1': 'limit', '3': 4, '4': 1, '5': 5, '10': 'limit'},
     const {'1': 'sorting', '3': 5, '4': 1, '5': 14, '6': '.RequestSorting', '10': 'sorting'},
+    const {'1': 'units', '3': 6, '4': 3, '5': 9, '10': 'units'},
   ],
 };
 

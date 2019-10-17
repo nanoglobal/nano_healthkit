@@ -634,6 +634,8 @@ struct HealthDataRequest {
 
   var sorting: RequestSorting = .descendingStartDate
 
+  var units: [String] = []
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -1284,6 +1286,7 @@ extension HealthDataRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     3: .same(proto: "endDate"),
     4: .same(proto: "limit"),
     5: .same(proto: "sorting"),
+    6: .same(proto: "units"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1294,6 +1297,7 @@ extension HealthDataRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
       case 3: try decoder.decodeSingularStringField(value: &self.endDate)
       case 4: try decoder.decodeSingularInt32Field(value: &self.limit)
       case 5: try decoder.decodeSingularEnumField(value: &self.sorting)
+      case 6: try decoder.decodeRepeatedStringField(value: &self.units)
       default: break
       }
     }
@@ -1315,6 +1319,9 @@ extension HealthDataRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     if self.sorting != .descendingStartDate {
       try visitor.visitSingularEnumField(value: self.sorting, fieldNumber: 5)
     }
+    if !self.units.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.units, fieldNumber: 6)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1324,6 +1331,7 @@ extension HealthDataRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     if lhs.endDate != rhs.endDate {return false}
     if lhs.limit != rhs.limit {return false}
     if lhs.sorting != rhs.sorting {return false}
+    if lhs.units != rhs.units {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

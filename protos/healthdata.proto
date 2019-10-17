@@ -132,6 +132,7 @@ message HealthDataRequest {
    string endDate = 3;
    int32 limit = 4;
    RequestSorting sorting = 5;
+   repeated string units = 6;
 }
 
 message HealthDataRequestList {

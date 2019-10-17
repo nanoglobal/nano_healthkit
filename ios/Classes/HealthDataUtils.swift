@@ -11,15 +11,13 @@ class HealthDataUtils: NSObject {
     let dataFetcher = HealthDataFetcher()
     var updateHandler: ((Any?, Error?) -> Void)?
     
-    var statusRecord: HealthStatusRecord? = HealthStatusRecord()
-    
-    static var WORKOUT_TYPES: [HKSampleType] = []
+    static var WORKOUT_TYPES: [(HKSampleType, HKUnit?, HKUnit?)] = []
     static var CATEGORY_TYPES: [HKCategoryTypeIdentifier] = []
     static var QUANTITY_TYPES: [(HKQuantityTypeIdentifier, HKUnit?)] = []
     static var CHARACTERISTIC_TYPES: [(HKCharacteristicTypeIdentifier, CharacteristicProcessType)] = []
     static var CLINICAL_TYPES: [Any] = []
     static var DOCUMENT_TYPES: [HKDocumentTypeIdentifier] = []
-    static var CORRELATION_TYPES: [HKCorrelationTypeIdentifier] = []
+    static var CORRELATION_TYPES: [(HKCorrelationTypeIdentifier, [HKUnit])] = []
     static var STATISTICS_OPTIONS_MAP: NSMutableDictionary = [:]
     
     override init() {
@@ -100,7 +98,8 @@ class HealthDataUtils: NSObject {
         let sortKey = request.sorting == .ascendingStartDate || request.sorting == .descendingStartDate ? HKSampleSortIdentifierStartDate : HKSampleSortIdentifierEndDate
         let sortAscending = request.sorting == .ascendingStartDate || request.sorting == .ascendingEndDate
         let sort = NSSortDescriptor(key: sortKey, ascending: sortAscending)
-        return HealthDataFetcher.BatchParams(startDate: startDate, endDate: endDate, limit: limit, sort: sort)
+        let units: [HKUnit] = request.units.map { HKUnit(from: $0) }
+        return HealthDataFetcher.BatchParams(startDate: startDate, endDate: endDate, limit: limit, sort: sort, units: units)
     }
     
     private func parseStatisticsRequest(_ request: StatisticsRequest) -> HealthDataFetcher.StatisticsParams {
