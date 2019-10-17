@@ -6,51 +6,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nano_healthkit_plugin/healthdata.pb.dart';
 
-void callbackDispatcher() {
-  const MethodChannel _backgroundChannel =
-      MethodChannel('nano_healthkit_plugin_background');
-  WidgetsFlutterBinding.ensureInitialized();
-
-  _backgroundChannel.setMethodCallHandler((MethodCall call) async {
-    final List<dynamic> args = call.arguments;
-    final Function callback = PluginUtilities.getCallbackFromHandle(
-        CallbackHandle.fromRawHandle(args[0]));
-    assert(callback != null);
-    //final List<String> triggeringGeofences = args[1].cast<String>();
-    //final List<double> locationList = <double>[];
-    //args[2].forEach((dynamic e) => locationList.add(double.parse(e.toString())));
-    //final Location triggeringLocation = locationFromList(locationList);
-    //final GeofenceEvent event = intToGeofenceEvent(args[3]);
-    //callback(triggeringGeofences, triggeringLocation, event);
-    print("Callback called!");
-    print(args);
-  });
-  _backgroundChannel.invokeMethod('initialized');
-}
-
 class NanoHealthkitPlugin {
   static const _channel = const MethodChannel('nano_healthkit_plugin');
   static const _stream = const EventChannel('nano_healthkit_plugin_stream');
   static var _subscriberMethod;
   static StreamSubscription _subscription;
-  static const MethodChannel _background =
-      MethodChannel('nano_healthkit_plugin_background');
 
   /// Initialize the plugin and request relevant permissions from the user.
   static Future<void> initialize<T>(void onData(T event)) async {
-    final CallbackHandle callback =
-        PluginUtilities.getCallbackHandle(callbackDispatcher);
-    await _channel
-        .invokeMethod('initialize', <dynamic>[callback.toRawHandle()]);
-
+    await _channel.invokeMethod('initialize', null);
     subscribeToUpdates(null, onData);
-    /*var request = HealthTypeList();
-    request.types.addAll(HealthTypes.values); // Subscribe to everything
-    subscribeToUpdates(request, onData);*/
-  }
-
-  static _updatesReceivedInBackground(HealthDataList updates) {
-    print(updates);
   }
 
   /// Requests permissions
@@ -90,7 +55,6 @@ class NanoHealthkitPlugin {
   static void subscribeToUpdates<T>(
       HealthTypeList request, void onData(T event)) {
     _subscriberMethod = onData;
-
     _subscription?.cancel();
     _subscription = _stream
         .receiveBroadcastStream(request?.writeToBuffer())
@@ -107,6 +71,14 @@ class NanoHealthkitPlugin {
     _subscription = null;
     _subscriberMethod = null;
     return await _channel.invokeMethod('unsubscribeToUpdates');
+  }
+
+  /// Checks if there is a subscription to updates
+  ///
+  /// Specially useful to keep track of the subscriptions probably done during
+  /// another session.
+  static Future<bool> isSubscribedToUpdates() async {
+    return await _channel.invokeMethod('isSubscribedToUpdates');
   }
 
   static void _updatesReceived(updates) {

@@ -295,7 +295,7 @@ extension HealthDataUtils {
         }
     }
     
-    // TODO: DELETE ME
+    // Used to help loggin background events
     static func addToLog(_ message: String) {
         
         let dateStr = Date().iso8601

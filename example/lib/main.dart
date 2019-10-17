@@ -31,9 +31,11 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    print('Initializing...');
     await NanoHealthkitPlugin.initialize(_updatesReceivedInBackground);
-    print('Initialization done');
+    bool _isSubscribed = await NanoHealthkitPlugin.isSubscribedToUpdates();
+    setState(() {
+      this._isSubscribed = _isSubscribed;
+    });
   }
 
   _authorize() async {
@@ -52,8 +54,8 @@ class _MyAppState extends State<MyApp> {
     //request.endDate = "2019-09-19T20:58:00.000Z";
     //request.limit = 2;
     //request.units.add("ft");
-    //request.units.add("kcal");
-    //request.units.add("km");
+    request.units.add("kcal");
+    request.units.add("km");
     var resultToShow = "";
     try {
       var basicHealth = await NanoHealthkitPlugin.fetchData(request);
@@ -137,6 +139,7 @@ class _MyAppState extends State<MyApp> {
       _pulledBackgroundDataString = saves.toString();
     });
     saves.clear();
+    prefs.setStringList("savedUpdates", List<String>());
   }
 
   @override
