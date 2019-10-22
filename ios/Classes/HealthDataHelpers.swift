@@ -21,6 +21,7 @@ extension HealthDataFetcher {
     
     func makeData(from sample: Any, sampleType: HKObjectType, units: [HKUnit], healthType: HealthTypes) -> HealthData? {
         
+        print("Making data of: \(healthType) object type: \(sampleType) sample: \(sample) units: \(units)")
         var singleData: HealthData?
         if let workoutSample = sample as? HKWorkout {
             singleData = saveAsData(sampleType: sampleType, value: workoutSample, units: units, healthType: healthType)
@@ -57,7 +58,7 @@ extension HealthDataFetcher {
         data.startDate = value.startDate.iso8601
         data.endDate = value.endDate.iso8601
         data.device = value.device?.name ?? ""
-        data.metadata = jsonToString(value.metadata)
+        data.metadata = jsonToString(json: value.metadata)
         data.uuid = value.uuid.uuidString
         saveSourceRevisionInfo(data: &data.source, value: value.sourceRevision)
     }
@@ -168,7 +169,7 @@ extension HealthDataFetcher {
             data.documentData.custodianName = documentValue.document?.custodianName ?? ""
             data.documentData.patientName = documentValue.document?.patientName ?? ""
             data.documentData.title = documentValue.document?.title ?? ""
-            data.documentData.documentData = jsonToString(documentValue.document?.documentData)
+            data.documentData.documentData = jsonToString(jsonData: documentValue.document?.documentData)
         }
         return data
     }
@@ -251,16 +252,23 @@ extension HealthDataFetcher {
         data.dataBySource.append(dataBySource)
     }
     
-    private func jsonToString(_ jsonDictionary: [String: Any]?) -> String {
+    private func jsonToString(json: Any?) -> String {
         
-        if let jsonDictionary = jsonDictionary, let jsonData = try? JSONSerialization.data(
-            withJSONObject: jsonDictionary, options: []) {
-            return jsonToString(jsonData)
+        if let jsonString = json as? String {
+            return jsonString
+        }
+        if let jsonDictionary = json as? [String: Any] {
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: jsonDictionary, options: [])
+                return jsonToString(jsonData: jsonData)
+            } catch {
+                print(error.localizedDescription)
+            }
         }
         return ""
     }
     
-    private func jsonToString(_ jsonData: Data?) -> String {
+    private func jsonToString(jsonData: Data?) -> String {
         
         var jsonText: String?
         if jsonData != nil {

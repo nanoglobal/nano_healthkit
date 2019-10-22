@@ -132,7 +132,7 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
     }
     
     @objc func sendUpdateEvent(update: Any?, error: Error?) {
-    
+        
         guard let eventSink = eventSink else {
             return
         }
@@ -158,7 +158,7 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
         let args = (arguments as? FlutterStandardTypedData)?.data ?? (arguments as? Data)
         HealthDataUtils.writeValue(args, key: "subscriptionSaved")
     }
-
+    
     // MARK: Aux methods
     
     private func deserializeArguments<T: Message>(_ arguments: Any?) -> T? {
