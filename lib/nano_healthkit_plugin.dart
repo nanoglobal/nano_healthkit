@@ -48,6 +48,17 @@ class NanoHealthkitPlugin {
     return HealthDataList.fromBuffer(rawData);
   }
 
+  /// Reads data of many types at once
+  ///
+  /// The [request] is a list of individual [HealthDataRequest] identical
+  /// to the one sent on [fetchData].
+  static Future<HealthDataList> fetchBatchData(
+      HealthDataRequestList request) async {
+    final Uint8List rawData =
+        await _channel.invokeMethod('fetchBatchData', request.writeToBuffer());
+    return HealthDataList.fromBuffer(rawData);
+  }
+
   /// Subscribes to new available data
   ///
   /// Only subscribes to types indicated in [request]. The method in [onData]

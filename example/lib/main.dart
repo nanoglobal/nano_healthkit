@@ -22,6 +22,7 @@ class _MyAppState extends State<MyApp> {
   String _updateMessageString = "";
   bool _isSubscribed = false;
   String _pulledBackgroundDataString = "";
+  String _batchString = "";
 
   @override
   void initState() {
@@ -65,6 +66,34 @@ class _MyAppState extends State<MyApp> {
     }
     setState(() {
       _basicHealthString = resultToShow;
+    });
+  }
+
+  _getUserBatchData() async {
+    // First get the list of existing types
+    var existingTypesReq = HealthTypeList();
+    existingTypesReq.types.addAll(HealthTypes.values);
+    var existingTypes =
+        await NanoHealthkitPlugin.filterExistingTypes(existingTypesReq);
+
+    // Make the request for all types
+    var requestList = HealthDataRequestList();
+    for (var type in existingTypes.types) {
+      var typeRequest = HealthDataRequest();
+      typeRequest.type = type;
+      requestList.requests.add(typeRequest);
+    }
+
+    var resultToShow = "";
+    try {
+      var batchHealth = await NanoHealthkitPlugin.fetchBatchData(requestList);
+      print(batchHealth);
+      resultToShow = batchHealth.toString();
+    } on Exception catch (error) {
+      resultToShow = error.toString();
+    }
+    setState(() {
+      _batchString = resultToShow;
     });
   }
 
@@ -204,6 +233,13 @@ class _MyAppState extends State<MyApp> {
                     onPressed: _getUserStatisticsData),
               ),
               Text('Statistics data: $_statisticsString\n'),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: RaisedButton(
+                    child: Text("Get batch data"),
+                    onPressed: _getUserBatchData),
+              ),
+              Text('Batch data: $_batchString\n'),
             ],
           ),
         ),

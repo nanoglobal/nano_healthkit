@@ -43,6 +43,10 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
             self.fetchData(call, result: result)
         }
         
+        if call.method == "fetchBatchData" {
+            self.fetchBatchData(call, result: result)
+        }
+        
         if call.method == "unsubscribeToUpdates" {
             self.unsubscribeToUpdates(call, result: result)
         }
@@ -86,6 +90,14 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
         
         let request: HealthDataRequest? = deserializeArguments(call.arguments)
         healthUtils.fetchData(for: request, result: { batch, error in
+            self.sendResult(target: result, response: batch, error: error)
+        })
+    }
+    
+    func fetchBatchData(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        let requestList: HealthDataRequestList? = deserializeArguments(call.arguments)
+        healthUtils.fetchBatchData(for: requestList, result: { batch, error in
             self.sendResult(target: result, response: batch, error: error)
         })
     }
