@@ -21,7 +21,7 @@ extension HealthDataFetcher {
     
     func makeData(from sample: Any, sampleType: HKObjectType, units: [HKUnit], healthType: HealthTypes) -> HealthData? {
         
-        print("Making data of: \(healthType) object type: \(sampleType) sample: \(sample) units: \(units)")
+        // print("Making data of: \(healthType) object type: \(sampleType) sample: \(sample) units: \(units) uuid: \((sample as? HKObject)?.uuid.description ?? "")")
         var singleData: HealthData?
         if let workoutSample = sample as? HKWorkout {
             singleData = saveAsData(sampleType: sampleType, value: workoutSample, units: units, healthType: healthType)
@@ -259,7 +259,12 @@ extension HealthDataFetcher {
         }
         if let jsonDictionary = json as? [String: Any] {
             do {
-                let jsonData = try JSONSerialization.data(withJSONObject: jsonDictionary, options: [])
+                // Map the dictionary to a plain one [String: String]
+                let jsonStringDic = Dictionary(uniqueKeysWithValues:
+                    jsonDictionary.map { key, value in (key, "\(value)") })
+                // Serialize it
+                let jsonData = try JSONSerialization.data(withJSONObject: jsonStringDic, options: [])
+                // Transform it to plain String
                 return jsonToString(jsonData: jsonData)
             } catch {
                 print(error.localizedDescription)
