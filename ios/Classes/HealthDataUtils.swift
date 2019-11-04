@@ -46,6 +46,37 @@ class HealthDataUtils: NSObject {
         }
     }
     
+    func fetchBatchData(for requestList: HealthDataRequestList?, result: @escaping (HealthDataList?, Error?) -> Void) {
+        
+        guard let requestList = requestList else {
+            result(nil, SimpleLocalizedError("Invalid request"))
+            return
+        }
+        
+        let group = DispatchGroup()
+        var groupError: Error?
+        var groupResult = HealthDataList()
+        for healthRequest in requestList.requests {
+            
+            // Exit the loop
+            if groupError != nil {
+                break
+            }
+            // Fetch
+            group.enter()
+            fetchData(for: healthRequest, result: { batch, error in
+                groupError = error
+                groupResult.data.append(contentsOf: batch?.data ?? [])
+                group.leave() // Continues the loop
+            })
+        }
+        
+        // Return result
+        group.notify(queue: .main) {
+            result(groupResult, groupError)
+        }
+    }
+    
     func fetchData(for request: HealthDataRequest?, result: @escaping (HealthDataList?, Error?) -> Void) {
         
         guard let request = request else {

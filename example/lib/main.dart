@@ -18,14 +18,11 @@ class _MyAppState extends State<MyApp> {
   bool _isAuthorized = false;
   String _basicHealthString = "";
   String _statisticsString = "";
-  String _activityData;
   String _exisitngTypesString = "";
-  String _updateStatusString = "";
   String _updateMessageString = "";
   bool _isSubscribed = false;
   String _pulledBackgroundDataString = "";
-
-  StreamSubscription _subscription = null;
+  String _batchString = "";
 
   @override
   void initState() {
@@ -33,7 +30,14 @@ class _MyAppState extends State<MyApp> {
     initPlatformState();
   }
 
-  initPlatformState() async {}
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlatformState() async {
+    await NanoHealthkitPlugin.initialize(_updatesReceivedInBackground);
+    bool _isSubscribed = await NanoHealthkitPlugin.isSubscribedToUpdates();
+    setState(() {
+      this._isSubscribed = _isSubscribed;
+    });
+  }
 
   _authorize() async {
     var request = HealthTypeList();
@@ -46,11 +50,13 @@ class _MyAppState extends State<MyApp> {
 
   _getUserBasicHealthData() async {
     var request = HealthDataRequest();
-    request.type = HealthTypes.WORKOUT_MAIN;
+    request.type = HealthTypes.CORRELATION_FOOD;
     //request.startDate = "2019-06-19T18:58:00.000Z";
     //request.endDate = "2019-09-19T20:58:00.000Z";
     //request.limit = 2;
     //request.units.add("ft");
+    request.units.add("kcal");
+    request.units.add("km");
     var resultToShow = "";
     try {
       var basicHealth = await NanoHealthkitPlugin.fetchData(request);
@@ -60,6 +66,34 @@ class _MyAppState extends State<MyApp> {
     }
     setState(() {
       _basicHealthString = resultToShow;
+    });
+  }
+
+  _getUserBatchData() async {
+    // First get the list of existing types
+    var existingTypesReq = HealthTypeList();
+    existingTypesReq.types.addAll(HealthTypes.values);
+    var existingTypes =
+        await NanoHealthkitPlugin.filterExistingTypes(existingTypesReq);
+
+    // Make the request for all types
+    var requestList = HealthDataRequestList();
+    for (var type in existingTypes.types) {
+      var typeRequest = HealthDataRequest();
+      typeRequest.type = type;
+      requestList.requests.add(typeRequest);
+    }
+
+    var resultToShow = "";
+    try {
+      var batchHealth = await NanoHealthkitPlugin.fetchBatchData(requestList);
+      print(batchHealth);
+      resultToShow = batchHealth.toString();
+    } on Exception catch (error) {
+      resultToShow = error.toString();
+    }
+    setState(() {
+      _batchString = resultToShow;
     });
   }
 
@@ -94,8 +128,7 @@ class _MyAppState extends State<MyApp> {
   _subscribeToUpdates() {
     var request = HealthTypeList();
     request.types.addAll(HealthTypes.values); // Subscribe to everything
-    _subscription =
-        NanoHealthkitPlugin.subscribeToUpdates(request, _updatesReceived);
+    NanoHealthkitPlugin.subscribeToUpdates(request, _updatesReceived);
     setState(() {
       _isSubscribed = true;
       _updateMessageString = "";
@@ -103,8 +136,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   _unsubscribeToUpdates() {
-    NanoHealthkitPlugin.unsubscribeToUpdates(_subscription);
-    _subscription = null;
+    NanoHealthkitPlugin.unsubscribeToUpdates();
     setState(() {
       _isSubscribed = false;
       _updateMessageString = "";
@@ -116,6 +148,10 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _updateMessageString = updates.toString();
     });
+  }
+
+  _updatesReceivedInBackground(HealthDataList updates) {
+    _saveUpdateData(updates);
   }
 
   _saveUpdateData(HealthDataList updates) async {
@@ -132,6 +168,7 @@ class _MyAppState extends State<MyApp> {
       _pulledBackgroundDataString = saves.toString();
     });
     saves.clear();
+    prefs.setStringList("savedUpdates", List<String>());
   }
 
   @override
@@ -196,6 +233,13 @@ class _MyAppState extends State<MyApp> {
                     onPressed: _getUserStatisticsData),
               ),
               Text('Statistics data: $_statisticsString\n'),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: RaisedButton(
+                    child: Text("Get batch data"),
+                    onPressed: _getUserBatchData),
+              ),
+              Text('Batch data: $_batchString\n'),
             ],
           ),
         ),

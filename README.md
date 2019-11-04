@@ -10,7 +10,7 @@ Currently, writing data into HealthKit is not supported.
 
 1. Add the plugin to your project's `pubspec.yaml`.
 
-2. Enable HealthKit capabilities (and also HealthRecords if desired) in Xcode.
+2. Enable HealthKit capabilities (and also "Clinical Health Records" and "Background fetch" if desired) in Xcode.
 
 3. Add the necessary entitlements in `Info.plist`.
 
@@ -68,10 +68,12 @@ Subscribe to new entries of height:
 ```dart
 var request = HealthTypeList();
 request.types.add(HealthTypes.QUANTITY_HEIGHT);
-_subscription = NanoHealthkitPlugin.subscribeToUpdates(request, _updatesReceived);
+NanoHealthkitPlugin.subscribeToUpdates(request, _updatesReceived);
 ```
 
 The updatesReceived method gets all new entries (even while the app is in background) in the same structure as the fetching of data.
+
+To enable background updates even when the app is killed, check the [notes regarding this topic to know how to configure it.](https://github.com/nanoglobal/nano-healthkit-plugin-flutter/wiki/Important-Notes#background-updates)
 
 ## Docs
 

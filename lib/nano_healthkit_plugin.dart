@@ -1,13 +1,22 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:nano_healthkit_plugin/healthdata.pb.dart';
 
 class NanoHealthkitPlugin {
   static const _channel = const MethodChannel('nano_healthkit_plugin');
   static const _stream = const EventChannel('nano_healthkit_plugin_stream');
   static var _subscriberMethod;
+  static StreamSubscription _subscription;
+
+  /// Initialize the plugin and request relevant permissions from the user.
+  static Future<void> initialize<T>(void onData(T event)) async {
+    await _channel.invokeMethod('initialize', null);
+    subscribeToUpdates(null, onData);
+  }
 
   /// Requests permissions
   ///
@@ -39,15 +48,27 @@ class NanoHealthkitPlugin {
     return HealthDataList.fromBuffer(rawData);
   }
 
+  /// Reads data of many types at once
+  ///
+  /// The [request] is a list of individual [HealthDataRequest] identical
+  /// to the one sent on [fetchData].
+  static Future<HealthDataList> fetchBatchData(
+      HealthDataRequestList request) async {
+    final Uint8List rawData =
+        await _channel.invokeMethod('fetchBatchData', request.writeToBuffer());
+    return HealthDataList.fromBuffer(rawData);
+  }
+
   /// Subscribes to new available data
   ///
   /// Only subscribes to types indicated in [request]. The method in [onData]
   /// gets called on each new available data in a ``HealthDataList`` object.
-  static StreamSubscription subscribeToUpdates<T>(
+  static void subscribeToUpdates<T>(
       HealthTypeList request, void onData(T event)) {
     _subscriberMethod = onData;
-    return _stream
-        .receiveBroadcastStream(request.writeToBuffer())
+    _subscription?.cancel();
+    _subscription = _stream
+        .receiveBroadcastStream(request?.writeToBuffer())
         .listen(_updatesReceived);
   }
 
@@ -56,12 +77,19 @@ class NanoHealthkitPlugin {
   /// Does not receive a list of types, instead it unsubscribes from all possible
   /// types of health data. [stream] needs to be the object that the subscription
   /// method returns.
-  static Future<bool> unsubscribeToUpdates(StreamSubscription stream) async {
-    if (stream != null) {
-      stream.cancel();
-      _subscriberMethod = null;
-    }
+  static Future<bool> unsubscribeToUpdates() async {
+    _subscription?.cancel();
+    _subscription = null;
+    _subscriberMethod = null;
     return await _channel.invokeMethod('unsubscribeToUpdates');
+  }
+
+  /// Checks if there is a subscription to updates
+  ///
+  /// Specially useful to keep track of the subscriptions probably done during
+  /// another session.
+  static Future<bool> isSubscribedToUpdates() async {
+    return await _channel.invokeMethod('isSubscribedToUpdates');
   }
 
   static void _updatesReceived(updates) {
