@@ -39,6 +39,10 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
         if call.method == "fetchStatisticsData" {
             self.fetchStatisticsData(call, result: result)
         }
+        
+        if call.method == "writeData" {
+            self.writeData(call, result: result)
+        }
     }
     
     private let healthUtils = HealthDataUtils.global
@@ -48,8 +52,11 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
     
     func requestPermissions(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
-        let request: HealthTypeList? = deserializeArguments(call.arguments)
-        healthUtils.requestPermissions(for: request, result: { permissionResult, error in
+        let arguments = call.arguments as? NSDictionary
+        let readRequest: HealthTypeList? = deserializeArguments(arguments?["read"])
+        let writeRequest: HealthTypeList? = deserializeArguments(arguments?["write"])
+
+        healthUtils.requestPermissions(readList: readRequest, writeList: writeRequest ,result:{ permissionResult, error in
             self.sendResult(target: result, response: permissionResult, error: error)
         })
     }
@@ -84,6 +91,15 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
             self.sendResult(target: result, response: batch, error: error)
         })
     }
+    
+    func writeData(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+     
+       let healthData: HealthData? = deserializeArguments(call.arguments)
+       healthUtils.writeData (for: healthData, result: { writeResult, error in
+           self.sendResult(target: result, response: writeResult, error: error)
+       })
+    }
+    
     
     // MARK: Subscription methods
     

@@ -32,16 +32,21 @@ class HealthDataUtils: NSObject {
         }
     }
     
-    func requestPermissions(for list: HealthTypeList?, result: @escaping (Bool, Error?) -> Void) {
+    func requestPermissions( readList: HealthTypeList?, writeList: HealthTypeList?, result: @escaping (Bool, Error?) -> Void) {
+     
         
-        guard let list = list else {
-            result(false, SimpleLocalizedError("Invalid list of params"))
+        guard readList == nil && writeList == nil else{
+             result(false, SimpleLocalizedError("Invalid list of params"))
             return
         }
+    
+        let readFilteredList = HealthDataUtils.filterPermissionRequiredTypes(readList!)
+        let readSet = HealthDataUtils.makeHKObjectSet(from: readFilteredList)
         
-        let filteredList = HealthDataUtils.filterPermissionRequiredTypes(list)
-        let typeSet = HealthDataUtils.makeHKObjectSet(from: filteredList)
-        HealthDataUtils.healthStore?.requestAuthorization(toShare: nil, read: typeSet) { success, error in
+        let writeFilteredList = HealthDataUtils.filterWriteRequiredTypes(writeList!)
+        let writeSet = HealthDataUtils.makeHKSampleSet(from: writeFilteredList)
+
+        HealthDataUtils.healthStore?.requestAuthorization(toShare: writeSet, read: readSet) { success, error in
             result(success, error)
         }
     }
@@ -88,6 +93,23 @@ class HealthDataUtils: NSObject {
         
         // Other types
         dataFetcher.fetchStatisticsData(for: request.type, params: parseStatisticsRequest(request), result: result)
+    }
+    
+    func writeData(for healthData: HealthData?, result: @escaping (Bool, Error?) -> Void){
+        guard let data = healthData else {
+             result(false, SimpleLocalizedError("Invalid request"))
+             return
+         }
+        
+        guard let healthDataHKObject = HealthDataUtils.makeHKObject(for: data) else {
+            result(false, SimpleLocalizedError("Invalid request"))
+            return
+        }
+        
+        HealthDataUtils.healthStore?.save(healthDataHKObject, withCompletion: { success, error in
+            result(success, error)
+        })
+        
     }
     
     private func parseHealthRequest(_ request: HealthDataRequest) -> HealthDataFetcher.BatchParams {

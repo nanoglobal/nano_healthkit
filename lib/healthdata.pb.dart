@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: healthdata.proto
+//  source: protos/healthdata.proto
 //
 // @dart = 2.3
 // ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
@@ -500,6 +500,7 @@ class WorkoutSpecificData extends $pb.GeneratedMessage {
     ..a<$core.double>(103, 'totalDistance', $pb.PbFieldType.OD, protoName: 'totalDistance')
     ..aOS(104, 'totalDistanceUnit', protoName: 'totalDistanceUnit')
     ..a<$core.double>(105, 'duration', $pb.PbFieldType.OD)
+    ..a<$core.int>(106, 'activityType', $pb.PbFieldType.OU3, protoName: 'activityType')
     ..hasRequiredFields = false
   ;
 
@@ -562,6 +563,15 @@ class WorkoutSpecificData extends $pb.GeneratedMessage {
   $core.bool hasDuration() => $_has(4);
   @$pb.TagNumber(105)
   void clearDuration() => clearField(105);
+
+  @$pb.TagNumber(106)
+  $core.int get activityType => $_getIZ(5);
+  @$pb.TagNumber(106)
+  set activityType($core.int v) { $_setUnsignedInt32(5, v); }
+  @$pb.TagNumber(106)
+  $core.bool hasActivityType() => $_has(5);
+  @$pb.TagNumber(106)
+  void clearActivityType() => clearField(106);
 }
 
 class CharacteristicSpecificData extends $pb.GeneratedMessage {

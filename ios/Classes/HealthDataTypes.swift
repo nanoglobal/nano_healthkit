@@ -448,6 +448,67 @@ extension HealthDataUtils {
         }
     }
     
+    static func makeHKObject(for healthData: HealthData) -> HKObject?{
+        
+        guard let index = getTypeIndex(healthData.type) else {
+                   return nil
+        }
+        
+        let startDate = Date(timeIntervalSince1970: Double(healthData.startDate) ?? Date.init().timeIntervalSinceNow)
+        let endDate = Date(timeIntervalSince1970: Double(healthData.endDate) ?? Date.init().timeIntervalSinceNow)
+        
+        let device =  HKDevice(name: healthData.device, manufacturer: nil, model: nil, hardwareVersion: nil, firmwareVersion: nil, softwareVersion: nil, localIdentifier: nil, udiDeviceIdentifier: nil)
+        
+        switch index.1 {
+        case .workout:
+            let eneryBurnedUnit = HKUnit(from: healthData.workoutData.totalEnergyBurnedUnit)
+            let eneryBurned = HKQuantity(unit: eneryBurnedUnit, doubleValue: healthData.workoutData.totalEnergyBurned)
+            
+            let distanceUnit = HKUnit(from: healthData.workoutData.totalDistanceUnit)
+            let distance = HKQuantity(unit: distanceUnit, doubleValue: healthData.workoutData.totalDistance)
+            
+            let type = HKWorkoutActivityType(rawValue: UInt(healthData.workoutData.activityType))//TODO Chris falta cuando lee
+            
+            return HKWorkout(activityType: type!, start: startDate, end: endDate, duration: healthData.workoutData.duration,
+                                   totalEnergyBurned: eneryBurned, totalDistance: distance, device: device, metadata:["metadata":healthData.metadata] )
+            
+        case .quantity:
+            let identifier = HealthDataUtils.QUANTITY_TYPES[index.0].0
+            let quantityType = HKQuantityType.quantityType(forIdentifier: identifier)
+            let quanitytUnit = HKUnit(from: healthData.quantityData.quantityUnit)
+            let quantityAmount = HKQuantity(unit: quanitytUnit, doubleValue: healthData.quantityData.quantity)
+            return  HKQuantitySample(type: quantityType!, quantity: quantityAmount, start: startDate, end: endDate)
+            
+        case .category:
+            let identifier = HealthDataUtils.CATEGORY_TYPES [index.0]
+            let categoryType = HKCategoryType.categoryType(forIdentifier: identifier)
+            return  HKCategorySample(type: categoryType!, value: Int(healthData.categoryData.value), start: startDate, end: endDate, device: device, metadata:["metadata":healthData.metadata] )
+            
+        case .characteristic:
+            return nil
+            
+        case .clinical:
+            return nil
+            
+        case .document:
+            if #available(iOS 10.0, *) {
+              let data = Data.init(base64Encoded: healthData.documentData.documentData)
+              do {
+                  let sample = try HKCDADocumentSample(data: data!, start: startDate, end: endDate, metadata:["metadata":healthData.metadata])
+                  return sample
+              } catch  {
+                  return nil
+              }
+            } else {
+                // Fallback on earlier versions
+                return nil
+            }
+        case .correlation:
+            return nil
+        }
+        
+    }
+
     private static func getCategoryType(_ index: Int) -> HKSampleType? {
         
         let identifier = HealthDataUtils.CATEGORY_TYPES[index]
@@ -497,6 +558,14 @@ extension HealthDataUtils {
         }.compactMap { $0 })
     }
     
+    
+    static func makeHKSampleSet(from list: HealthTypeList) -> Set<HKSampleType> {
+           
+           return Set(list.types.map { (helthType) -> HKSampleType? in
+               HealthDataUtils.getHKObjectType(for: helthType) as? HKSampleType
+           }.compactMap { $0 })
+       }
+    
     static func makeFilteredToupleList<T: HKObjectType>(from list: HealthTypeList) -> [(HealthTypes, T)] {
         
         let filteredList = filterExistingTypes(list)
@@ -531,4 +600,43 @@ extension HealthDataUtils {
         }
         return filteredList
     }
+    
+    static func filterWriteRequiredTypes(_ list: HealthTypeList) -> HealthTypeList {
+       let writeFilteredList =  HealthDataUtils.filterPermissionRequiredTypes(list)
+        
+       var filteredList = HealthTypeList()
+       for elem in writeFilteredList.types {
+            if !FORBIDDEN_WRITE_LIST.contains(elem){
+               filteredList.types.append(elem)
+           }
+       }
+       return filteredList
+        
+    }
+    
+    private static var FORBIDDEN_WRITE_LIST:[HealthTypes] = [
+        .characteristicBiologicalSex,
+        .characteristicBloodType,
+        .characteristicDateOfBirth ,
+        .characteristicFitzpatrickSkinType,
+        .characteristicWheelchairUse ,
+        .clinicalAllergyRecord,
+        .clinicalConditionRecord,
+        .clinicalImmunizationRecord,
+        .clinicalLabResultRecord,
+        .clinicalMedicationRecord,
+        .clinicalProcedureRecord,
+        .clinicalVitalSignRecord,
+        .quantityWalkingHeartRateAverage,
+        .quantityAppleStandTime,
+        .quantityNikeFuel,
+        .quantityAppleExerciseTime,
+        .categoryLowHeartRateEvent,
+        .categoryAppleStandHour,
+        .categoryAudioExposureEvent,
+        .categoryHighHeartRateEvent,
+        .categoryIrregularHeartRhythmEvent,
+        .correlationBloodPressure,
+        .correlationFood,
+    ]
 }

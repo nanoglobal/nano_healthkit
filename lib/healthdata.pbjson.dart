@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: healthdata.proto
+//  source: protos/healthdata.proto
 //
 // @dart = 2.3
 // ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
@@ -232,6 +232,7 @@ const WorkoutSpecificData$json = const {
     const {'1': 'totalDistance', '3': 103, '4': 1, '5': 1, '10': 'totalDistance'},
     const {'1': 'totalDistanceUnit', '3': 104, '4': 1, '5': 9, '10': 'totalDistanceUnit'},
     const {'1': 'duration', '3': 105, '4': 1, '5': 1, '10': 'duration'},
+    const {'1': 'activityType', '3': 106, '4': 1, '5': 13, '10': 'activityType'},
   ],
 };
 

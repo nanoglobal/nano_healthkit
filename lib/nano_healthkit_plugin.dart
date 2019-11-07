@@ -12,9 +12,13 @@ class NanoHealthkitPlugin {
   /// Requests permissions
   ///
   /// Desired health types to request permissions are indicated in the [request].
-  static Future<bool> authorize(HealthTypeList request) async {
+  static Future<bool> authorize(HealthTypeList readRequest,HealthTypeList writeRequest) async {
     return await _channel.invokeMethod(
-        'requestPermissions', request.writeToBuffer());
+       'requestPermissions', <String, dynamic>{
+          'read': readRequest.writeToBuffer(),
+         'write': writeRequest.writeToBuffer()
+    } );
+
   }
 
   /// Filters types that are available on the user's device
@@ -38,6 +42,12 @@ class NanoHealthkitPlugin {
         await _channel.invokeMethod('fetchData', request.writeToBuffer());
     return HealthDataList.fromBuffer(rawData);
   }
+
+  static Future<bool> writeData(HealthData healthData) async {
+    return await _channel.invokeMethod('writeData', healthData.writeToBuffer());
+
+  }
+
 
   /// Subscribes to new available data
   ///

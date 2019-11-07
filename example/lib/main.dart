@@ -6,6 +6,8 @@ import 'package:nano_healthkit_plugin/nano_healthkit_plugin.dart';
 import 'package:nano_healthkit_plugin/healthdata.pb.dart';
 import 'package:nano_healthkit_plugin/healthdata.pbenum.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:ffi' as prefix0;
+import 'package:fixnum/fixnum.dart';
 
 void main() => runApp(MyApp());
 
@@ -36,9 +38,14 @@ class _MyAppState extends State<MyApp> {
   initPlatformState() async {}
 
   _authorize() async {
-    var request = HealthTypeList();
-    request.types.addAll(HealthTypes.values); // Permissions to read everything
-    bool isAuthorized = await NanoHealthkitPlugin.authorize(request);
+    var readRequest = HealthTypeList();
+    readRequest.types.addAll(HealthTypes.values); // Permissions to read everything
+
+    var writeRequest = HealthTypeList();
+    writeRequest.types.addAll(HealthTypes.values); // Permissions to write everything
+
+
+    bool isAuthorized = await NanoHealthkitPlugin.authorize(readRequest,writeRequest);
     setState(() {
       _isAuthorized = isAuthorized;
     });
@@ -61,6 +68,37 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _basicHealthString = resultToShow;
     });
+  }
+
+  _writeSomeData() async{
+
+    QuantitySpecificData quantitySpecificData = QuantitySpecificData();
+    quantitySpecificData.count = Int64(20) ;
+    quantitySpecificData.quantityUnit = 'degC';
+    quantitySpecificData.quantity = 20;
+
+    HealthData healthdata = HealthData();
+
+    healthdata.type = HealthTypes.QUANTITY_BODY_TEMPERATURE;
+    healthdata.device = "device";
+
+
+    healthdata.quantityData = quantitySpecificData ;
+    healthdata.startDate = DateTime.now().millisecondsSinceEpoch.toString();
+    healthdata.endDate = DateTime.now().millisecondsSinceEpoch.toString();
+
+    var resultToShow = "";
+    try {
+      var result = await NanoHealthkitPlugin.writeData(healthdata);
+      resultToShow = result.toString();
+    } on Exception catch (error) {
+      resultToShow = error.toString();
+    }
+    setState(() {
+      _statisticsString = resultToShow;
+    });
+
+
   }
 
   _getUserStatisticsData() async {
@@ -164,6 +202,14 @@ class _MyAppState extends State<MyApp> {
                     }),
               ),
               Text('Valid types: $_exisitngTypesString\n'),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: RaisedButton(
+                    child: Text("Write some data"),
+                    onPressed: () {
+                      _writeSomeData();
+                    }),
+              ),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: RaisedButton(
