@@ -52,7 +52,7 @@ extension HealthDataUtils {
     // MARK: Quantity
     
     private static var QUANTITY_TYPES_V8_0: [(HKQuantityTypeIdentifier, HKUnit?)] = [
-        (.bodyMassIndex, nil),
+        (.bodyMassIndex, HKUnit.init(from: "count")),
         (.bodyFatPercentage, .percent()),
         (.height, .meter()),
         (.bodyMass, HKUnit.gramUnit(with: .kilo)),
