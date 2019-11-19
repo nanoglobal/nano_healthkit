@@ -467,7 +467,7 @@ extension HealthDataUtils {
             let distanceUnit = HKUnit(from: healthData.workoutData.totalDistanceUnit)
             let distance = HKQuantity(unit: distanceUnit, doubleValue: healthData.workoutData.totalDistance)
             
-            let type = HKWorkoutActivityType(rawValue: UInt(healthData.workoutData.activityType))//TODO Chris falta cuando lee
+            let type = HKWorkoutActivityType(rawValue: UInt(healthData.workoutData.activityType))
             
             return HKWorkout(activityType: type!, start: startDate, end: endDate, duration: healthData.workoutData.duration,
                                    totalEnergyBurned: eneryBurned, totalDistance: distance, device: device, metadata:["metadata":healthData.metadata] )
