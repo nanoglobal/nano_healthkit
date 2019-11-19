@@ -6,20 +6,31 @@ import UIKit
 
 public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     
+    static var instance: SwiftNanoHealthkitPlugin?
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
         
-        let instance = SwiftNanoHealthkitPlugin()
-        
-        let methodChannel = FlutterMethodChannel(name: "nano_healthkit_plugin", binaryMessenger: registrar.messenger())
-        registrar.addMethodCallDelegate(instance, channel: methodChannel)
-        
-        let eventChannel = FlutterEventChannel(name: "nano_healthkit_plugin_stream", binaryMessenger: registrar.messenger())
-        eventChannel.setStreamHandler(instance)
+        if instance == nil {
+            
+            let instance = SwiftNanoHealthkitPlugin()
+            SwiftNanoHealthkitPlugin.instance = instance
+            
+            // Register main channel
+            let _methodChannel = FlutterMethodChannel(name: "nano_healthkit_plugin", binaryMessenger: registrar.messenger())
+            registrar.addMethodCallDelegate(instance, channel: _methodChannel)
+            
+            // Register event channel
+            let _eventChannel = FlutterEventChannel(name: "nano_healthkit_plugin_stream", binaryMessenger: registrar.messenger())
+            _eventChannel.setStreamHandler(instance)
+        }
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
-        print("calling handler")
+        if call.method == "initialize" {
+            self.initialize(call, result: result)
+        }
+        
         if call.method == "requestPermissions" {
             self.requestPermissions(call, result: result)
         }
@@ -32,8 +43,16 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
             self.fetchData(call, result: result)
         }
         
+        if call.method == "fetchBatchData" {
+            self.fetchBatchData(call, result: result)
+        }
+        
         if call.method == "unsubscribeToUpdates" {
             self.unsubscribeToUpdates(call, result: result)
+        }
+        
+        if call.method == "isSubscribedToUpdates" {
+            self.isSubscribedToUpdates(call, result: result)
         }
         
         if call.method == "fetchStatisticsData" {
@@ -49,6 +68,11 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
     private var eventSink: FlutterEventSink?
     
     // MARK: Remote methods
+    
+    func initialize(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        sendResult(target: result, response: true, error: nil)
+    }
     
     func requestPermissions(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
@@ -77,11 +101,26 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
         })
     }
     
+    func fetchBatchData(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        let requestList: HealthDataRequestList? = deserializeArguments(call.arguments)
+        healthUtils.fetchBatchData(for: requestList, result: { batch, error in
+            self.sendResult(target: result, response: batch, error: error)
+        })
+    }
+    
     func unsubscribeToUpdates(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
+        saveSubscription(arguments: nil)
         healthUtils.unsubscribeToUpdates(result: { unsubscribeResponse, error in
             self.sendResult(target: result, response: unsubscribeResponse, error: error)
         })
+    }
+    
+    func isSubscribedToUpdates(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        let isSubscribed = restoreSubscription() != nil
+        self.sendResult(target: result, response: isSubscribed, error: nil)
     }
     
     func fetchStatisticsData(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -103,8 +142,14 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
     
     // MARK: Subscription methods
     
+    // It can be called with arguments or empty. If empty try to restore a subscription, otherwise dont continue
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        
         self.eventSink = events
+        guard let arguments = arguments ?? restoreSubscription() else {
+            return nil
+        }
+        saveSubscription(arguments: arguments)
         subscribeToUpdates(withArguments: arguments)
         return nil
     }
@@ -115,6 +160,7 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
     }
     
     @objc func sendUpdateEvent(update: Any?, error: Error?) {
+        
         guard let eventSink = eventSink else {
             return
         }
@@ -132,12 +178,21 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
         }
     }
     
+    private func restoreSubscription() -> Data? {
+        return HealthDataUtils.readValue(type: Data.self, key: "subscriptionSaved")
+    }
+    
+    private func saveSubscription(arguments: Any?) {
+        let args = (arguments as? FlutterStandardTypedData)?.data ?? (arguments as? Data)
+        HealthDataUtils.writeValue(args, key: "subscriptionSaved")
+    }
+    
     // MARK: Aux methods
     
     private func deserializeArguments<T: Message>(_ arguments: Any?) -> T? {
         
-        guard let dataArgs = (arguments as? FlutterStandardTypedData)?.data,
-            let request = try? T(serializedData: dataArgs) else {
+        let dataArgsOp: Data? = (arguments as? FlutterStandardTypedData)?.data ?? (arguments as? Data)
+        guard let dataArgs = dataArgsOp, let request = try? T(serializedData: dataArgs) else {
             return nil
         }
         return request
