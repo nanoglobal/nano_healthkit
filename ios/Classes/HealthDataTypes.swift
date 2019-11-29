@@ -345,7 +345,7 @@ extension HealthDataUtils {
     
     // MARK: Methods
     
-    func fillTypes() {
+    func fillReadTypes() {
         
         if #available(iOS 8.0, *) {
             HealthDataUtils.WORKOUT_TYPES.append(contentsOf: HealthDataUtils.WORKOUT_TYPES_V8_0)
@@ -568,7 +568,7 @@ extension HealthDataUtils {
     
     static func makeFilteredToupleList<T: HKObjectType>(from list: HealthTypeList) -> [(HealthTypes, T)] {
         
-        let filteredList = filterExistingTypes(list)
+        let filteredList = filterReadExistingTypes(list)
         return filteredList.types.map { (helthType) -> (HealthTypes, T)? in
             if let obj = HealthDataUtils.getHKObjectType(for: helthType) as? T {
                 return (helthType, obj)
@@ -577,7 +577,7 @@ extension HealthDataUtils {
         }.compactMap { $0 }
     }
     
-    static func filterExistingTypes(_ list: HealthTypeList) -> HealthTypeList {
+    static func filterReadExistingTypes(_ list: HealthTypeList) -> HealthTypeList {
         return filterTypes(list, function: { HealthDataUtils.typeExists($0) })
     }
     
@@ -601,42 +601,157 @@ extension HealthDataUtils {
         return filteredList
     }
     
-    static func filterWriteRequiredTypes(_ list: HealthTypeList) -> HealthTypeList {
-       let writeFilteredList =  HealthDataUtils.filterPermissionRequiredTypes(list)
+   
+                        
+    private static var AVAILABLE_WRITE_LIST:[HealthTypes] = []
+    
+    private static var AVAILABLE_WRITE_TYPES_V8_0: [HealthTypes] = [
+        .workoutMain,
+        .categorySleepAnalysis,
+        .quantityBodyMassIndex,
+        .quantityBodyFatPercentage,
+        .quantityHeight,
+        .quantityBodyMass,
+        .quantityLeanBodyMass,
+        .quantityStepCount,
+        .quantityDistanceWalkingRunning,
+        .quantityDistanceCycling,
+        .quantityBasalEnergyBurned,
+        .quantityActiveEnergyBurned,
+        .quantityFlightsClimbed,
+        .quantityHeartRate,
+        .quantityBodyTemperature,
+        .quantityBasalBodyTemperature,
+        .quantityBloodPressureSystolic,
+        .quantityBloodPressureDiastolic,
+        .quantityRespiratoryRate,
+        .quantityOxygenSaturation,
+        .quantityPeripheralPerfusionIndex,
+        .quantityBloodGlucose,
+        .quantityNumberOfTimesFallen,
+        .quantityElectrodermalActivity,
+        .quantityInhalerUsage,
+        .quantityBloodAlcoholContent,
+        .quantityForcedVitalCapacity,
+        .quantityForcedExpiratoryVolume1,
+        .quantityPeakExpiratoryFlowRate,
+        .quantityDietaryFatTotal,
+        .quantityDietaryFatPolyunsaturated,
+        .quantityDietaryFatMonounsaturated,
+        .quantityDietaryFatSaturated,
+        .quantityDietaryCholesterol,
+        .quantityDietarySodium,
+        .quantityDietaryCarbohydrates,
+        .quantityDietaryFiber,
+        .quantityDietarySugar,
+        .quantityDietaryEnergyConsumed,
+        .quantityDietaryProtein,
+        .quantityDietaryVitaminA,
+        .quantityDietaryVitaminB6,
+        .quantityDietaryVitaminB12,
+        .quantityDietaryVitaminC,
+        .quantityDietaryVitaminD,
+        .quantityDietaryVitaminE,
+        .quantityDietaryVitaminK,
+        .quantityDietaryCalcium,
+        .quantityDietaryIron,
+        .quantityDietaryThiamin,
+        .quantityDietaryRiboflavin,
+        .quantityDietaryNiacin,
+        .quantityDietaryFolate,
+        .quantityDietaryBiotin,
+        .quantityDietaryPantothenicAcid,
+        .quantityDietaryPhosphorus,
+        .quantityDietaryIodine,
+        .quantityDietaryMagnesium,
+        .quantityDietaryZinc,
+        .quantityDietarySelenium,
+        .quantityDietaryCopper,
+        .quantityDietaryManganese,
+        .quantityDietaryChromium,
+        .quantityDietaryMolybdenum,
+        .quantityDietaryChloride,
+        .quantityDietaryPotassium,
+        .quantityDietaryCaffeine,
+    ]
+    
+    // MARK: Category
+    
+
+    
+    @available(iOS 9.0, *)
+    private static var AVAILABLE_WRITE_TYPES_V9_0: [HealthTypes] = [
+        .categoryCervicalMucusQuality,
+        .categoryOvulationTestResult,
+        .categoryMenstrualFlow,
+        .categoryIntermenstrualBleeding,
+        .quantityDietaryWater,
+    ]
+    @available(iOS 10.0, *)
+    private static var AVAILABLE_WRITE_TYPES_V10_0: [HealthTypes] = [
+        .categoryMindfulSession,
+        .quantityDistanceWheelchair,
+        .quantityPushCount,
+        .quantityDistanceSwimming,
+        .quantitySwimmingStrokeCount,
+    ]
+    @available(iOS 11.0, *)
+    private static var AVAILABLE_WRITE_TYPES_V11_0: [HealthTypes] = [
+        .quantityWaistCircumference,
+        .quantityVo2Max,
+        .quantityRestingHeartRate,
+        .quantityHeartRateVariabilitySdnn,
+    ]
+    @available(iOS 11.2, *)
+    private static var AVAILABLE_WRITE_TYPES_V11_2: [HealthTypes] = [
+        .quantityInsulinDelivery,
+        .quantityDistanceDownhillSnowSports,
+    ]
+    @available(iOS 13.0, *)
+    private static var AVAILABLE_WRITE_TYPES_V13_0: [HealthTypes] = [
+        .categoryToothbrushingEvent,
+        .quantityEnvironmentalAudioExposure,
+        .quantityHeadphoneAudioExposure
+    ]
+
+    func fillWriteTypes() {
+        if #available(iOS 8.0, *) {
+            HealthDataUtils.AVAILABLE_WRITE_LIST.append(contentsOf: HealthDataUtils.AVAILABLE_WRITE_TYPES_V8_0)
+        }
+
+        if #available(iOS 9.0, *) {
+            HealthDataUtils.AVAILABLE_WRITE_LIST.append(contentsOf: HealthDataUtils.AVAILABLE_WRITE_TYPES_V9_0)
+        }
+
+        if #available(iOS 10, *) {
+            HealthDataUtils.AVAILABLE_WRITE_LIST.append(contentsOf: HealthDataUtils.AVAILABLE_WRITE_TYPES_V10_0)
+        }
+
+        if #available(iOS 11.0, *) {
+            HealthDataUtils.AVAILABLE_WRITE_LIST.append(contentsOf: HealthDataUtils.AVAILABLE_WRITE_TYPES_V11_0)
+        }
         
-       var filteredList = HealthTypeList()
-       for elem in writeFilteredList.types {
-            if !FORBIDDEN_WRITE_LIST.contains(elem){
-               filteredList.types.append(elem)
-           }
-       }
-       return filteredList
+        if #available(iOS 11.2, *) {
+            HealthDataUtils.AVAILABLE_WRITE_LIST.append(contentsOf: HealthDataUtils.AVAILABLE_WRITE_TYPES_V11_2)
+
+        }
         
+        if #available(iOS 13.0, *) {
+            HealthDataUtils.AVAILABLE_WRITE_LIST.append(contentsOf: HealthDataUtils.AVAILABLE_WRITE_TYPES_V13_0)
+        }
     }
     
-    private static var FORBIDDEN_WRITE_LIST:[HealthTypes] = [
-        .characteristicBiologicalSex,
-        .characteristicBloodType,
-        .characteristicDateOfBirth ,
-        .characteristicFitzpatrickSkinType,
-        .characteristicWheelchairUse ,
-        .clinicalAllergyRecord,
-        .clinicalConditionRecord,
-        .clinicalImmunizationRecord,
-        .clinicalLabResultRecord,
-        .clinicalMedicationRecord,
-        .clinicalProcedureRecord,
-        .clinicalVitalSignRecord,
-        .quantityWalkingHeartRateAverage,
-        .quantityAppleStandTime,
-        .quantityNikeFuel,
-        .quantityAppleExerciseTime,
-        .categoryLowHeartRateEvent,
-        .categoryAppleStandHour,
-        .categoryAudioExposureEvent,
-        .categoryHighHeartRateEvent,
-        .categoryIrregularHeartRhythmEvent,
-        .correlationBloodPressure,
-        .correlationFood,
-    ]
+    static func filterWriteExistingTypes(_ list: HealthTypeList) -> HealthTypeList {
+          let writeFilteredList =  HealthDataUtils.filterPermissionRequiredTypes(list)
+           
+          var filteredList = HealthTypeList()
+          for elem in writeFilteredList.types {
+               if AVAILABLE_WRITE_LIST.contains(elem){
+                  filteredList.types.append(elem)
+              }
+          }
+          return filteredList
+           
+       }
+    
 }

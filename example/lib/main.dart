@@ -17,10 +17,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _isAuthorized = false;
+  bool _isReadAuthorized = false;
+  bool _isWriteAuthorized = false;
   String _basicHealthString = "";
   String _statisticsString = "";
-  String _exisitngTypesString = "";
+  String _existingReadTypesString = "";
+  String _existingWriteTypesString = "";
   String _updateMessageString = "";
   bool _isSubscribed = false;
   String _pulledBackgroundDataString = "";
@@ -41,7 +43,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  _authorize() async {
+  _authorizeRead() async {
     var readRequest = HealthTypeList();
     readRequest.types.addAll(HealthTypes.values); // Permissions to read everything
 
@@ -49,9 +51,20 @@ class _MyAppState extends State<MyApp> {
     writeRequest.types.addAll(HealthTypes.values); // Permissions to write everything
 
 
-    bool isAuthorized = await NanoHealthkitPlugin.authorize(readRequest,writeRequest);
+    bool isAuthorized = await NanoHealthkitPlugin.authorizeRead(readRequest);
     setState(() {
-      _isAuthorized = isAuthorized;
+      _isReadAuthorized = isAuthorized;
+    });
+  }
+  _authorizeWrite() async {
+
+    var writeRequest = HealthTypeList();
+    writeRequest.types.addAll(HealthTypes.values); // Permissions to write everything
+
+
+    bool isAuthorized = await NanoHealthkitPlugin.authorizeWrite(writeRequest);
+    setState(() {
+      _isWriteAuthorized = isAuthorized;
     });
   }
 
@@ -81,7 +94,7 @@ class _MyAppState extends State<MyApp> {
     var existingTypesReq = HealthTypeList();
     existingTypesReq.types.addAll(HealthTypes.values);
     var existingTypes =
-        await NanoHealthkitPlugin.filterExistingTypes(existingTypesReq);
+        await NanoHealthkitPlugin.filterExistingReadTypes(existingTypesReq);
 
     // Make the request for all types
     var requestList = HealthDataRequestList();
@@ -154,14 +167,24 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  _filterExistingTypes() async {
+  _filterReadExistingTypes() async {
     var request = HealthTypeList();
     request.types.addAll(HealthTypes.values);
-    var filtered = await NanoHealthkitPlugin.filterExistingTypes(request);
+    var filtered = await NanoHealthkitPlugin.filterExistingReadTypes(request);
     setState(() {
-      _exisitngTypesString = filtered.toString();
+      _existingReadTypesString = filtered.toString();
     });
   }
+
+  _filterWriteExistingTypes() async {
+    var request = HealthTypeList();
+    request.types.addAll(HealthTypes.values);
+    var filtered = await NanoHealthkitPlugin.filterExistingWriteTypes(request);
+    setState(() {
+      _existingWriteTypesString = filtered.toString();
+    });
+  }
+
 
   _subscribeToUpdates() {
     var request = HealthTypeList();
@@ -224,21 +247,39 @@ class _MyAppState extends State<MyApp> {
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: RaisedButton(
-                    child: Text("Authorize"),
+                    child: Text("Read Authorize"),
                     onPressed: () {
-                      _authorize();
+                      _authorizeRead();
                     }),
               ),
-              Text('Authorized: $_isAuthorized\n'),
+              Text('Read Authorized: $_isReadAuthorized\n'),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: RaisedButton(
-                    child: Text("Filter Only Existing Types"),
+                    child: Text("Write Authorize"),
                     onPressed: () {
-                      _filterExistingTypes();
+                      _authorizeWrite();
                     }),
               ),
-              Text('Valid types: $_exisitngTypesString\n'),
+              Text('Write Authorized: $_isWriteAuthorized\n'),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: RaisedButton(
+                    child: Text("Filter Only Read Existing Types"),
+                    onPressed: () {
+                      _filterReadExistingTypes();
+                    }),
+              ),
+              Text('Valid types: $_existingReadTypesString\n'),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: RaisedButton(
+                    child: Text("Filter Only Write Existing Types"),
+                    onPressed: () {
+                      _filterWriteExistingTypes();
+                    }),
+              ),
+              Text('Valid types: $_existingWriteTypesString\n'),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: RaisedButton(

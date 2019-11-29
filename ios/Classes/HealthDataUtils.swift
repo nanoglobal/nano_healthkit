@@ -24,32 +24,40 @@ class HealthDataUtils: NSObject {
         super.init()
         
         // Add version specific types
-        fillTypes()
-        
+        fillReadTypes()
+        fillWriteTypes()
         // Create the instance of healthStore
         if HKHealthStore.isHealthDataAvailable() && HealthDataUtils.healthStore == nil {
             HealthDataUtils.healthStore = HKHealthStore()
         }
     }
     
-    func requestPermissions( readList: HealthTypeList?, writeList: HealthTypeList?, result: @escaping (Bool, Error?) -> Void) {
-     
-        
-        guard readList == nil && writeList == nil else{
+    func requestReadPermissions( readList: HealthTypeList?, writeList: HealthTypeList?, result: @escaping (Bool, Error?) -> Void) {
+        guard let readList = readList else{
              result(false, SimpleLocalizedError("Invalid list of params"))
             return
         }
     
-        let readFilteredList = HealthDataUtils.filterPermissionRequiredTypes(readList!)
+        let readFilteredList = HealthDataUtils.filterPermissionRequiredTypes(readList)
         let readSet = HealthDataUtils.makeHKObjectSet(from: readFilteredList)
-        
-        let writeFilteredList = HealthDataUtils.filterWriteRequiredTypes(writeList!)
-        let writeSet = HealthDataUtils.makeHKSampleSet(from: writeFilteredList)
 
-        HealthDataUtils.healthStore?.requestAuthorization(toShare: writeSet, read: readSet) { success, error in
+        HealthDataUtils.healthStore?.requestAuthorization(toShare: nil, read: readSet) { success, error in
             result(success, error)
         }
     }
+    func requestWritePermissions( writeList: HealthTypeList?, result: @escaping (Bool, Error?) -> Void) {
+          guard let writeList = writeList else{
+               result(false, SimpleLocalizedError("Invalid list of params"))
+              return
+          }
+
+          let writeFilteredList = HealthDataUtils.filterWriteExistingTypes(writeList)
+          let writeSet = HealthDataUtils.makeHKSampleSet(from: writeFilteredList)
+
+          HealthDataUtils.healthStore?.requestAuthorization(toShare: writeSet, read: nil) { success, error in
+              result(success, error)
+          }
+      }
     
     func fetchBatchData(for requestList: HealthDataRequestList?, result: @escaping (HealthDataList?, Error?) -> Void) {
         
@@ -168,14 +176,14 @@ class HealthDataUtils: NSObject {
         return HealthDataFetcher.StatisticsParams(startDate: startDate, endDate: endDate, statisticsOptions: options)
     }
     
-    func filterExistingTypes(for list: HealthTypeList?, result: @escaping (HealthTypeList?, Error?) -> Void) {
+    func filterReadExistingTypes(for list: HealthTypeList?, result: @escaping (HealthTypeList?, Error?) -> Void) {
         
         guard let list = list else {
             result(nil, SimpleLocalizedError("Invalid list of params"))
             return
         }
         
-        let filteredList = HealthDataUtils.filterExistingTypes(list)
+        let filteredList = HealthDataUtils.filterReadExistingTypes(list)
         result(filteredList, nil)
     }
     
@@ -199,5 +207,17 @@ class HealthDataUtils: NSObject {
     func sendUpdateEvent(_ dataList: HealthDataList?, error: Error?) {
         
         self.updateHandler?(dataList, error)
+    }
+    
+    
+    func filterWriteExistingTypes(for list: HealthTypeList?, result: @escaping (HealthTypeList?, Error?) -> Void) {
+        
+        guard let list = list else {
+            result(nil, SimpleLocalizedError("Invalid list of params"))
+            return
+        }
+        
+        let filteredList = HealthDataUtils.filterWriteExistingTypes(list)
+        result(filteredList, nil)
     }
 }

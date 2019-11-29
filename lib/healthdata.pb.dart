@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: protos/healthdata.proto
+//  source: healthdata.proto
 //
 // @dart = 2.3
 // ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
@@ -114,14 +114,14 @@ class HealthDataRequestList extends $pb.GeneratedMessage {
 }
 
 enum HealthData_SpecificData {
-  emptyData, 
-  quantityData, 
-  categoryData, 
-  workoutData, 
-  characteristicData, 
-  clinicalRecordData, 
-  documentData, 
-  correlationData, 
+  emptyData,
+  quantityData,
+  categoryData,
+  workoutData,
+  characteristicData,
+  clinicalRecordData,
+  documentData,
+  correlationData,
   notSet
 }
 
@@ -370,7 +370,7 @@ class WorkoutSpecificData extends $pb.GeneratedMessage {
     ..a<$core.double>(103, 'totalDistance', $pb.PbFieldType.OD)
     ..aOS(104, 'totalDistanceUnit')
     ..a<$core.double>(105, 'duration', $pb.PbFieldType.OD)
-    ..a<$core.int>(106, 'activityType', $pb.PbFieldType.OU3, protoName: 'activityType')
+    ..a<$core.int>(106, 'activityType', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -413,13 +413,9 @@ class WorkoutSpecificData extends $pb.GeneratedMessage {
   $core.bool hasDuration() => $_has(4);
   void clearDuration() => clearField(105);
 
-  @$pb.TagNumber(106)
-  $core.int get activityType => $_getIZ(5);
-  @$pb.TagNumber(106)
-  set activityType($core.int v) { $_setUnsignedInt32(5, v); }
-  @$pb.TagNumber(106)
+  $core.int get activityType => $_get(5, 0);
+  set activityType($core.int v) { $_setSignedInt32(5, v); }
   $core.bool hasActivityType() => $_has(5);
-  @$pb.TagNumber(106)
   void clearActivityType() => clearField(106);
 }
 
@@ -782,4 +778,3 @@ class StatisticsData extends $pb.GeneratedMessage {
 
   $core.List<StatisticsData_StatisticsDataBySource> get dataBySource => $_getList(9);
 }
-
