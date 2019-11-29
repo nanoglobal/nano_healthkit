@@ -60,7 +60,7 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
         }
         
         if call.method == "requestWritePermissions" {
-           self.requestReadPermissions(call, result: result)
+           self.requestWritePermissions(call, result: result)
         }
         
         if call.method == "writeData" {
