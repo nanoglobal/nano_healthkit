@@ -1,7 +1,6 @@
 name: nano_healthkit_plugin
 description: Nano Healthkit Plugin for Flutter
-version: 0.0.2
-author: Mauro Andres Carreño <mauro.carreno@nanovision.com>
+version: 1.0.0
 homepage: https://github.com/nanoglobal/nano-healthkit-plugin-flutter/
 
 environment:
