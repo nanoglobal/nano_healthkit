@@ -1,0 +1,256 @@
+syntax = "proto3";
+
+enum HealthTypes {
+   WORKOUT_MAIN = 0;
+   CATEGORY_SLEEP_ANALYSIS = 1;
+   CATEGORY_APPLE_STAND_HOUR = 2;
+   CATEGORY_CERVICAL_MUCUS_QUALITY = 3;
+   CATEGORY_OVULATION_TEST_RESULT = 4;
+   CATEGORY_MENSTRUAL_FLOW = 5;
+   CATEGORY_INTERMENSTRUAL_BLEEDING = 6;
+   CATEGORY_SEXUAL_ACTIVITY = 7;
+   CATEGORY_MINDFUL_SESSION = 8;
+   CATEGORY_HIGH_HEART_RATE_EVENT = 9;
+   CATEGORY_LOW_HEART_RATE_EVENT = 10;
+   CATEGORY_IRREGULAR_HEART_RHYTHM_EVENT = 11;
+   CATEGORY_AUDIO_EXPOSURE_EVENT = 12;
+   CATEGORY_TOOTHBRUSHING_EVENT = 13;
+   QUANTITY_BODY_MASS_INDEX = 14;
+   QUANTITY_BODY_FAT_PERCENTAGE = 15;
+   QUANTITY_HEIGHT = 16;
+   QUANTITY_BODY_MASS = 17;
+   QUANTITY_LEAN_BODY_MASS = 18;
+   QUANTITY_STEP_COUNT = 19;
+   QUANTITY_DISTANCE_WALKING_RUNNING = 20;
+   QUANTITY_DISTANCE_CYCLING = 21;
+   QUANTITY_BASAL_ENERGY_BURNED = 22;
+   QUANTITY_ACTIVE_ENERGY_BURNED = 23;
+   QUANTITY_FLIGHTS_CLIMBED = 24;
+   QUANTITY_NIKE_FUEL = 25;
+   QUANTITY_HEART_RATE = 26;
+   QUANTITY_BODY_TEMPERATURE = 27;
+   QUANTITY_BASAL_BODY_TEMPERATURE = 28;
+   QUANTITY_BLOOD_PRESSURE_SYSTOLIC = 29;
+   QUANTITY_BLOOD_PRESSURE_DIASTOLIC = 30;
+   QUANTITY_RESPIRATORY_RATE = 31;
+   QUANTITY_OXYGEN_SATURATION = 32;
+   QUANTITY_PERIPHERAL_PERFUSION_INDEX = 33;
+   QUANTITY_BLOOD_GLUCOSE = 34;
+   QUANTITY_NUMBER_OF_TIMES_FALLEN = 35;
+   QUANTITY_ELECTRODERMAL_ACTIVITY = 36;
+   QUANTITY_INHALER_USAGE = 37;
+   QUANTITY_BLOOD_ALCOHOL_CONTENT = 38;
+   QUANTITY_FORCED_VITAL_CAPACITY = 39;
+   QUANTITY_FORCED_EXPIRATORY_VOLUME1 = 40;
+   QUANTITY_PEAK_EXPIRATORY_FLOW_RATE = 41;
+   QUANTITY_DIETARY_FAT_TOTAL = 42;
+   QUANTITY_DIETARY_FAT_POLYUNSATURATED = 43;
+   QUANTITY_DIETARY_FAT_MONOUNSATURATED = 44;
+   QUANTITY_DIETARY_FAT_SATURATED = 45;
+   QUANTITY_DIETARY_CHOLESTEROL = 46;
+   QUANTITY_DIETARY_SODIUM = 47;
+   QUANTITY_DIETARY_CARBOHYDRATES = 48;
+   QUANTITY_DIETARY_FIBER = 49;
+   QUANTITY_DIETARY_SUGAR = 50;
+   QUANTITY_DIETARY_ENERGY_CONSUMED = 51;
+   QUANTITY_DIETARY_PROTEIN = 52;
+   QUANTITY_DIETARY_VITAMIN_A = 53;
+   QUANTITY_DIETARY_VITAMIN_B6 = 54;
+   QUANTITY_DIETARY_VITAMIN_B12 = 55;
+   QUANTITY_DIETARY_VITAMIN_C = 56;
+   QUANTITY_DIETARY_VITAMIN_D = 57;
+   QUANTITY_DIETARY_VITAMIN_E = 58;
+   QUANTITY_DIETARY_VITAMIN_K = 59;
+   QUANTITY_DIETARY_CALCIUM = 60;
+   QUANTITY_DIETARY_IRON = 61;
+   QUANTITY_DIETARY_THIAMIN = 62;
+   QUANTITY_DIETARY_RIBOFLAVIN = 63;
+   QUANTITY_DIETARY_NIACIN = 64;
+   QUANTITY_DIETARY_FOLATE = 65;
+   QUANTITY_DIETARY_BIOTIN = 66;
+   QUANTITY_DIETARY_PANTOTHENIC_ACID = 67;
+   QUANTITY_DIETARY_PHOSPHORUS = 68;
+   QUANTITY_DIETARY_IODINE = 69;
+   QUANTITY_DIETARY_MAGNESIUM = 70;
+   QUANTITY_DIETARY_ZINC = 71;
+   QUANTITY_DIETARY_SELENIUM = 72;
+   QUANTITY_DIETARY_COPPER = 73;
+   QUANTITY_DIETARY_MANGANESE = 74;
+   QUANTITY_DIETARY_CHROMIUM = 75;
+   QUANTITY_DIETARY_MOLYBDENUM = 76;
+   QUANTITY_DIETARY_CHLORIDE = 77;
+   QUANTITY_DIETARY_POTASSIUM = 78;
+   QUANTITY_DIETARY_CAFFEINE = 79;
+   QUANTITY_DIETARY_WATER = 80;
+   QUANTITY_UV_EXPOSURE = 81;
+   QUANTITY_APPLE_EXERCISE_TIME = 82;
+   QUANTITY_DISTANCE_WHEELCHAIR = 83;
+   QUANTITY_PUSH_COUNT = 84;
+   QUANTITY_DISTANCE_SWIMMING = 85;
+   QUANTITY_SWIMMING_STROKE_COUNT = 86;
+   QUANTITY_WAIST_CIRCUMFERENCE = 87;
+   QUANTITY_VO2_MAX = 88;
+   QUANTITY_RESTING_HEART_RATE = 89;
+   QUANTITY_WALKING_HEART_RATE_AVERAGE = 90;
+   QUANTITY_HEART_RATE_VARIABILITY_SDNN = 91;
+   QUANTITY_INSULIN_DELIVERY = 92;
+   QUANTITY_DISTANCE_DOWNHILL_SNOW_SPORTS = 93;
+   QUANTITY_APPLE_STAND_TIME = 94;
+   QUANTITY_ENVIRONMENTAL_AUDIO_EXPOSURE = 95;
+   QUANTITY_HEADPHONE_AUDIO_EXPOSURE = 96;
+   CHARACTERISTIC_BIOLOGICAL_SEX = 97;
+   CHARACTERISTIC_BLOOD_TYPE = 98;
+   CHARACTERISTIC_DATE_OF_BIRTH = 99;
+   CHARACTERISTIC_FITZPATRICK_SKIN_TYPE = 100;
+   CHARACTERISTIC_WHEELCHAIR_USE = 101;
+   CLINICAL_ALLERGY_RECORD = 102;
+   CLINICAL_CONDITION_RECORD = 103;
+   CLINICAL_IMMUNIZATION_RECORD = 104;
+   CLINICAL_LAB_RESULT_RECORD = 105;
+   CLINICAL_MEDICATION_RECORD = 106;
+   CLINICAL_PROCEDURE_RECORD = 107;
+   CLINICAL_VITAL_SIGN_RECORD = 108;
+   DOCUMENT_CDA = 109;
+   CORRELATION_BLOOD_PRESSURE = 110;
+   CORRELATION_FOOD = 111;
+}
+
+enum RequestSorting {
+   DESCENDING_START_DATE = 0;
+   ASCENDING_START_DATE = 1;
+   ASCENDING_END_DATE = 2;
+   DESCENDING_END_DATE = 3;
+}
+
+message HealthTypeList {
+   repeated HealthTypes types = 1;
+}
+
+message HealthDataRequest {
+   HealthTypes type = 1;
+   string startDate = 2;
+   string endDate = 3;
+   int32 limit = 4;
+   RequestSorting sorting = 5;
+   repeated string units = 6;
+}
+
+message HealthDataRequestList {
+   repeated HealthDataRequest requests = 1;
+}
+
+message HealthData {
+   HealthTypes type = 1;
+   string objectType = 2;
+   string startDate = 3;
+   string endDate = 4;
+   string device = 5;
+   string metadata = 6;
+   string uuid = 7;
+   SourceRevision source = 8;
+
+   oneof specificData {
+      EmptySpecificData emptyData = 10;
+      QuantitySpecificData quantityData = 11;
+      CategorySpecificData categoryData = 12;
+      WorkoutSpecificData workoutData = 13;
+      CharacteristicSpecificData characteristicData = 14;
+      ClinicalRecordSpecificData clinicalRecordData = 15;
+      DocumentSpecificData documentData = 16;
+      CorrelationSpecificData correlationData = 17;
+   }
+}
+
+message HealthDataList {
+   repeated HealthData data = 1;
+}
+
+message EmptySpecificData {
+}
+
+message QuantitySpecificData {
+   int64 count = 101;
+   string quantityUnit = 102;
+   double quantity = 103;
+}
+
+message CategorySpecificData {
+   int64 value = 101;
+}
+
+message WorkoutSpecificData {
+   double totalEnergyBurned = 101;
+   string totalEnergyBurnedUnit = 102;
+   double totalDistance = 103;
+   string totalDistanceUnit = 104;
+   double duration = 105;
+}
+
+message CharacteristicSpecificData {
+   string value = 101;
+}
+
+message ClinicalRecordSpecificData {
+   string displayName = 101;
+   string fhirResource = 102;
+}
+
+message DocumentSpecificData {
+   string authorName = 101;
+   string custodianName = 102;
+   string documentData = 103;
+   string patientName = 104;
+   string title = 105;
+}
+
+message CorrelationSpecificData {
+   repeated HealthData objects = 101;
+}
+
+message SourceRevision {
+   string version = 101;
+   string operatingSystemVersion = 102;
+   string productType = 103;
+   string name = 104;
+   string bundleIdentifier = 105;
+}
+
+enum StatisticsOptions {
+   DISCRETE_AVERAGE = 0;
+   DISCRETE_MIN = 1;
+   DISCRETE_MAX = 2;
+   CUMULATIVE_SUM = 3;
+   MOST_RECENT = 4;
+   DURATION = 5;
+   SEPARATE_BY_SOURCE = 6;
+}
+
+message StatisticsRequest {
+   HealthTypes type = 1;
+   string startDate = 2;
+   string endDate = 3;
+   repeated StatisticsOptions options = 4;
+}
+
+message StatisticsData {
+   repeated SourceRevision sources = 1;
+   QuantitySpecificData averageQuantity = 2;
+   QuantitySpecificData maximumQuantity = 3;
+   QuantitySpecificData minimumQuantity = 4;
+   QuantitySpecificData sumQuantity = 5;
+   QuantitySpecificData duration = 6;
+   QuantitySpecificData mostRecentQuantity = 7;
+   TimeInterval mostRecentQuantityDateInterval = 8;
+   TimeInterval dataInterval = 9;
+   repeated StatisticsDataBySource dataBySource = 10;
+
+   message StatisticsDataBySource {
+      SourceRevision source = 1;
+      StatisticsData data = 2;
+   }
+
+   message TimeInterval {
+      string startDate = 3;
+      string endDate = 4;
+   }
+}
