@@ -146,6 +146,8 @@ extension HealthDataFetcher {
             data.workoutData.totalDistanceUnit = distanceUnit.unitString
         }
         data.workoutData.duration = value.duration
+        data.workoutData.activityType = Int32(value.workoutActivityType.rawValue)
+        
         return data
     }
     

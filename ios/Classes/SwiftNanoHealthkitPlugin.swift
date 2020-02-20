@@ -31,12 +31,12 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
             self.initialize(call, result: result)
         }
         
-        if call.method == "requestPermissions" {
-            self.requestPermissions(call, result: result)
+        if call.method == "requestReadPermissions" {
+            self.requestReadPermissions(call, result: result)
         }
         
-        if call.method == "filterExistingTypes" {
-            self.filterExistingTypes(call, result: result)
+        if call.method == "filterExistingReadTypes" {
+            self.filterReadExistingTypes(call, result: result)
         }
         
         if call.method == "fetchData" {
@@ -58,6 +58,17 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
         if call.method == "fetchStatisticsData" {
             self.fetchStatisticsData(call, result: result)
         }
+        
+        if call.method == "requestWritePermissions" {
+           self.requestWritePermissions(call, result: result)
+        }
+        
+        if call.method == "writeData" {
+            self.writeData(call, result: result)
+        }
+        if call.method == "filterExistingWriteTypes" {
+           self.filterWriteExistingTypes(call, result: result)
+        }
     }
     
     private let healthUtils = HealthDataUtils.global
@@ -70,18 +81,21 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
         sendResult(target: result, response: true, error: nil)
     }
     
-    func requestPermissions(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func requestReadPermissions(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
-        let request: HealthTypeList? = deserializeArguments(call.arguments)
-        healthUtils.requestPermissions(for: request, result: { permissionResult, error in
+        let arguments = call.arguments as? NSDictionary
+        let readRequest: HealthTypeList? = deserializeArguments(arguments?["read"])
+      
+
+        healthUtils.requestReadPermissions(readList: readRequest, writeList: nil ,result:{ permissionResult, error in
             self.sendResult(target: result, response: permissionResult, error: error)
         })
     }
     
-    func filterExistingTypes(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func filterReadExistingTypes(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
         let request: HealthTypeList? = deserializeArguments(call.arguments)
-        healthUtils.filterExistingTypes(for: request, result: { filteredList, error in
+        healthUtils.filterReadExistingTypes(for: request, result: { filteredList, error in
             self.sendResult(target: result, response: filteredList, error: error)
         })
     }
@@ -124,6 +138,30 @@ public class SwiftNanoHealthkitPlugin: NSObject, FlutterPlugin, FlutterStreamHan
         })
     }
     
+    func requestWritePermissions(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        let arguments = call.arguments as? NSDictionary
+        let writeRequest: HealthTypeList? = deserializeArguments(arguments?["write"])
+
+        healthUtils.requestWritePermissions(writeList: writeRequest ,result:{ permissionResult, error in
+            self.sendResult(target: result, response: permissionResult, error: error)
+        })
+    }
+    func writeData(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+     
+       let healthData: HealthData? = deserializeArguments(call.arguments)
+       healthUtils.writeData (for: healthData, result: { writeResult, error in
+           self.sendResult(target: result, response: writeResult, error: error)
+       })
+    }
+    
+    func filterWriteExistingTypes(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        let request: HealthTypeList? = deserializeArguments(call.arguments)
+        healthUtils.filterWriteExistingTypes(for: request, result: { filteredList, error in
+            self.sendResult(target: result, response: filteredList, error: error)
+        })
+    }
     // MARK: Subscription methods
     
     // It can be called with arguments or empty. If empty try to restore a subscription, otherwise dont continue

@@ -184,6 +184,7 @@ message WorkoutSpecificData {
    double totalDistance = 103;
    string totalDistanceUnit = 104;
    double duration = 105;
+   int32  activityType = 106;
 }
 
 message CharacteristicSpecificData {

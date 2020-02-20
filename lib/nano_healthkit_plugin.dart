@@ -18,22 +18,25 @@ class NanoHealthkitPlugin {
     subscribeToUpdates(null, onData);
   }
 
-  /// Requests permissions
+  /// Requests Read permissions
   ///
-  /// Desired health types to request permissions are indicated in the [request].
-  static Future<bool> authorize(HealthTypeList request) async {
+  /// Desired health types to request permissions are indicated in the [readRequest].
+
+  static Future<bool> authorizeRead(HealthTypeList readRequest)async {
     return await _channel.invokeMethod(
-        'requestPermissions', request.writeToBuffer());
+        'requestReadPermissions', <String, dynamic>{
+      'read': readRequest.writeToBuffer()
+    } );
   }
 
-  /// Filters types that are available on the user's device
+   /// Filters Read types that are available on the user's device
   ///
   /// Depending on the OS version, some types may not be available.
   /// Returns the valid types.
-  static Future<HealthTypeList> filterExistingTypes(
+  static Future<HealthTypeList> filterExistingReadTypes(
       HealthTypeList request) async {
     final Uint8List rawData = await _channel.invokeMethod(
-        'filterExistingTypes', request.writeToBuffer());
+        'filterExistingReadTypes', request.writeToBuffer());
     return HealthTypeList.fromBuffer(rawData);
   }
 
@@ -109,4 +112,39 @@ class NanoHealthkitPlugin {
         'fetchStatisticsData', request.writeToBuffer());
     return StatisticsData.fromBuffer(rawData);
   }
+
+  /// Requests Write permissions
+  ///
+  ///
+  /// Desired health types to request permissions are indicated in the [writeRequest].
+  static Future<bool> authorizeWrite(HealthTypeList writeRequest)async {
+    return await _channel.invokeMethod(
+        'requestWritePermissions', <String, dynamic>{
+      'write': writeRequest.writeToBuffer()
+    } );
+  }
+
+  /// Filters Write types that are available on the user's device
+  ///
+  /// Depending on the OS version, some types may not be available.
+  /// Returns the valid types.
+  static Future<HealthTypeList> filterExistingWriteTypes(
+      HealthTypeList request) async {
+    final Uint8List rawData = await _channel.invokeMethod(
+        'filterExistingWriteTypes', request.writeToBuffer());
+    return HealthTypeList.fromBuffer(rawData);
+  }
+
+  /// Write data
+  ///
+  /// [healthData] need a type of health data to write.
+  /// Depending on the health type others field must be supplied.
+  /// Optionally a limit,
+  /// startDate, endDate are optionals
+
+  static Future<bool> writeData(HealthData healthData) async {
+    return await _channel.invokeMethod('writeData', healthData.writeToBuffer());
+
+  }
+
 }

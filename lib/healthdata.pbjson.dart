@@ -232,6 +232,7 @@ const WorkoutSpecificData$json = const {
     const {'1': 'totalDistance', '3': 103, '4': 1, '5': 1, '10': 'totalDistance'},
     const {'1': 'totalDistanceUnit', '3': 104, '4': 1, '5': 9, '10': 'totalDistanceUnit'},
     const {'1': 'duration', '3': 105, '4': 1, '5': 1, '10': 'duration'},
+    const {'1': 'activityType', '3': 106, '4': 1, '5': 5, '10': 'activityType'},
   ],
 };
 
@@ -321,4 +322,3 @@ const StatisticsData_TimeInterval$json = const {
     const {'1': 'endDate', '3': 4, '4': 1, '5': 9, '10': 'endDate'},
   ],
 };
-

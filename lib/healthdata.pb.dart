@@ -114,14 +114,14 @@ class HealthDataRequestList extends $pb.GeneratedMessage {
 }
 
 enum HealthData_SpecificData {
-  emptyData, 
-  quantityData, 
-  categoryData, 
-  workoutData, 
-  characteristicData, 
-  clinicalRecordData, 
-  documentData, 
-  correlationData, 
+  emptyData,
+  quantityData,
+  categoryData,
+  workoutData,
+  characteristicData,
+  clinicalRecordData,
+  documentData,
+  correlationData,
   notSet
 }
 
@@ -370,6 +370,7 @@ class WorkoutSpecificData extends $pb.GeneratedMessage {
     ..a<$core.double>(103, 'totalDistance', $pb.PbFieldType.OD)
     ..aOS(104, 'totalDistanceUnit')
     ..a<$core.double>(105, 'duration', $pb.PbFieldType.OD)
+    ..a<$core.int>(106, 'activityType', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -411,6 +412,11 @@ class WorkoutSpecificData extends $pb.GeneratedMessage {
   set duration($core.double v) { $_setDouble(4, v); }
   $core.bool hasDuration() => $_has(4);
   void clearDuration() => clearField(105);
+
+  $core.int get activityType => $_get(5, 0);
+  set activityType($core.int v) { $_setSignedInt32(5, v); }
+  $core.bool hasActivityType() => $_has(5);
+  void clearActivityType() => clearField(106);
 }
 
 class CharacteristicSpecificData extends $pb.GeneratedMessage {
@@ -772,4 +778,3 @@ class StatisticsData extends $pb.GeneratedMessage {
 
   $core.List<StatisticsData_StatisticsDataBySource> get dataBySource => $_getList(9);
 }
-

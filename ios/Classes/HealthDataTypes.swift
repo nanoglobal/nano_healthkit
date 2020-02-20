@@ -345,7 +345,7 @@ extension HealthDataUtils {
     
     // MARK: Methods
     
-    func fillTypes() {
+    func fillReadTypes() {
         
         if #available(iOS 8.0, *) {
             HealthDataUtils.WORKOUT_TYPES.append(contentsOf: HealthDataUtils.WORKOUT_TYPES_V8_0)
@@ -448,6 +448,67 @@ extension HealthDataUtils {
         }
     }
     
+    static func makeHKObject(for healthData: HealthData) -> HKObject?{
+        
+        guard let index = getTypeIndex(healthData.type) else {
+                   return nil
+        }
+        
+        let startDate = Date(timeIntervalSince1970: Double(healthData.startDate) ?? Date.init().timeIntervalSinceNow)
+        let endDate = Date(timeIntervalSince1970: Double(healthData.endDate) ?? Date.init().timeIntervalSinceNow)
+        
+        let device =  HKDevice(name: healthData.device, manufacturer: nil, model: nil, hardwareVersion: nil, firmwareVersion: nil, softwareVersion: nil, localIdentifier: nil, udiDeviceIdentifier: nil)
+        
+        switch index.1 {
+        case .workout:
+            let eneryBurnedUnit = HKUnit(from: healthData.workoutData.totalEnergyBurnedUnit)
+            let eneryBurned = HKQuantity(unit: eneryBurnedUnit, doubleValue: healthData.workoutData.totalEnergyBurned)
+            
+            let distanceUnit = HKUnit(from: healthData.workoutData.totalDistanceUnit)
+            let distance = HKQuantity(unit: distanceUnit, doubleValue: healthData.workoutData.totalDistance)
+            
+            let type = HKWorkoutActivityType(rawValue: UInt(healthData.workoutData.activityType))
+            
+            return HKWorkout(activityType: type!, start: startDate, end: endDate, duration: healthData.workoutData.duration,
+                                   totalEnergyBurned: eneryBurned, totalDistance: distance, device: device, metadata:["metadata":healthData.metadata] )
+            
+        case .quantity:
+            let identifier = HealthDataUtils.QUANTITY_TYPES[index.0].0
+            let quantityType = HKQuantityType.quantityType(forIdentifier: identifier)
+            let quanitytUnit = HKUnit(from: healthData.quantityData.quantityUnit)
+            let quantityAmount = HKQuantity(unit: quanitytUnit, doubleValue: healthData.quantityData.quantity)
+            return  HKQuantitySample(type: quantityType!, quantity: quantityAmount, start: startDate, end: endDate)
+            
+        case .category:
+            let identifier = HealthDataUtils.CATEGORY_TYPES [index.0]
+            let categoryType = HKCategoryType.categoryType(forIdentifier: identifier)
+            return  HKCategorySample(type: categoryType!, value: Int(healthData.categoryData.value), start: startDate, end: endDate, device: device, metadata:["metadata":healthData.metadata] )
+            
+        case .characteristic:
+            return nil
+            
+        case .clinical:
+            return nil
+            
+        case .document:
+            if #available(iOS 10.0, *) {
+              let data = Data.init(base64Encoded: healthData.documentData.documentData)
+              do {
+                  let sample = try HKCDADocumentSample(data: data!, start: startDate, end: endDate, metadata:["metadata":healthData.metadata])
+                  return sample
+              } catch  {
+                  return nil
+              }
+            } else {
+                // Fallback on earlier versions
+                return nil
+            }
+        case .correlation:
+            return nil
+        }
+        
+    }
+
     private static func getCategoryType(_ index: Int) -> HKSampleType? {
         
         let identifier = HealthDataUtils.CATEGORY_TYPES[index]
@@ -497,9 +558,17 @@ extension HealthDataUtils {
         }.compactMap { $0 })
     }
     
+    
+    static func makeHKSampleSet(from list: HealthTypeList) -> Set<HKSampleType> {
+           
+           return Set(list.types.map { (helthType) -> HKSampleType? in
+               HealthDataUtils.getHKObjectType(for: helthType) as? HKSampleType
+           }.compactMap { $0 })
+       }
+    
     static func makeFilteredToupleList<T: HKObjectType>(from list: HealthTypeList) -> [(HealthTypes, T)] {
         
-        let filteredList = filterExistingTypes(list)
+        let filteredList = filterReadExistingTypes(list)
         return filteredList.types.map { (helthType) -> (HealthTypes, T)? in
             if let obj = HealthDataUtils.getHKObjectType(for: helthType) as? T {
                 return (helthType, obj)
@@ -508,7 +577,7 @@ extension HealthDataUtils {
         }.compactMap { $0 }
     }
     
-    static func filterExistingTypes(_ list: HealthTypeList) -> HealthTypeList {
+    static func filterReadExistingTypes(_ list: HealthTypeList) -> HealthTypeList {
         return filterTypes(list, function: { HealthDataUtils.typeExists($0) })
     }
     
@@ -531,4 +600,158 @@ extension HealthDataUtils {
         }
         return filteredList
     }
+    
+   
+                        
+    private static var AVAILABLE_WRITE_LIST:[HealthTypes] = []
+    
+    private static var AVAILABLE_WRITE_TYPES_V8_0: [HealthTypes] = [
+        .workoutMain,
+        .categorySleepAnalysis,
+        .quantityBodyMassIndex,
+        .quantityBodyFatPercentage,
+        .quantityHeight,
+        .quantityBodyMass,
+        .quantityLeanBodyMass,
+        .quantityStepCount,
+        .quantityDistanceWalkingRunning,
+        .quantityDistanceCycling,
+        .quantityBasalEnergyBurned,
+        .quantityActiveEnergyBurned,
+        .quantityFlightsClimbed,
+        .quantityHeartRate,
+        .quantityBodyTemperature,
+        .quantityBasalBodyTemperature,
+        .quantityBloodPressureSystolic,
+        .quantityBloodPressureDiastolic,
+        .quantityRespiratoryRate,
+        .quantityOxygenSaturation,
+        .quantityPeripheralPerfusionIndex,
+        .quantityBloodGlucose,
+        .quantityNumberOfTimesFallen,
+        .quantityElectrodermalActivity,
+        .quantityInhalerUsage,
+        .quantityBloodAlcoholContent,
+        .quantityForcedVitalCapacity,
+        .quantityForcedExpiratoryVolume1,
+        .quantityPeakExpiratoryFlowRate,
+        .quantityDietaryFatTotal,
+        .quantityDietaryFatPolyunsaturated,
+        .quantityDietaryFatMonounsaturated,
+        .quantityDietaryFatSaturated,
+        .quantityDietaryCholesterol,
+        .quantityDietarySodium,
+        .quantityDietaryCarbohydrates,
+        .quantityDietaryFiber,
+        .quantityDietarySugar,
+        .quantityDietaryEnergyConsumed,
+        .quantityDietaryProtein,
+        .quantityDietaryVitaminA,
+        .quantityDietaryVitaminB6,
+        .quantityDietaryVitaminB12,
+        .quantityDietaryVitaminC,
+        .quantityDietaryVitaminD,
+        .quantityDietaryVitaminE,
+        .quantityDietaryVitaminK,
+        .quantityDietaryCalcium,
+        .quantityDietaryIron,
+        .quantityDietaryThiamin,
+        .quantityDietaryRiboflavin,
+        .quantityDietaryNiacin,
+        .quantityDietaryFolate,
+        .quantityDietaryBiotin,
+        .quantityDietaryPantothenicAcid,
+        .quantityDietaryPhosphorus,
+        .quantityDietaryIodine,
+        .quantityDietaryMagnesium,
+        .quantityDietaryZinc,
+        .quantityDietarySelenium,
+        .quantityDietaryCopper,
+        .quantityDietaryManganese,
+        .quantityDietaryChromium,
+        .quantityDietaryMolybdenum,
+        .quantityDietaryChloride,
+        .quantityDietaryPotassium,
+        .quantityDietaryCaffeine,
+    ]
+    
+    // MARK: Category
+    
+
+    
+    @available(iOS 9.0, *)
+    private static var AVAILABLE_WRITE_TYPES_V9_0: [HealthTypes] = [
+        .categoryCervicalMucusQuality,
+        .categoryOvulationTestResult,
+        .categoryMenstrualFlow,
+        .categoryIntermenstrualBleeding,
+        .quantityDietaryWater,
+    ]
+    @available(iOS 10.0, *)
+    private static var AVAILABLE_WRITE_TYPES_V10_0: [HealthTypes] = [
+        .categoryMindfulSession,
+        .quantityDistanceWheelchair,
+        .quantityPushCount,
+        .quantityDistanceSwimming,
+        .quantitySwimmingStrokeCount,
+    ]
+    @available(iOS 11.0, *)
+    private static var AVAILABLE_WRITE_TYPES_V11_0: [HealthTypes] = [
+        .quantityWaistCircumference,
+        .quantityVo2Max,
+        .quantityRestingHeartRate,
+        .quantityHeartRateVariabilitySdnn,
+    ]
+    @available(iOS 11.2, *)
+    private static var AVAILABLE_WRITE_TYPES_V11_2: [HealthTypes] = [
+        .quantityInsulinDelivery,
+        .quantityDistanceDownhillSnowSports,
+    ]
+    @available(iOS 13.0, *)
+    private static var AVAILABLE_WRITE_TYPES_V13_0: [HealthTypes] = [
+        .categoryToothbrushingEvent,
+        .quantityEnvironmentalAudioExposure,
+        .quantityHeadphoneAudioExposure
+    ]
+
+    func fillWriteTypes() {
+        if #available(iOS 8.0, *) {
+            HealthDataUtils.AVAILABLE_WRITE_LIST.append(contentsOf: HealthDataUtils.AVAILABLE_WRITE_TYPES_V8_0)
+        }
+
+        if #available(iOS 9.0, *) {
+            HealthDataUtils.AVAILABLE_WRITE_LIST.append(contentsOf: HealthDataUtils.AVAILABLE_WRITE_TYPES_V9_0)
+        }
+
+        if #available(iOS 10, *) {
+            HealthDataUtils.AVAILABLE_WRITE_LIST.append(contentsOf: HealthDataUtils.AVAILABLE_WRITE_TYPES_V10_0)
+        }
+
+        if #available(iOS 11.0, *) {
+            HealthDataUtils.AVAILABLE_WRITE_LIST.append(contentsOf: HealthDataUtils.AVAILABLE_WRITE_TYPES_V11_0)
+        }
+        
+        if #available(iOS 11.2, *) {
+            HealthDataUtils.AVAILABLE_WRITE_LIST.append(contentsOf: HealthDataUtils.AVAILABLE_WRITE_TYPES_V11_2)
+
+        }
+        
+        if #available(iOS 13.0, *) {
+            HealthDataUtils.AVAILABLE_WRITE_LIST.append(contentsOf: HealthDataUtils.AVAILABLE_WRITE_TYPES_V13_0)
+        }
+    }
+    
+    static func filterWriteExistingTypes(_ list: HealthTypeList) -> HealthTypeList {
+          let writeFilteredList =  HealthDataUtils.filterPermissionRequiredTypes(list)
+           
+          var filteredList = HealthTypeList()
+          for elem in writeFilteredList.types {
+               if AVAILABLE_WRITE_LIST.contains(elem){
+                  filteredList.types.append(elem)
+              }
+          }
+          return filteredList
+           
+       }
+    
 }
